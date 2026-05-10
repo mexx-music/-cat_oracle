@@ -1,11 +1,55 @@
 import 'package:flutter/material.dart';
 
+import '../../../astrology/data/demo_astrology_readings.dart';
+import '../../../oracle/data/demo_combined_oracle_reading.dart';
+import '../../../palmistry/data/demo_palmistry_readings.dart';
+
 class OracleResultPage extends StatelessWidget {
   const OracleResultPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final palmItems =
+        (demoPalmistryReadings.isNotEmpty
+                ? demoPalmistryReadings
+                      .take(2)
+                      .map(
+                        (reading) => _DemoItem(
+                          label: reading.title,
+                          text: reading.summary,
+                        ),
+                      )
+                : const [
+                    _DemoItem(
+                      label: 'Handlinien-Deutung',
+                      text:
+                          'Die Katze betrachtet deine Linien mit ruhiger Aufmerksamkeit.',
+                    ),
+                  ])
+            .toList();
+    final astrologyItems =
+        (demoAstrologyReadings.isNotEmpty
+                ? demoAstrologyReadings
+                      .take(2)
+                      .map(
+                        (reading) => _DemoItem(
+                          label: reading.title,
+                          text: reading.summary,
+                        ),
+                      )
+                : const [
+                    _DemoItem(
+                      label: 'Astrologie-Deutung',
+                      text:
+                          'Die Sterne zeigen heute eine sanfte, leuchtende Stimmung.',
+                    ),
+                  ])
+            .toList();
+    final combinedMessage =
+        demoCombinedOracleReading.combinedCatMessage.isNotEmpty
+        ? demoCombinedOracleReading.combinedCatMessage
+        : 'Die Katze verbindet deine Eindrücke zu einer stillen, warmen Orakel-Botschaft.';
 
     return Scaffold(
       appBar: AppBar(title: const Text('Orakel-Ergebnis')),
@@ -32,35 +76,13 @@ class OracleResultPage extends StatelessWidget {
                 // Hand Reading Section
                 _InterpretationCard(
                   title: '✋ Handlinien-Deutung',
-                  items: const [
-                    _DemoItem(
-                      label: 'Lebenslinie',
-                      text:
-                          'Du lebst mit Wärmherzigkeit und bleibst neugierig wie eine Katze.',
-                    ),
-                    _DemoItem(
-                      label: 'Herzlinie',
-                      text:
-                          'Dein Herz ist empfänglich für Schönheit und stille Magie.',
-                    ),
-                  ],
+                  items: palmItems,
                 ),
                 const SizedBox(height: 20),
                 // Astrology Section
                 _InterpretationCard(
                   title: '✨ Astrologie-Deutung',
-                  items: const [
-                    _DemoItem(
-                      label: 'Sternzeichen',
-                      text:
-                          'Dein Sternzeichen verbindet dich mit einem Tier-Totem voller Kraft.',
-                    ),
-                    _DemoItem(
-                      label: 'Mond-Energie',
-                      text:
-                          'Die Mondphase unterstützt deine innere Balance und Klarheit.',
-                    ),
-                  ],
+                  items: astrologyItems,
                 ),
                 const SizedBox(height: 20),
                 // Combined Oracle Guidance
@@ -92,7 +114,7 @@ class OracleResultPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Die Katze verbindet deine Handlinien mit den Sternen und sieht einen Weg voller Neugier, Wärme und leiser Stärke.',
+                        combinedMessage,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Colors.white.withValues(alpha: 0.85),
                           height: 1.6,
