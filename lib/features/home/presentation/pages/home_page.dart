@@ -9,10 +9,18 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final safeAreaPadding = MediaQuery.of(context).padding.vertical;
+    final heroSpacing = (screenHeight * 0.42).clamp(180.0, 340.0).toDouble();
 
     return Scaffold(
       body: Stack(
         children: [
+          SizedBox.expand(
+            child: Image.asset(
+              'assets/images/gattofuturo.png',
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
+            ),
+          ),
           Container(
             width: double.infinity,
             height: double.infinity,
@@ -21,25 +29,11 @@ class HomePage extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Color(0xFF0B0510),
-                  Color(0xFF1A1025),
-                  Color(0xFF120F1F),
+                  Color(0x3307040D),
+                  Color(0x220C0814),
+                  Color(0xAA100A1A),
+                  Color(0xE00B0612),
                 ],
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: Opacity(
-              opacity: 0.28,
-              child: SizedBox(
-                width: double.infinity,
-                height: screenHeight * 0.56,
-                child: Image.asset(
-                  'assets/images/cat_oracle_head.png',
-                  fit: BoxFit.contain,
-                  alignment: Alignment.topCenter,
-                ),
               ),
             ),
           ),
@@ -53,9 +47,10 @@ class HomePage extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      SizedBox(height: heroSpacing),
                       Text(
                         '🐾 Cat Oracle 🔮',
                         textAlign: TextAlign.center,
@@ -81,46 +76,38 @@ class HomePage extends StatelessWidget {
                         'Scanne deine Handlinien und erhalte eine charmante Katzen-Deutung.',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.7),
+                          color: Colors.white.withValues(alpha: 0.78),
                           height: 1.5,
                         ),
                       ),
                       const SizedBox(height: 40),
-                      SizedBox(
-                        height: 56,
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pushNamed(AppRoutes.handScan);
-                          },
-                          child: const Text('✋ Hand scannen'),
-                        ),
+                      _EntryCard(
+                        symbol: '✋',
+                        title: 'Handlesen',
+                        subtitle: 'Lies deine Linien',
+                        onTap: () {
+                          Navigator.of(context).pushNamed(AppRoutes.handScan);
+                        },
                       ),
                       const SizedBox(height: 14),
-                      SizedBox(
-                        height: 56,
-                        width: double.infinity,
-                        child: OutlinedButton(
-                          onPressed: () {
-                            Navigator.of(
-                              context,
-                            ).pushNamed(AppRoutes.oracleResult);
-                          },
-                          child: const Text('🔮 Demo-Lesung'),
-                        ),
+                      _EntryCard(
+                        symbol: '🔮',
+                        title: 'Demo-Lesung',
+                        subtitle: 'Katzen-Orakel ansehen',
+                        onTap: () {
+                          Navigator.of(
+                            context,
+                          ).pushNamed(AppRoutes.oracleResult);
+                        },
                       ),
                       const SizedBox(height: 14),
-                      SizedBox(
-                        height: 56,
-                        width: double.infinity,
-                        child: OutlinedButton(
-                          onPressed: () {
-                            Navigator.of(
-                              context,
-                            ).pushNamed(AppRoutes.astrology);
-                          },
-                          child: const Text('✨ Astrologie'),
-                        ),
+                      _EntryCard(
+                        symbol: '✨',
+                        title: 'Astrologie',
+                        subtitle: 'Sterne & Zeichen',
+                        onTap: () {
+                          Navigator.of(context).pushNamed(AppRoutes.astrology);
+                        },
                       ),
                     ],
                   ),
@@ -129,6 +116,102 @@ class HomePage extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _EntryCard extends StatelessWidget {
+  const _EntryCard({
+    required this.symbol,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  final String symbol;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(22),
+          child: Ink(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(22),
+              color: const Color(0x2D160F25),
+              border: Border.all(color: const Color(0x88DABA72), width: 1),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x40120D1D),
+                  blurRadius: 18,
+                  offset: Offset(0, 10),
+                ),
+                BoxShadow(
+                  color: Color(0x1F8A5CCF),
+                  blurRadius: 10,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(18),
+              child: Row(
+                children: [
+                  Container(
+                    width: 54,
+                    height: 54,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: const Color(0x33412B60),
+                      border: Border.all(color: const Color(0x77E3C881)),
+                    ),
+                    child: Center(
+                      child: Text(symbol, style: const TextStyle(fontSize: 24)),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
+                                color: const Color(0xFFFFECB8),
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          subtitle,
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: Colors.white.withValues(alpha: 0.78),
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Icon(
+                    Icons.chevron_right_rounded,
+                    color: Color(0xFFF1DDA2),
+                    size: 28,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

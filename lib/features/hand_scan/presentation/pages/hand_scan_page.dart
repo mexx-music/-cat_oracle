@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/app_routes.dart';
+
 class HandScanPage extends StatelessWidget {
   const HandScanPage({super.key});
 
@@ -12,12 +14,13 @@ class HandScanPage extends StatelessWidget {
       body: Stack(
         children: [
           Opacity(
-            opacity: 0.68,
+            opacity: 0.82,
             child: SizedBox.expand(
               child: Image.asset(
                 'assets/images/palmcat.png',
                 fit: BoxFit.cover,
                 alignment: Alignment.center,
+                errorBuilder: (_, _, _) => const SizedBox.shrink(),
               ),
             ),
           ),
@@ -27,10 +30,10 @@ class HandScanPage extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Color(0xD9090711),
-                  Color(0xD9150E22),
-                  Color(0xE00E0818),
-                  Color(0xF206050C),
+                  Color(0xB0090711),
+                  Color(0xA8150E22),
+                  Color(0xBC0E0818),
+                  Color(0xD806050C),
                 ],
               ),
             ),
@@ -71,18 +74,71 @@ class HandScanPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      'Deine Hand erzahlt deine Geschichte',
+                      'Deine Hand erzählt ihre Linien',
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: const Color(0xFFE6DDF8),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    SizedBox(
-                      height: (screenHeight * 0.22)
-                          .clamp(120.0, 220.0)
-                          .toDouble(),
+                    const SizedBox(height: 28),
+                    Container(
+                      padding: const EdgeInsets.all(22),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(24),
+                        color: const Color(0x36120F1F),
+                        border: Border.all(
+                          color: const Color(0x99DAB86E),
+                          width: 1.1,
+                        ),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x54110D1C),
+                            blurRadius: 28,
+                            offset: Offset(0, 12),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          Container(
+                            width: 84,
+                            height: 84,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: const Color(0x3340295E),
+                              border: Border.all(
+                                color: const Color(0x88E1C27A),
+                              ),
+                            ),
+                            child: const Center(
+                              child: Text('✋', style: TextStyle(fontSize: 34)),
+                            ),
+                          ),
+                          const SizedBox(height: 18),
+                          Text(
+                            'Scanbereich',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.titleLarge
+                                ?.copyWith(
+                                  color: const Color(0xFFFFE9B0),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Kamera-Scan wird später aktiviert',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  color: const Color(0xFFE6DDF8),
+                                  height: 1.4,
+                                ),
+                          ),
+                        ],
+                      ),
                     ),
+                    const SizedBox(height: 18),
                     Container(
                       padding: const EdgeInsets.all(18),
                       decoration: BoxDecoration(
@@ -101,7 +157,7 @@ class HandScanPage extends StatelessWidget {
                         ],
                       ),
                       child: Text(
-                        'Lege deine Hand spater in den Scanbereich und die Katze liest deine Linien.',
+                        'Die Katze achtet später auf Lebenslinie, Herzlinie, Kopflinie und Schicksalslinie.',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           color: const Color(0xFFF3ECFF),
@@ -114,7 +170,7 @@ class HandScanPage extends StatelessWidget {
                       height: 56,
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: null,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFAA7B2E),
                           foregroundColor: const Color(0xFF150C1F),
@@ -127,12 +183,16 @@ class HandScanPage extends StatelessWidget {
                       height: 56,
                       width: double.infinity,
                       child: OutlinedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.of(
+                            context,
+                          ).pushNamed(AppRoutes.oracleResult);
+                        },
                         style: OutlinedButton.styleFrom(
                           foregroundColor: const Color(0xFFF5E7BF),
                           side: const BorderSide(color: Color(0x88DAB86E)),
                         ),
-                        child: const Text('Demo-Handlesen'),
+                        child: const Text('Demo-Handlesen ansehen'),
                       ),
                     ),
                   ],

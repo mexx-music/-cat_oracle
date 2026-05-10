@@ -150,6 +150,65 @@ class AstrologyInputPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 18),
+                    Container(
+                      padding: const EdgeInsets.all(18),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: const Color(0x36140F20),
+                        border: Border.all(
+                          color: const Color(0x66CFAF69),
+                          width: 1,
+                        ),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x4A120D1C),
+                            blurRadius: 22,
+                            offset: Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            'Kosmische Angaben',
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  color: const Color(0xFFFFE4A6),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                          ),
+                          const SizedBox(height: 14),
+                          const _MysticInputField(hintText: 'Geburtsdatum'),
+                          const SizedBox(height: 12),
+                          const _MysticInputField(
+                            hintText: 'Geburtszeit (optional)',
+                          ),
+                          const SizedBox(height: 12),
+                          const _MysticInputField(hintText: 'Geburtsort'),
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            height: 56,
+                            child: ElevatedButton(
+                              onPressed: null,
+                              style: ElevatedButton.styleFrom(
+                                disabledBackgroundColor: const Color(
+                                  0x7FA27B35,
+                                ),
+                                disabledForegroundColor: const Color(
+                                  0xFFEEDAA5,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                              child: const Text('Astrologie vorbereiten'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 18),
                     const _AstroOptionTile(
                       icon: Icons.auto_awesome_rounded,
                       title: 'Tagesorakel',
@@ -176,6 +235,37 @@ class AstrologyInputPage extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _MysticInputField extends StatelessWidget {
+  const _MysticInputField({required this.hintText});
+
+  final String hintText;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      style: const TextStyle(color: Color(0xFFF4E9FF)),
+      decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: const TextStyle(color: Color(0xB8D8C8F7)),
+        filled: true,
+        fillColor: const Color(0x30191329),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Color(0x55D0B16F)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Color(0x88F0D28D)),
+        ),
       ),
     );
   }
