@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cat_oracle/features/astrology/data/demo_astrology_readings.dart';
+import 'package:cat_oracle/features/astrology/logic/birth_place_lookup.dart';
 import 'package:cat_oracle/features/astrology/logic/zodiac_calculator.dart';
+import 'package:cat_oracle/features/astrology/models/birth_place_coordinates.dart';
 import 'package:cat_oracle/features/astrology/models/astrology_reading.dart';
 import 'package:cat_oracle/features/astrology/models/zodiac_sign.dart';
 
@@ -31,6 +33,7 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
   late final TextEditingController _birthPlaceController;
   DateTime? _selectedBirthDate;
   TimeOfDay? _selectedBirthTime;
+  BirthPlaceCoordinates? _resolvedBirthPlace;
   ZodiacSign? _calculatedSunSign;
   AstrologyReading? _calculatedAstrologyReading;
   String? _errorMessage;
@@ -50,8 +53,12 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
   }
 
   void _onBirthPlaceChanged() {
+    final lookupResult = findBirthPlaceByName(_birthPlaceController.text);
+
     if (mounted) {
-      setState(() {});
+      setState(() {
+        _resolvedBirthPlace = lookupResult;
+      });
     }
   }
 
@@ -172,7 +179,11 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
       selection: TextSelection.collapsed(offset: place.length),
     );
     FocusScope.of(context).unfocus();
-    setState(() {});
+  }
+
+  String _formatCoordinates(BirthPlaceCoordinates coordinates) {
+    return '${coordinates.latitude.toStringAsFixed(4)} / '
+        '${coordinates.longitude.toStringAsFixed(4)}';
   }
 
   @override
@@ -400,6 +411,74 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
                                     ),
                                   )
                                   .toList(),
+                            ),
+                          ],
+                          if (_resolvedBirthPlace != null) ...[
+                            const SizedBox(height: 10),
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(14),
+                                color: const Color(0x2B161126),
+                                border: Border.all(
+                                  color: const Color(0x66D5B46B),
+                                  width: 0.9,
+                                ),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color(0x40100D1B),
+                                    blurRadius: 14,
+                                    offset: Offset(0, 6),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.place_rounded,
+                                        size: 18,
+                                        color: Color(0xFFFFD98A),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        '📍 Ort erkannt',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall
+                                            ?.copyWith(
+                                              color: const Color(0xFFFFE9B0),
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    '${_resolvedBirthPlace!.cityName}, ${_resolvedBirthPlace!.country}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: const Color(0xFFF4E9FF),
+                                          height: 1.35,
+                                        ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    _formatCoordinates(_resolvedBirthPlace!),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: const Color(0xFFD8C8F7),
+                                          height: 1.35,
+                                        ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                           const SizedBox(height: 16),
