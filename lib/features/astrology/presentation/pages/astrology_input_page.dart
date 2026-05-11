@@ -6,6 +6,7 @@ import 'package:cat_oracle/features/astrology/models/birth_place_coordinates.dar
 import 'package:cat_oracle/features/astrology/models/astrology_profile.dart';
 import 'package:cat_oracle/features/astrology/models/astrology_reading.dart';
 import 'package:cat_oracle/features/astrology/models/zodiac_sign.dart';
+import 'package:cat_oracle/services/oracle_session_service.dart';
 
 const List<String> _demoBirthPlaces = [
   'Wien',
@@ -97,6 +98,8 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
       _preparedAstrologyProfile = null;
       _calculatedAstrologyReading = null;
     });
+
+    OracleSessionService.instance.clearAstrologyProfile();
   }
 
   Future<void> _pickBirthTime() async {
@@ -125,6 +128,8 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
         _preparedAstrologyProfile = null;
         _calculatedAstrologyReading = null;
       });
+
+      OracleSessionService.instance.clearAstrologyProfile();
       return;
     }
 
@@ -149,6 +154,10 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
       );
       _calculatedAstrologyReading = demoReading;
     });
+
+    OracleSessionService.instance.setAstrologyProfile(
+      _preparedAstrologyProfile!,
+    );
   }
 
   String _getZodiacSignName(ZodiacSign sign) {
