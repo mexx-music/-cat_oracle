@@ -4,6 +4,22 @@ import 'package:cat_oracle/features/astrology/logic/zodiac_calculator.dart';
 import 'package:cat_oracle/features/astrology/models/astrology_reading.dart';
 import 'package:cat_oracle/features/astrology/models/zodiac_sign.dart';
 
+const List<String> _demoBirthPlaces = [
+  'Wien',
+  'Graz',
+  'Salzburg',
+  'München',
+  'Berlin',
+  'Hamburg',
+  'Zürich',
+  'Basel',
+  'Paris',
+  'London',
+  'Rom',
+  'Oslo',
+  'Trondheim',
+];
+
 class AstrologyInputPage extends StatefulWidget {
   const AstrologyInputPage({super.key});
 
@@ -12,9 +28,9 @@ class AstrologyInputPage extends StatefulWidget {
 }
 
 class _AstrologyInputPageState extends State<AstrologyInputPage> {
-  late final TextEditingController _birthdateController;
-  late final TextEditingController _birthTimeController;
   late final TextEditingController _birthPlaceController;
+  DateTime? _selectedBirthDate;
+  TimeOfDay? _selectedBirthTime;
   ZodiacSign? _calculatedSunSign;
   AstrologyReading? _calculatedAstrologyReading;
   String? _errorMessage;
@@ -22,53 +38,75 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
   @override
   void initState() {
     super.initState();
-    _birthdateController = TextEditingController();
-    _birthTimeController = TextEditingController();
     _birthPlaceController = TextEditingController();
-
-    _birthdateController.addListener(() {
-      setState(() {});
-    });
+    _birthPlaceController.addListener(_onBirthPlaceChanged);
   }
 
   @override
   void dispose() {
-    _birthdateController.dispose();
-    _birthTimeController.dispose();
+    _birthPlaceController.removeListener(_onBirthPlaceChanged);
     _birthPlaceController.dispose();
     super.dispose();
   }
 
-  DateTime? _parseDateFromString(String dateString) {
-    final parts = dateString.split('.');
-    if (parts.length != 3) {
-      return null;
-    }
-
-    try {
-      final day = int.parse(parts[0]);
-      final month = int.parse(parts[1]);
-      final year = int.parse(parts[2]);
-
-      if (year < 1900 || year > 2100) {
-        return null;
-      }
-
-      final parsedDate = DateTime(year, month, day);
-      if (parsedDate.year != year ||
-          parsedDate.month != month ||
-          parsedDate.day != day) {
-        return null;
-      }
-
-      return parsedDate;
-    } catch (_) {
-      return null;
+  void _onBirthPlaceChanged() {
+    if (mounted) {
+      setState(() {});
     }
   }
 
+  String _formatDate(DateTime dateTime) {
+    final day = dateTime.day.toString().padLeft(2, '0');
+    final month = dateTime.month.toString().padLeft(2, '0');
+    final year = dateTime.year.toString();
+    return '$day.$month.$year';
+  }
+
+  String _formatTime(TimeOfDay timeOfDay) {
+    final hour = timeOfDay.hour.toString().padLeft(2, '0');
+    final minute = timeOfDay.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
+  }
+
+  Future<void> _pickBirthDate() async {
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _selectedBirthDate ?? DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
+      helpText: 'Geburtsdatum auswählen',
+    );
+
+    if (pickedDate == null) {
+      return;
+    }
+
+    setState(() {
+      _selectedBirthDate = pickedDate;
+      _errorMessage = null;
+      _calculatedSunSign = null;
+      _calculatedAstrologyReading = null;
+    });
+  }
+
+  Future<void> _pickBirthTime() async {
+    final pickedTime = await showTimePicker(
+      context: context,
+      initialTime: _selectedBirthTime ?? TimeOfDay.now(),
+      helpText: 'Geburtszeit auswählen',
+    );
+
+    if (pickedTime == null) {
+      return;
+    }
+
+    setState(() {
+      _selectedBirthTime = pickedTime;
+    });
+  }
+
   void _calculateSunSign() {
-    final birthDate = _parseDateFromString(_birthdateController.text.trim());
+    final birthDate = _selectedBirthDate;
 
     if (birthDate == null) {
       setState(() {
@@ -114,6 +152,27 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
     };
 
     return names[sign] ?? 'Unbekannt';
+  }
+
+  List<String> get _filteredBirthPlaceSuggestions {
+    final query = _birthPlaceController.text.trim().toLowerCase();
+    if (query.isEmpty) {
+      return const [];
+    }
+
+    return _demoBirthPlaces
+        .where((place) => place.toLowerCase().contains(query))
+        .take(5)
+        .toList();
+  }
+
+  void _selectBirthPlace(String place) {
+    _birthPlaceController.value = TextEditingValue(
+      text: place,
+      selection: TextSelection.collapsed(offset: place.length),
+    );
+    FocusScope.of(context).unfocus();
+    setState(() {});
   }
 
   @override
@@ -304,26 +363,50 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
                                 ),
                           ),
                           const SizedBox(height: 14),
-                          _MysticInputField(
-                            hintText: 'Geburtsdatum (TT.MM.JJJJ)',
-                            controller: _birthdateController,
+                          _MysticPickerField(
+                            label: 'Geburtsdatum',
+                            value: _selectedBirthDate == null
+                                ? 'TT.MM.JJJJ'
+                                : _formatDate(_selectedBirthDate!),
+                            onTap: _pickBirthDate,
+                            icon: Icons.calendar_month_rounded,
                           ),
                           const SizedBox(height: 12),
-                          _MysticInputField(
-                            hintText: 'Geburtszeit (optional)',
-                            controller: _birthTimeController,
+                          _MysticPickerField(
+                            label: 'Geburtszeit (optional)',
+                            value: _selectedBirthTime == null
+                                ? 'HH:mm'
+                                : _formatTime(_selectedBirthTime!),
+                            onTap: _pickBirthTime,
+                            icon: Icons.schedule_rounded,
                           ),
                           const SizedBox(height: 12),
                           _MysticInputField(
                             hintText: 'Geburtsort',
                             controller: _birthPlaceController,
                           ),
+                          if (_filteredBirthPlaceSuggestions.isNotEmpty) ...[
+                            const SizedBox(height: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: _filteredBirthPlaceSuggestions
+                                  .map(
+                                    (place) => Padding(
+                                      padding: const EdgeInsets.only(bottom: 8),
+                                      child: _BirthPlaceSuggestionTile(
+                                        label: place,
+                                        onTap: () => _selectBirthPlace(place),
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          ],
                           const SizedBox(height: 16),
                           SizedBox(
                             height: 56,
                             child: ElevatedButton(
-                              onPressed:
-                                  _birthdateController.text.trim().isEmpty
+                              onPressed: _selectedBirthDate == null
                                   ? null
                                   : _calculateSunSign,
                               style: ElevatedButton.styleFrom(
@@ -457,6 +540,72 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
   }
 }
 
+class _MysticPickerField extends StatelessWidget {
+  const _MysticPickerField({
+    required this.label,
+    required this.value,
+    required this.onTap,
+    required this.icon,
+  });
+
+  final String label;
+  final String value;
+  final VoidCallback onTap;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: const Color(0x30191329),
+            border: Border.all(color: const Color(0x55D0B16F)),
+          ),
+          child: Row(
+            children: [
+              Icon(icon, size: 20, color: const Color(0xFFFFD98A)),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      label,
+                      style: const TextStyle(
+                        color: Color(0xB8D8C8F7),
+                        fontSize: 12,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      value,
+                      style: const TextStyle(
+                        color: Color(0xFFF4E9FF),
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(
+                Icons.arrow_drop_down_rounded,
+                color: Color(0xFFE5D0A0),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _MysticInputField extends StatelessWidget {
   const _MysticInputField({required this.hintText, required this.controller});
 
@@ -484,6 +633,58 @@ class _MysticInputField extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: Color(0x88F0D28D)),
+        ),
+      ),
+    );
+  }
+}
+
+class _BirthPlaceSuggestionTile extends StatelessWidget {
+  const _BirthPlaceSuggestionTile({required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            color: const Color(0x2B161126),
+            border: Border.all(color: const Color(0x66D5B46B), width: 0.9),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x40100D1B),
+                blurRadius: 14,
+                offset: Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.location_on_rounded,
+                size: 18,
+                color: Color(0xFFFFD98A),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  label,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: const Color(0xFFF4E9FF),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
