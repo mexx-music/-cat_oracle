@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../astrology/data/demo_astrology_readings.dart';
+import '../../../astrology/models/zodiac_sign.dart';
 import '../../../oracle/data/demo_combined_oracle_reading.dart';
 import '../../../palmistry/data/demo_palmistry_readings.dart';
+import '../../../../services/oracle_session_service.dart';
 
 class OracleResultPage extends StatelessWidget {
   const OracleResultPage({super.key});
@@ -10,6 +12,7 @@ class OracleResultPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final astrologyProfile = OracleSessionService.instance.astrologyProfile;
     final palmItems =
         (demoPalmistryReadings.isNotEmpty
                 ? demoPalmistryReadings
@@ -28,24 +31,32 @@ class OracleResultPage extends StatelessWidget {
                     ),
                   ])
             .toList();
-    final astrologyItems =
-        (demoAstrologyReadings.isNotEmpty
-                ? demoAstrologyReadings
-                      .take(2)
-                      .map(
-                        (reading) => _DemoItem(
-                          label: reading.title,
-                          text: reading.summary,
-                        ),
-                      )
-                : const [
-                    _DemoItem(
-                      label: 'Astrologie-Deutung',
-                      text:
-                          'Die Sterne zeigen heute eine sanfte, leuchtende Stimmung.',
-                    ),
-                  ])
-            .toList();
+    final astrologyItems = astrologyProfile == null
+        ? (demoAstrologyReadings.isNotEmpty
+                  ? demoAstrologyReadings
+                        .take(2)
+                        .map(
+                          (reading) => _DemoItem(
+                            label: reading.title,
+                            text: reading.summary,
+                          ),
+                        )
+                  : const [
+                      _DemoItem(
+                        label: 'Astrologie-Deutung',
+                        text:
+                            'Die Sterne zeigen heute eine sanfte, leuchtende Stimmung.',
+                      ),
+                    ])
+              .toList()
+        : [
+            _DemoItem(
+              label: 'Sonnenzeichen',
+              text: _formatZodiacSign(astrologyProfile.sunSign),
+            ),
+            _DemoItem(label: 'Mondzeichen', text: 'später'),
+            _DemoItem(label: 'Aszendent', text: 'später'),
+          ];
     final combinedMessage =
         demoCombinedOracleReading.combinedCatMessage.isNotEmpty
         ? demoCombinedOracleReading.combinedCatMessage
@@ -145,6 +156,35 @@ class OracleResultPage extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+String _formatZodiacSign(ZodiacSign sign) {
+  switch (sign) {
+    case ZodiacSign.aries:
+      return 'Widder';
+    case ZodiacSign.taurus:
+      return 'Stier';
+    case ZodiacSign.gemini:
+      return 'Zwillinge';
+    case ZodiacSign.cancer:
+      return 'Krebs';
+    case ZodiacSign.leo:
+      return 'Löwe';
+    case ZodiacSign.virgo:
+      return 'Jungfrau';
+    case ZodiacSign.libra:
+      return 'Waage';
+    case ZodiacSign.scorpio:
+      return 'Skorpion';
+    case ZodiacSign.sagittarius:
+      return 'Schütze';
+    case ZodiacSign.capricorn:
+      return 'Steinbock';
+    case ZodiacSign.aquarius:
+      return 'Wassermann';
+    case ZodiacSign.pisces:
+      return 'Fische';
   }
 }
 
