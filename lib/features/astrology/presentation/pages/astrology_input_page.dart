@@ -3,6 +3,7 @@ import 'package:cat_oracle/features/astrology/data/demo_astrology_readings.dart'
 import 'package:cat_oracle/features/astrology/logic/birth_place_lookup.dart';
 import 'package:cat_oracle/features/astrology/logic/zodiac_calculator.dart';
 import 'package:cat_oracle/features/astrology/models/birth_place_coordinates.dart';
+import 'package:cat_oracle/features/astrology/models/astrology_profile.dart';
 import 'package:cat_oracle/features/astrology/models/astrology_reading.dart';
 import 'package:cat_oracle/features/astrology/models/zodiac_sign.dart';
 
@@ -35,6 +36,7 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
   TimeOfDay? _selectedBirthTime;
   BirthPlaceCoordinates? _resolvedBirthPlace;
   ZodiacSign? _calculatedSunSign;
+  AstrologyProfile? _preparedAstrologyProfile;
   AstrologyReading? _calculatedAstrologyReading;
   String? _errorMessage;
 
@@ -92,6 +94,7 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
       _selectedBirthDate = pickedDate;
       _errorMessage = null;
       _calculatedSunSign = null;
+      _preparedAstrologyProfile = null;
       _calculatedAstrologyReading = null;
     });
   }
@@ -119,6 +122,7 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
       setState(() {
         _errorMessage = 'Bitte gib ein gültiges Datum ein.';
         _calculatedSunSign = null;
+        _preparedAstrologyProfile = null;
         _calculatedAstrologyReading = null;
       });
       return;
@@ -138,6 +142,11 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
     setState(() {
       _errorMessage = null;
       _calculatedSunSign = sunSign;
+      _preparedAstrologyProfile = AstrologyProfile(
+        sunSign: sunSign,
+        moonSign: null,
+        ascendant: null,
+      );
       _calculatedAstrologyReading = demoReading;
     });
   }
@@ -580,6 +589,89 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
                                           height: 1.45,
                                         ),
                                   ),
+                                ],
+                              ),
+                            ),
+                          ],
+                          if (_preparedAstrologyProfile != null) ...[
+                            const SizedBox(height: 12),
+                            Container(
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(14),
+                                color: const Color(0x25181227),
+                                border: Border.all(
+                                  color: const Color(0x55D0B16F),
+                                  width: 0.9,
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Astrologie-Profil vorbereitet',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleSmall
+                                        ?.copyWith(
+                                          color: const Color(0xFFFFE9B0),
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Sonnenzeichen: ${_getZodiacSignName(_preparedAstrologyProfile!.sunSign)}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: const Color(0xFFF4E9FF),
+                                        ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Mondzeichen: später',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: const Color(0xFFF4E9FF),
+                                        ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Aszendent: später',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: const Color(0xFFF4E9FF),
+                                        ),
+                                  ),
+                                  if (_resolvedBirthPlace != null) ...[
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Ort: ${_resolvedBirthPlace!.cityName}, ${_resolvedBirthPlace!.country}',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            color: const Color(0xFFF4E9FF),
+                                          ),
+                                    ),
+                                  ],
+                                  if (_selectedBirthTime != null) ...[
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Uhrzeit: ${_formatTime(_selectedBirthTime!)}',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            color: const Color(0xFFF4E9FF),
+                                          ),
+                                    ),
+                                  ],
                                 ],
                               ),
                             ),
