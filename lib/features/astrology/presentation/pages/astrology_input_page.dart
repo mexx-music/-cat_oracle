@@ -1,7 +1,114 @@
 import 'package:flutter/material.dart';
+import 'package:cat_oracle/features/astrology/logic/zodiac_calculator.dart';
+import 'package:cat_oracle/features/astrology/models/zodiac_sign.dart';
 
-class AstrologyInputPage extends StatelessWidget {
+class AstrologyInputPage extends StatefulWidget {
   const AstrologyInputPage({super.key});
+
+  @override
+  State<AstrologyInputPage> createState() => _AstrologyInputPageState();
+}
+
+class _AstrologyInputPageState extends State<AstrologyInputPage> {
+  late TextEditingController _birthdateController;
+  late TextEditingController _birthTimeController;
+  late TextEditingController _birthPlaceController;
+  ZodiacSign? _calculatedSunSign;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _birthdateController = TextEditingController();
+    _birthTimeController = TextEditingController();
+    _birthPlaceController = TextEditingController();
+
+    // Add listener to update button state when birthdate changes
+    _birthdateController.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _birthdateController.dispose();
+    _birthTimeController.dispose();
+    _birthPlaceController.dispose();
+    super.dispose();
+  }
+
+  DateTime? _parseDateFromString(String dateString) {
+    // Format: TT.MM.JJJJ
+    final parts = dateString.split('.');
+    if (parts.length != 3) {
+      return null;
+    }
+
+    try {
+      final day = int.parse(parts[0]);
+      final month = int.parse(parts[1]);
+      final year = int.parse(parts[2]);
+
+      // Basic validation
+      if (day < 1 ||
+          day > 31 ||
+          month < 1 ||
+          month > 12 ||
+          year < 1900 ||
+          year > 2100) {
+        return null;
+      }
+
+      return DateTime(year, month, day);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  void _calculateSunSign() {
+    setState(() {
+      _errorMessage = null;
+      _calculatedSunSign = null;
+    });
+
+    if (_birthdateController.text.isEmpty) {
+      setState(() {
+        _errorMessage = 'Bitte gib ein gültiges Datum ein.';
+      });
+      return;
+    }
+
+    final birthDate = _parseDateFromString(_birthdateController.text);
+    if (birthDate == null) {
+      setState(() {
+        _errorMessage = 'Bitte gib ein gültiges Datum ein.';
+      });
+      return;
+    }
+
+    final sunSign = calculateSunSign(birthDate);
+    setState(() {
+      _calculatedSunSign = sunSign;
+    });
+  }
+
+  String _getZodiacSignName(ZodiacSign sign) {
+    const names = {
+      ZodiacSign.aries: 'Widder',
+      ZodiacSign.taurus: 'Stier',
+      ZodiacSign.gemini: 'Zwillinge',
+      ZodiacSign.cancer: 'Krebs',
+      ZodiacSign.leo: 'Löwe',
+      ZodiacSign.virgo: 'Jungfrau',
+      ZodiacSign.libra: 'Waage',
+      ZodiacSign.scorpio: 'Skorpion',
+      ZodiacSign.sagittarius: 'Schütze',
+      ZodiacSign.capricorn: 'Steinbock',
+      ZodiacSign.aquarius: 'Wassermann',
+      ZodiacSign.pisces: 'Fische',
+    };
+    return names[sign] ?? 'Unbekannt';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -191,18 +298,27 @@ class AstrologyInputPage extends StatelessWidget {
                                 ),
                           ),
                           const SizedBox(height: 14),
-                          const _MysticInputField(hintText: 'Geburtsdatum'),
-                          const SizedBox(height: 12),
-                          const _MysticInputField(
-                            hintText: 'Geburtszeit (optional)',
+                          _MysticInputField(
+                            hintText: 'Geburtsdatum (TT.MM.JJJJ)',
+                            controller: _birthdateController,
                           ),
                           const SizedBox(height: 12),
-                          const _MysticInputField(hintText: 'Geburtsort'),
+                          _MysticInputField(
+                            hintText: 'Geburtszeit (optional)',
+                            controller: _birthTimeController,
+                          ),
+                          const SizedBox(height: 12),
+                          _MysticInputField(
+                            hintText: 'Geburtsort',
+                            controller: _birthPlaceController,
+                          ),
                           const SizedBox(height: 16),
                           SizedBox(
                             height: 56,
                             child: ElevatedButton(
-                              onPressed: null,
+                              onPressed: _birthdateController.text.isEmpty
+                                  ? null
+                                  : _calculateSunSign,
                               style: ElevatedButton.styleFrom(
                                 disabledBackgroundColor: const Color(
                                   0x7FA27B35,
@@ -210,6 +326,8 @@ class AstrologyInputPage extends StatelessWidget {
                                 disabledForegroundColor: const Color(
                                   0xFFEEDAA5,
                                 ),
+                                backgroundColor: const Color(0xFF7A5D2E),
+                                foregroundColor: const Color(0xFFFFE9B0),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
                                 ),
@@ -217,6 +335,82 @@ class AstrologyInputPage extends StatelessWidget {
                               child: const Text('Astrologie vorbereiten'),
                             ),
                           ),
+                          if (_errorMessage != null) ...[
+                            const SizedBox(height: 12),
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color: const Color(0x3ACC6B6B),
+                                border: Border.all(
+                                  color: const Color(0xFFCC9999),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Text(
+                                _errorMessage!,
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(color: const Color(0xFFFFCCCC)),
+                              ),
+                            ),
+                          ],
+                          if (_calculatedSunSign != null) ...[
+                            const SizedBox(height: 16),
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                color: const Color(0x3E2D1F4F),
+                                border: Border.all(
+                                  color: const Color(0x88B37ED8),
+                                  width: 1.2,
+                                ),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color(0x3D7A4DCC),
+                                    blurRadius: 16,
+                                    offset: Offset(0, 8),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    '🌟 Dein Sonnenzeichen 🌟',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          color: const Color(0xFFFFD98A),
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    _getZodiacSignName(_calculatedSunSign!),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall
+                                        ?.copyWith(
+                                          color: const Color(0xFFFFE9B0),
+                                          fontWeight: FontWeight.w700,
+                                          letterSpacing: 0.8,
+                                        ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Die kosmischen Energien haben gesprochen',
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(
+                                          color: const Color(0xFFD8C8F7),
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -252,17 +446,39 @@ class AstrologyInputPage extends StatelessWidget {
   }
 }
 
-class _MysticInputField extends StatelessWidget {
-  const _MysticInputField({required this.hintText});
+class _MysticInputField extends StatefulWidget {
+  const _MysticInputField({required this.hintText, required this.controller});
 
   final String hintText;
+  final TextEditingController controller;
+
+  @override
+  State<_MysticInputField> createState() => _MysticInputFieldState();
+}
+
+class _MysticInputFieldState extends State<_MysticInputField> {
+  late FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: widget.controller,
+      focusNode: _focusNode,
       style: const TextStyle(color: Color(0xFFF4E9FF)),
       decoration: InputDecoration(
-        hintText: hintText,
+        hintText: widget.hintText,
         hintStyle: const TextStyle(color: Color(0xB8D8C8F7)),
         filled: true,
         fillColor: const Color(0x30191329),
@@ -279,6 +495,13 @@ class _MysticInputField extends StatelessWidget {
           borderSide: const BorderSide(color: Color(0x88F0D28D)),
         ),
       ),
+      onChanged: (value) {
+        // Update parent state to enable/disable button
+        if (widget.controller == widget.controller) {
+          // This is a bit hacky, but we need to trigger a rebuild
+          // The parent will handle this through setState
+        }
+      },
     );
   }
 }
