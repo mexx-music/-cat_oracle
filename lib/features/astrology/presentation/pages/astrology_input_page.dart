@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:cat_oracle/features/astrology/data/demo_astrology_readings.dart';
 import 'package:cat_oracle/features/astrology/logic/zodiac_calculator.dart';
+import 'package:cat_oracle/features/astrology/models/astrology_reading.dart';
 import 'package:cat_oracle/features/astrology/models/zodiac_sign.dart';
 
 class AstrologyInputPage extends StatefulWidget {
@@ -10,10 +12,11 @@ class AstrologyInputPage extends StatefulWidget {
 }
 
 class _AstrologyInputPageState extends State<AstrologyInputPage> {
-  late TextEditingController _birthdateController;
-  late TextEditingController _birthTimeController;
-  late TextEditingController _birthPlaceController;
+  late final TextEditingController _birthdateController;
+  late final TextEditingController _birthTimeController;
+  late final TextEditingController _birthPlaceController;
   ZodiacSign? _calculatedSunSign;
+  AstrologyReading? _calculatedAstrologyReading;
   String? _errorMessage;
 
   @override
@@ -23,7 +26,6 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
     _birthTimeController = TextEditingController();
     _birthPlaceController = TextEditingController();
 
-    // Add listener to update button state when birthdate changes
     _birthdateController.addListener(() {
       setState(() {});
     });
@@ -38,7 +40,6 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
   }
 
   DateTime? _parseDateFromString(String dateString) {
-    // Format: TT.MM.JJJJ
     final parts = dateString.split('.');
     if (parts.length != 3) {
       return null;
@@ -49,46 +50,50 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
       final month = int.parse(parts[1]);
       final year = int.parse(parts[2]);
 
-      // Basic validation
-      if (day < 1 ||
-          day > 31 ||
-          month < 1 ||
-          month > 12 ||
-          year < 1900 ||
-          year > 2100) {
+      if (year < 1900 || year > 2100) {
         return null;
       }
 
-      return DateTime(year, month, day);
-    } catch (e) {
+      final parsedDate = DateTime(year, month, day);
+      if (parsedDate.year != year ||
+          parsedDate.month != month ||
+          parsedDate.day != day) {
+        return null;
+      }
+
+      return parsedDate;
+    } catch (_) {
       return null;
     }
   }
 
   void _calculateSunSign() {
-    setState(() {
-      _errorMessage = null;
-      _calculatedSunSign = null;
-    });
+    final birthDate = _parseDateFromString(_birthdateController.text.trim());
 
-    if (_birthdateController.text.isEmpty) {
-      setState(() {
-        _errorMessage = 'Bitte gib ein gültiges Datum ein.';
-      });
-      return;
-    }
-
-    final birthDate = _parseDateFromString(_birthdateController.text);
     if (birthDate == null) {
       setState(() {
         _errorMessage = 'Bitte gib ein gültiges Datum ein.';
+        _calculatedSunSign = null;
+        _calculatedAstrologyReading = null;
       });
       return;
     }
 
     final sunSign = calculateSunSign(birthDate);
+    final demoReading = demoAstrologyReadings.firstWhere(
+      (reading) => reading.zodiacSign == sunSign,
+      orElse: () => const AstrologyReading(
+        zodiacSign: ZodiacSign.aries,
+        title: 'Dein Sternzeichen',
+        summary:
+            'Dein Demo-Reading ist noch nicht hinterlegt. Die Sterne bleiben dennoch freundlich und voller Möglichkeiten.',
+      ),
+    );
+
     setState(() {
+      _errorMessage = null;
       _calculatedSunSign = sunSign;
+      _calculatedAstrologyReading = demoReading;
     });
   }
 
@@ -107,6 +112,7 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
       ZodiacSign.aquarius: 'Wassermann',
       ZodiacSign.pisces: 'Fische',
     };
+
     return names[sign] ?? 'Unbekannt';
   }
 
@@ -316,7 +322,8 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
                           SizedBox(
                             height: 56,
                             child: ElevatedButton(
-                              onPressed: _birthdateController.text.isEmpty
+                              onPressed:
+                                  _birthdateController.text.trim().isEmpty
                                   ? null
                                   : _calculateSunSign,
                               style: ElevatedButton.styleFrom(
@@ -400,11 +407,15 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Die kosmischen Energien haben gesprochen',
+                                    _calculatedAstrologyReading?.summary ??
+                                        'Die kosmischen Energien haben gesprochen.',
                                     textAlign: TextAlign.center,
-                                    style: Theme.of(context).textTheme.bodySmall
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
                                         ?.copyWith(
-                                          color: const Color(0xFFD8C8F7),
+                                          color: const Color(0xFFF1E9FF),
+                                          height: 1.45,
                                         ),
                                   ),
                                 ],
@@ -446,39 +457,19 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
   }
 }
 
-class _MysticInputField extends StatefulWidget {
+class _MysticInputField extends StatelessWidget {
   const _MysticInputField({required this.hintText, required this.controller});
 
   final String hintText;
   final TextEditingController controller;
 
   @override
-  State<_MysticInputField> createState() => _MysticInputFieldState();
-}
-
-class _MysticInputFieldState extends State<_MysticInputField> {
-  late FocusNode _focusNode;
-
-  @override
-  void initState() {
-    super.initState();
-    _focusNode = FocusNode();
-  }
-
-  @override
-  void dispose() {
-    _focusNode.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return TextField(
-      controller: widget.controller,
-      focusNode: _focusNode,
+      controller: controller,
       style: const TextStyle(color: Color(0xFFF4E9FF)),
       decoration: InputDecoration(
-        hintText: widget.hintText,
+        hintText: hintText,
         hintStyle: const TextStyle(color: Color(0xB8D8C8F7)),
         filled: true,
         fillColor: const Color(0x30191329),
@@ -495,13 +486,6 @@ class _MysticInputFieldState extends State<_MysticInputField> {
           borderSide: const BorderSide(color: Color(0x88F0D28D)),
         ),
       ),
-      onChanged: (value) {
-        // Update parent state to enable/disable button
-        if (widget.controller == widget.controller) {
-          // This is a bit hacky, but we need to trigger a rebuild
-          // The parent will handle this through setState
-        }
-      },
     );
   }
 }
