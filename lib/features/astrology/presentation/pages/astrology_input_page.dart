@@ -30,6 +30,18 @@ class AstrologyInputPage extends StatelessWidget {
               ),
             ),
           ),
+          IgnorePointer(
+            child: Opacity(
+              opacity: 0.32,
+              child: SizedBox.expand(
+                child: Image.asset(
+                  'assets/images/galaxy.png',
+                  fit: BoxFit.cover,
+                  alignment: Alignment.center,
+                ),
+              ),
+            ),
+          ),
           const IgnorePointer(child: _StarDustLayer()),
           IgnorePointer(
             child: Opacity(
