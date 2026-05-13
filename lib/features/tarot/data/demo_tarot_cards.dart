@@ -4,6 +4,7 @@ const List<TarotCard> demoTarotCards = [
   TarotCard(
     name: 'Die Katze',
     symbol: '🐈',
+    imageAsset: 'assets/images/tarot/cat_fool.png',
     meaning:
         'Diese Karte steht fur geschmeidige Aufmerksamkeit und sanfte Selbstfuhrung. Sie erinnert daran, den eigenen Rhythmus mit Ruhe zu ehren.',
     catMessage:
@@ -12,6 +13,7 @@ const List<TarotCard> demoTarotCards = [
   TarotCard(
     name: 'Der Mond',
     symbol: '🌙',
+    imageAsset: 'assets/images/tarot/cat_moon.png',
     meaning:
         'Der Mond ladet dazu ein, innere Stimmungen behutsam wahrzunehmen. Zwischen Licht und Schatten darf Intuition weich wachsen.',
     catMessage:
@@ -20,6 +22,7 @@ const List<TarotCard> demoTarotCards = [
   TarotCard(
     name: 'Der Stern',
     symbol: '⭐',
+    imageAsset: 'assets/images/tarot/cat_star.png',
     meaning:
         'Der Stern schenkt eine stille Aussicht auf Zuversicht. Er steht fur Klarheit, die aus Sanftmut und Geduld entsteht.',
     catMessage:
@@ -28,6 +31,7 @@ const List<TarotCard> demoTarotCards = [
   TarotCard(
     name: 'Die Hohepriesterin',
     symbol: '🔮',
+    imageAsset: 'assets/images/tarot/cat_priestess.png',
     meaning:
         'Diese Karte erinnert an innere Weisheit und feine Grenzen. Wissen darf heute in Ruhe reifen, statt laut erklart zu werden.',
     catMessage:
@@ -36,6 +40,7 @@ const List<TarotCard> demoTarotCards = [
   TarotCard(
     name: 'Das Rad',
     symbol: '🜁',
+    imageAsset: 'assets/images/tarot/cat_wheel.png',
     meaning:
         'Das Rad steht fur Wandel als naturlichen Fluss. Kleine Verschiebungen konnen neue Perspektiven mit Eleganz offnen.',
     catMessage:
@@ -44,6 +49,7 @@ const List<TarotCard> demoTarotCards = [
   TarotCard(
     name: 'Die Sonne',
     symbol: '☀️',
+    imageAsset: 'assets/images/tarot/cat_sun.png',
     meaning:
         'Die Sonne bringt warme Klarheit in den Tag. Sie erinnert an spielerische Kraft, die ohne Druck leuchten darf.',
     catMessage:
@@ -52,6 +58,7 @@ const List<TarotCard> demoTarotCards = [
   TarotCard(
     name: 'Der Turm',
     symbol: '🜂',
+    imageAsset: 'assets/images/tarot/cat_tower.png',
     meaning:
         'Der Turm zeigt den Moment, in dem alte Muster sichtbar werden. Daraus kann ehrliche Neuordnung mit ruhiger Haltung entstehen.',
     catMessage:
@@ -60,6 +67,7 @@ const List<TarotCard> demoTarotCards = [
   TarotCard(
     name: 'Die Liebenden',
     symbol: '💞',
+    imageAsset: 'assets/images/tarot/cat_lovers.png',
     meaning:
         'Diese Karte steht fur bewusste Wahl und Verbindung auf Augenhohe. Sie betont Harmonie, die aus Klarheit und Respekt erwachst.',
     catMessage:

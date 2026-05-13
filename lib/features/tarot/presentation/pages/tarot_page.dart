@@ -157,6 +157,8 @@ class TarotPage extends StatelessWidget {
                                         ),
                                   ),
                                   const SizedBox(height: 10),
+                                  _TarotCardImagePreview(card: dailyCard),
+                                  const SizedBox(height: 10),
                                   Text(
                                     '${dailyCard.symbol} ${dailyCard.name}',
                                     style: Theme.of(context)
@@ -416,6 +418,76 @@ class _TarotOptionTile extends StatelessWidget {
         trailing: const Icon(
           Icons.chevron_right_rounded,
           color: Color(0xFFE5D0A0),
+        ),
+      ),
+    );
+  }
+}
+
+class _TarotCardImagePreview extends StatelessWidget {
+  const _TarotCardImagePreview({required this.card});
+
+  final TarotCard card;
+
+  @override
+  Widget build(BuildContext context) {
+    final assetPath = card.imageAsset;
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        height: 180,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0x402B1A46), Color(0x3224133A)],
+          ),
+          border: Border.all(color: const Color(0x66D5B46B), width: 0.9),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x2A7A4DCC),
+              blurRadius: 14,
+              offset: Offset(0, 6),
+            ),
+          ],
+        ),
+        child: assetPath == null
+            ? _TarotImageFallback(symbol: card.symbol)
+            : Image.asset(
+                assetPath,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return _TarotImageFallback(symbol: card.symbol);
+                },
+              ),
+      ),
+    );
+  }
+}
+
+class _TarotImageFallback extends StatelessWidget {
+  const _TarotImageFallback({required this.symbol});
+
+  final String symbol;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0x38211436), Color(0x5010091E)],
+        ),
+      ),
+      child: Center(
+        child: Text(
+          '$symbol  🃏',
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+            color: const Color(0xFFFFE9B0),
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
     );
