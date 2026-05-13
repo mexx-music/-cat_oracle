@@ -4,6 +4,7 @@ import '../../../astrology/data/demo_astrology_readings.dart';
 import '../../../astrology/logic/astrology_reading_composer.dart';
 import '../../../astrology/models/zodiac_sign.dart';
 import '../../../oracle/data/demo_combined_oracle_reading.dart';
+import '../../../oracle/logic/daily_cat_oracle_generator.dart';
 import '../../../palmistry/data/demo_palmistry_readings.dart';
 import '../../../../services/oracle_session_service.dart';
 
@@ -13,6 +14,7 @@ class OracleResultPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final dailyOracle = generateDailyCatOracle();
     final astrologyProfile = OracleSessionService.instance.astrologyProfile;
     final sessionResult = OracleSessionService.instance.astrologySessionResult;
     final composedReading =
@@ -166,6 +168,52 @@ class OracleResultPage extends StatelessWidget {
                     ),
                   ),
                 ],
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: colorScheme.secondary.withValues(alpha: 0.3),
+                      width: 1,
+                    ),
+                    gradient: LinearGradient(
+                      colors: [
+                        colorScheme.secondary.withValues(alpha: 0.08),
+                        colorScheme.primary.withValues(alpha: 0.06),
+                      ],
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        '🌙 Tages-Orakel',
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        dailyOracle.message,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.white.withValues(alpha: 0.85),
+                          height: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Stimmung: ${dailyOracle.mood}',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: colorScheme.primary.withValues(alpha: 0.9),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 20),
                 // Combined Oracle Guidance
                 Container(
