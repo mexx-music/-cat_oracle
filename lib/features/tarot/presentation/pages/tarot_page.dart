@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../../logic/daily_tarot_card_generator.dart';
+
 class TarotPage extends StatelessWidget {
   const TarotPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final dailyCard = generateDailyTarotCard();
     final screenHeight = MediaQuery.of(context).size.height;
     final safePadding = MediaQuery.of(context).padding.vertical;
     final contentTopSpacing = (screenHeight * 0.18)
@@ -112,7 +115,93 @@ class TarotPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 18),
-                    const _TarotOptionTile(title: 'Tageskarte'),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(18),
+                        color: const Color(0x32150F24),
+                        border: Border.all(
+                          color: const Color(0x88DAB86E),
+                          width: 1,
+                        ),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x40100D1B),
+                            blurRadius: 18,
+                            offset: Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            '🃏 Tageskarte',
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  color: const Color(0xFFFFE4A6),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            '${dailyCard.symbol} ${dailyCard.name}',
+                            style: Theme.of(context).textTheme.titleLarge
+                                ?.copyWith(
+                                  color: const Color(0xFFFFE9B0),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            dailyCard.meaning,
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  color: const Color(0xFFF1E9FF),
+                                  height: 1.45,
+                                ),
+                          ),
+                          const SizedBox(height: 10),
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: const Color(0x24130F1F),
+                              border: Border.all(
+                                color: const Color(0x44D0B16F),
+                              ),
+                            ),
+                            child: Text(
+                              dailyCard.catMessage,
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(
+                                    color: const Color(0xE8F1E9FF),
+                                    height: 1.45,
+                                  ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            height: 46,
+                            child: OutlinedButton(
+                              onPressed: null,
+                              style: OutlinedButton.styleFrom(
+                                disabledForegroundColor: const Color(
+                                  0xFFEADBAF,
+                                ),
+                                side: const BorderSide(
+                                  color: Color(0x66D5B46B),
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: const Text('Neue Demo-Karte ansehen'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     const SizedBox(height: 12),
                     const _TarotOptionTile(title: 'Drei-Karten-Legung'),
                     const SizedBox(height: 12),
