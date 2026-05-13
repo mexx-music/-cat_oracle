@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../../../astrology/data/demo_astrology_readings.dart';
@@ -134,12 +133,7 @@ class OracleResultPage extends StatelessWidget {
             ],
           ),
         ),
-        // ScrollConfiguration: remove mouse from drag devices so Web/Desktop
-        // pointer clicks are never stolen by the scroll view as drag gestures.
-        child: ScrollConfiguration(
-          behavior: ScrollConfiguration.of(context).copyWith(
-            dragDevices: {PointerDeviceKind.touch, PointerDeviceKind.stylus},
-          ),
+        child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: ConstrainedBox(
