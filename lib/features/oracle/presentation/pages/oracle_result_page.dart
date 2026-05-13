@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../../../astrology/data/demo_astrology_readings.dart';
 import '../../../astrology/logic/astrology_reading_composer.dart';
+import '../../../astrology/logic/daily_zodiac_oracle_generator.dart';
 import '../../../astrology/models/zodiac_sign.dart';
 import '../../../oracle/data/demo_combined_oracle_reading.dart';
 import '../../../oracle/logic/daily_cat_oracle_generator.dart';
+import '../../../oracle/models/daily_cat_oracle.dart';
 import '../../../palmistry/data/demo_palmistry_readings.dart';
 import '../../../../services/oracle_session_service.dart';
 
@@ -16,6 +18,9 @@ class OracleResultPage extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final dailyOracle = generateDailyCatOracle();
     final astrologyProfile = OracleSessionService.instance.astrologyProfile;
+    final dailyZodiacOracle = astrologyProfile == null
+        ? null
+        : generateDailyZodiacOracle(sign: astrologyProfile.sunSign);
     final sessionResult = OracleSessionService.instance.astrologySessionResult;
     final composedReading =
         sessionResult?.composedReading ??
@@ -168,50 +173,107 @@ class OracleResultPage extends StatelessWidget {
                     ),
                   ),
                 ],
-                const SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: colorScheme.secondary.withValues(alpha: 0.3),
-                      width: 1,
+                if (dailyZodiacOracle != null) ...[
+                  const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: colorScheme.primary.withValues(alpha: 0.3),
+                        width: 1,
+                      ),
+                      gradient: LinearGradient(
+                        colors: [
+                          colorScheme.primary.withValues(alpha: 0.1),
+                          colorScheme.secondary.withValues(alpha: 0.06),
+                        ],
+                      ),
                     ),
-                    gradient: LinearGradient(
-                      colors: [
-                        colorScheme.secondary.withValues(alpha: 0.08),
-                        colorScheme.primary.withValues(alpha: 0.06),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          '✨ Sternzeichen-Orakel',
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          dailyZodiacOracle,
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: Colors.white.withValues(alpha: 0.85),
+                                height: 1.5,
+                              ),
+                        ),
                       ],
                     ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        '🌙 Tages-Orakel',
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        dailyOracle.message,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.85),
-                          height: 1.5,
+                ],
+                const SizedBox(height: 20),
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: () {
+                      _showDailyOracleBottomSheet(
+                        context: context,
+                        dailyOracle: dailyOracle,
+                      );
+                    },
+                    child: Ink(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: colorScheme.secondary.withValues(alpha: 0.3),
+                          width: 1,
+                        ),
+                        gradient: LinearGradient(
+                          colors: [
+                            colorScheme.secondary.withValues(alpha: 0.08),
+                            colorScheme.primary.withValues(alpha: 0.06),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Stimmung: ${dailyOracle.mood}',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: colorScheme.primary.withValues(alpha: 0.9),
-                          fontWeight: FontWeight.w600,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            '🌙 Tages-Orakel',
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            dailyOracle.message,
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  color: Colors.white.withValues(alpha: 0.85),
+                                  height: 1.5,
+                                ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Stimmung: ${dailyOracle.mood}',
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: colorScheme.primary.withValues(
+                                    alpha: 0.9,
+                                  ),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -276,6 +338,110 @@ class OracleResultPage extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> _showDailyOracleBottomSheet({
+  required BuildContext context,
+  required DailyCatOracle dailyOracle,
+}) {
+  final colorScheme = Theme.of(context).colorScheme;
+
+  return showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (sheetContext) {
+      return SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+          child: Container(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(sheetContext).size.height * 0.8,
+            ),
+            decoration: BoxDecoration(
+              color: const Color(0xFF140F1F),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: colorScheme.secondary.withValues(alpha: 0.45),
+                width: 1.2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: colorScheme.primary.withValues(alpha: 0.22),
+                  blurRadius: 22,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 44,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.35),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  Text(
+                    '🌙 Tages-Orakel',
+                    style: Theme.of(sheetContext).textTheme.titleLarge
+                        ?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Stimmung: ${dailyOracle.mood}',
+                    style: Theme.of(sheetContext).textTheme.titleSmall
+                        ?.copyWith(
+                          color: colorScheme.primary.withValues(alpha: 0.95),
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    dailyOracle.message,
+                    style: Theme.of(sheetContext).textTheme.bodyLarge?.copyWith(
+                      color: Colors.white.withValues(alpha: 0.88),
+                      height: 1.6,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: colorScheme.secondary.withValues(alpha: 0.1),
+                      border: Border.all(
+                        color: colorScheme.secondary.withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: Text(
+                      'Dieses Orakel erneuert sich taeglich.',
+                      style: Theme.of(sheetContext).textTheme.bodySmall
+                          ?.copyWith(
+                            color: Colors.white.withValues(alpha: 0.76),
+                            height: 1.35,
+                          ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }
 
 String _formatZodiacSign(ZodiacSign sign) {
