@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../../../astrology/data/demo_astrology_readings.dart';
@@ -133,9 +134,18 @@ class OracleResultPage extends StatelessWidget {
             ],
           ),
         ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: ConstrainedBox(
+        // ScrollConfiguration: remove mouse from drag devices so Web/Desktop
+        // pointer clicks are never stolen by the scroll view as drag gestures.
+        child: ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(
+            dragDevices: {
+              PointerDeviceKind.touch,
+              PointerDeviceKind.stylus,
+            },
+          ),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: ConstrainedBox(
             constraints: BoxConstraints(
               minHeight: MediaQuery.of(context).size.height - 100,
             ),
@@ -215,65 +225,77 @@ class OracleResultPage extends StatelessWidget {
                   ),
                 ],
                 const SizedBox(height: 20),
-                Material(
-                  color: Colors.transparent,
-                  child: InkWell(
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    onTap: () {
-                      _showDailyOracleBottomSheet(
-                        context: context,
-                        dailyOracle: dailyOracle,
-                      );
-                    },
-                    child: Ink(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: colorScheme.secondary.withValues(alpha: 0.3),
-                          width: 1,
-                        ),
-                        gradient: LinearGradient(
-                          colors: [
-                            colorScheme.secondary.withValues(alpha: 0.08),
-                            colorScheme.primary.withValues(alpha: 0.06),
-                          ],
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            '🌙 Tages-Orakel',
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            dailyOracle.message,
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.85),
-                                  height: 1.5,
-                                ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Stimmung: ${dailyOracle.mood}',
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(
-                                  color: colorScheme.primary.withValues(
-                                    alpha: 0.9,
-                                  ),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                          ),
-                        ],
-                      ),
+                    border: Border.all(
+                      color: colorScheme.secondary.withValues(alpha: 0.3),
+                      width: 1,
                     ),
+                    gradient: LinearGradient(
+                      colors: [
+                        colorScheme.secondary.withValues(alpha: 0.08),
+                        colorScheme.primary.withValues(alpha: 0.06),
+                      ],
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        '🌙 Tages-Orakel',
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        dailyOracle.message,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.white.withValues(alpha: 0.85),
+                          height: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Stimmung: ${dailyOracle.mood}',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: colorScheme.primary.withValues(alpha: 0.9),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: OutlinedButton(
+                          onPressed: () {
+                            debugPrint('DAILY ORACLE BUTTON PRESSED');
+                            _showDailyOracleSheet(context, dailyOracle);
+                          },
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            side: BorderSide(
+                              color: colorScheme.secondary.withValues(
+                                alpha: 0.55,
+                              ),
+                              width: 1.1,
+                            ),
+                            backgroundColor: colorScheme.secondary.withValues(
+                              alpha: 0.08,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: const Text('Tages-Orakel oeffnen'),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -333,6 +355,7 @@ class OracleResultPage extends StatelessWidget {
                 ),
               ],
             ),
+            ),
           ),
         ),
       ),
@@ -340,24 +363,39 @@ class OracleResultPage extends StatelessWidget {
   }
 }
 
+Future<void> _showDailyOracleSheet(
+  BuildContext context,
+  DailyCatOracle dailyOracle,
+) {
+  return _showDailyOracleBottomSheet(
+    context: context,
+    dailyOracle: dailyOracle,
+  );
+}
+
 Future<void> _showDailyOracleBottomSheet({
   required BuildContext context,
   required DailyCatOracle dailyOracle,
 }) {
   final colorScheme = Theme.of(context).colorScheme;
+  // Capture height from the outer context. Inside the builder, sheetContext's
+  // MediaQuery.size.height can be 0 on Flutter Web/Desktop with isScrollControlled.
+  final screenHeight = MediaQuery.of(context).size.height;
+  debugPrint('_showDailyOracleBottomSheet called, screenHeight=$screenHeight');
 
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder: (sheetContext) {
+      debugPrint('BottomSheet builder running, sheetContext height=${MediaQuery.of(sheetContext).size.height}');
       return SafeArea(
         top: false,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
           child: Container(
             constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(sheetContext).size.height * 0.8,
+              maxHeight: screenHeight * 0.8,
             ),
             decoration: BoxDecoration(
               color: const Color(0xFF140F1F),
