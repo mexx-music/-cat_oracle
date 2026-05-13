@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cat_oracle/features/astrology/data/demo_astrology_readings.dart';
 import 'package:cat_oracle/features/astrology/logic/birth_place_lookup.dart';
 import 'package:cat_oracle/features/astrology/logic/ascendant_calculator.dart';
+import 'package:cat_oracle/features/astrology/logic/astrology_reading_composer.dart';
 import 'package:cat_oracle/features/astrology/logic/moon_sign_calculator.dart';
 import 'package:cat_oracle/features/astrology/logic/zodiac_calculator.dart';
 import 'package:cat_oracle/features/astrology/models/birth_place_coordinates.dart';
@@ -41,6 +42,7 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
   ZodiacSign? _calculatedSunSign;
   AstrologyProfile? _preparedAstrologyProfile;
   AstrologyReading? _calculatedAstrologyReading;
+  String? _composedDemoReading;
   String? _errorMessage;
 
   @override
@@ -99,6 +101,7 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
       _calculatedSunSign = null;
       _preparedAstrologyProfile = null;
       _calculatedAstrologyReading = null;
+      _composedDemoReading = null;
     });
 
     OracleSessionService.instance.clearAstrologyProfile();
@@ -129,6 +132,7 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
         _calculatedSunSign = null;
         _preparedAstrologyProfile = null;
         _calculatedAstrologyReading = null;
+        _composedDemoReading = null;
       });
 
       OracleSessionService.instance.clearAstrologyProfile();
@@ -154,6 +158,11 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
       latitude: _resolvedBirthPlace?.latitude,
       longitude: _resolvedBirthPlace?.longitude,
     );
+    final composedReading = composeDemoAstrologyReading(
+      sunSign: sunSign,
+      moonSign: moonSign,
+      ascendant: ascendant,
+    );
 
     final demoReading = demoAstrologyReadings.firstWhere(
       (reading) => reading.zodiacSign == sunSign,
@@ -170,6 +179,7 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
       _calculatedSunSign = sunSign;
       _preparedAstrologyProfile = profile;
       _calculatedAstrologyReading = demoReading;
+      _composedDemoReading = composedReading;
     });
 
     OracleSessionService.instance.setAstrologyProfile(profile);
@@ -613,6 +623,30 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
                                           height: 1.45,
                                         ),
                                   ),
+                                  if (_composedDemoReading != null) ...[
+                                    const SizedBox(height: 12),
+                                    Container(
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        color: const Color(0x24130F1F),
+                                        border: Border.all(
+                                          color: const Color(0x44D0B16F),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        _composedDemoReading!,
+                                        textAlign: TextAlign.center,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                              color: const Color(0xE8F1E9FF),
+                                              height: 1.45,
+                                            ),
+                                      ),
+                                    ),
+                                  ],
                                 ],
                               ),
                             ),

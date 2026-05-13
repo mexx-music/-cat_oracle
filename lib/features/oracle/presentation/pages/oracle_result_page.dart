@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../astrology/data/demo_astrology_readings.dart';
+import '../../../astrology/logic/astrology_reading_composer.dart';
 import '../../../astrology/models/zodiac_sign.dart';
 import '../../../oracle/data/demo_combined_oracle_reading.dart';
 import '../../../palmistry/data/demo_palmistry_readings.dart';
@@ -13,6 +14,13 @@ class OracleResultPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final astrologyProfile = OracleSessionService.instance.astrologyProfile;
+    final composedReading = astrologyProfile == null
+        ? null
+        : composeDemoAstrologyReading(
+            sunSign: astrologyProfile.sunSign,
+            moonSign: astrologyProfile.moonSign,
+            ascendant: astrologyProfile.ascendant,
+          );
     final palmItems =
         (demoPalmistryReadings.isNotEmpty
                 ? demoPalmistryReadings
@@ -89,6 +97,11 @@ class OracleResultPage extends StatelessWidget {
                 label: 'Koordinaten',
                 text:
                     '${astrologyProfile.latitude!.toStringAsFixed(4)} / ${astrologyProfile.longitude!.toStringAsFixed(4)}',
+              ),
+            if (composedReading != null)
+              _DemoItem(
+                label: 'Dynamisches Demo-Reading',
+                text: composedReading,
               ),
           ];
     final combinedMessage =
