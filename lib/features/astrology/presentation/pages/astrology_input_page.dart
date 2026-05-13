@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cat_oracle/features/astrology/data/demo_astrology_readings.dart';
 import 'package:cat_oracle/features/astrology/logic/birth_place_lookup.dart';
+import 'package:cat_oracle/features/astrology/logic/moon_sign_calculator.dart';
 import 'package:cat_oracle/features/astrology/logic/zodiac_calculator.dart';
 import 'package:cat_oracle/features/astrology/models/birth_place_coordinates.dart';
 import 'package:cat_oracle/features/astrology/models/astrology_profile.dart';
@@ -134,9 +135,10 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
     }
 
     final sunSign = calculateSunSign(birthDate);
+    final moonSign = calculateDemoMoonSign(birthDate);
     final profile = AstrologyProfile(
       sunSign: sunSign,
-      moonSign: null,
+      moonSign: moonSign,
       ascendant: null,
       birthDate: _selectedBirthDate,
       birthTimeLabel: _selectedBirthTime == null

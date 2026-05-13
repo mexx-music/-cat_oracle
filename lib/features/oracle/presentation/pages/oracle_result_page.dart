@@ -54,7 +54,12 @@ class OracleResultPage extends StatelessWidget {
               label: 'Sonnenzeichen',
               text: _formatZodiacSign(astrologyProfile.sunSign),
             ),
-            _DemoItem(label: 'Mondzeichen', text: 'später'),
+            _DemoItem(
+              label: 'Mondzeichen',
+              text: astrologyProfile.moonSign == null
+                  ? 'später'
+                  : _formatZodiacSign(astrologyProfile.moonSign!),
+            ),
             _DemoItem(label: 'Aszendent', text: 'später'),
             if (astrologyProfile.birthDate != null)
               _DemoItem(
