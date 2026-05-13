@@ -31,7 +31,7 @@ const List<TarotCard> demoTarotCards = [
   TarotCard(
     name: 'Die Hohepriesterin',
     symbol: '🔮',
-    imageAsset: 'assets/images/tarot/cat_priestess.png',
+    imageAsset: 'assets/images/tarot/cat_highpriest.png',
     meaning:
         'Diese Karte erinnert an innere Weisheit und feine Grenzen. Wissen darf heute in Ruhe reifen, statt laut erklart zu werden.',
     catMessage:
@@ -40,7 +40,7 @@ const List<TarotCard> demoTarotCards = [
   TarotCard(
     name: 'Das Rad',
     symbol: '🜁',
-    imageAsset: 'assets/images/tarot/cat_wheel.png',
+    imageAsset: 'assets/images/tarot/cat_wheeloffortune.png',
     meaning:
         'Das Rad steht fur Wandel als naturlichen Fluss. Kleine Verschiebungen konnen neue Perspektiven mit Eleganz offnen.',
     catMessage:

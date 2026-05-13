@@ -304,6 +304,8 @@ Future<void> _showDailyTarotDialog(BuildContext context, TarotCard card) {
                   ),
                 ),
                 const SizedBox(height: 12),
+                _TarotCardImagePreview(card: card),
+                const SizedBox(height: 12),
                 Text(
                   card.name,
                   style: Theme.of(dialogContext).textTheme.titleMedium
@@ -436,7 +438,7 @@ class _TarotCardImagePreview extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(14),
       child: Container(
-        height: 180,
+        height: 260,
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
