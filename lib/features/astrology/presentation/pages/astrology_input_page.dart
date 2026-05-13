@@ -696,6 +696,27 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
                                           ),
                                     ),
                                   ],
+                                  const SizedBox(height: 10),
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: const Color(0x24130F1F),
+                                      border: Border.all(
+                                        color: const Color(0x44D0B16F),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Hinweis: Mondzeichen und Aszendent sind aktuell Demo-Werte. Die professionelle Berechnung folgt später.',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: const Color(0xD8D8C8F7),
+                                            height: 1.35,
+                                          ),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),

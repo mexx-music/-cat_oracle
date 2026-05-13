@@ -129,6 +129,27 @@ class OracleResultPage extends StatelessWidget {
                   title: '✨ Astrologie-Deutung',
                   items: astrologyItems,
                 ),
+                if (astrologyProfile != null) ...[
+                  const SizedBox(height: 10),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: colorScheme.secondary.withValues(alpha: 0.08),
+                      border: Border.all(
+                        color: colorScheme.secondary.withValues(alpha: 0.25),
+                      ),
+                    ),
+                    child: Text(
+                      'Hinweis: Mondzeichen und Aszendent sind aktuell Demo-Werte. Die professionelle Berechnung folgt später.',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.white.withValues(alpha: 0.75),
+                        height: 1.35,
+                      ),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 20),
                 // Combined Oracle Guidance
                 Container(
