@@ -109,6 +109,24 @@ class HomePage extends StatelessWidget {
                           Navigator.of(context).pushNamed(AppRoutes.astrology);
                         },
                       ),
+                      const SizedBox(height: 14),
+                      _EntryCard(
+                        symbol: '🃏',
+                        title: 'Tarot',
+                        subtitle: 'Die Karten flüstern',
+                        onTap: () {
+                          Navigator.of(context).pushNamed(AppRoutes.tarot);
+                        },
+                      ),
+                      const SizedBox(height: 14),
+                      _EntryCard(
+                        symbol: '✒️',
+                        title: 'Grafologie',
+                        subtitle: 'Schrift offenbart Charakter',
+                        onTap: () {
+                          Navigator.of(context).pushNamed(AppRoutes.graphology);
+                        },
+                      ),
                     ],
                   ),
                 ),
