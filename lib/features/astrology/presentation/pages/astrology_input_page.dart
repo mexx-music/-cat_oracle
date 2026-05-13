@@ -105,6 +105,8 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
       _composedDemoReading = null;
     });
 
+    debugPrint('Selected birth date: ${_formatDate(pickedDate)}');
+
     OracleSessionService.instance.clearAstrologyProfile();
     OracleSessionService.instance.clearAstrologySessionResult();
   }
@@ -123,6 +125,86 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
     setState(() {
       _selectedBirthTime = pickedTime;
     });
+  }
+
+  void _handleAstrologyPreparePressed() {
+    debugPrint('ASTROLOGY PREPARE PRESSED');
+
+    if (_selectedBirthDate == null) {
+      setState(() {
+        _errorMessage = 'Bitte zuerst ein Geburtsdatum waehlen.';
+      });
+      return;
+    }
+
+    _calculateSunSign();
+  }
+
+  Future<void> _showAstroOptionDialog({
+    required String title,
+    required String message,
+  }) {
+    return showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: const Color(0xFF140F1F),
+          elevation: 0,
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 24,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: const Color(0x66D5B46B), width: 1),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x40100D1B),
+                  blurRadius: 18,
+                  offset: Offset(0, 8),
+                ),
+              ],
+            ),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(18),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: const Color(0xFFFFE9B0),
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    message,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: const Color(0xFFF1E9FF),
+                      height: 1.45,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () => Navigator.of(dialogContext).pop(),
+                      child: const Text('Schließen'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   void _calculateSunSign() {
@@ -538,16 +620,8 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
                           SizedBox(
                             height: 56,
                             child: ElevatedButton(
-                              onPressed: _selectedBirthDate == null
-                                  ? null
-                                  : _calculateSunSign,
+                              onPressed: _handleAstrologyPreparePressed,
                               style: ElevatedButton.styleFrom(
-                                disabledBackgroundColor: const Color(
-                                  0x7FA27B35,
-                                ),
-                                disabledForegroundColor: const Color(
-                                  0xFFEEDAA5,
-                                ),
                                 backgroundColor: const Color(0xFF7A5D2E),
                                 foregroundColor: const Color(0xFFFFE9B0),
                                 shape: RoundedRectangleBorder(
@@ -557,6 +631,14 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
                               child: const Text('Astrologie vorbereiten'),
                             ),
                           ),
+                          if (_selectedBirthDate == null) ...[
+                            const SizedBox(height: 8),
+                            Text(
+                              'Bitte zuerst ein Geburtsdatum waehlen.',
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(color: const Color(0xFFD8C8F7)),
+                            ),
+                          ],
                           if (_errorMessage != null) ...[
                             const SizedBox(height: 12),
                             Container(
@@ -769,24 +851,57 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
                       ),
                     ),
                     const SizedBox(height: 18),
-                    const _AstroOptionTile(
+                    _AstroOptionTile(
                       icon: Icons.auto_awesome_rounded,
                       title: 'Tagesorakel',
+                      onTap: () {
+                        debugPrint('Astrology option tapped: Tagesorakel');
+                        _showAstroOptionDialog(
+                          title: 'Tagesorakel',
+                          message: 'Das Tagesorakel erwacht bald.',
+                        );
+                      },
                     ),
                     const SizedBox(height: 12),
-                    const _AstroOptionTile(
+                    _AstroOptionTile(
                       icon: Icons.public_rounded,
                       title: 'Sternzeichen',
+                      onTap: () {
+                        debugPrint('Astrology option tapped: Sternzeichen');
+                        _showAstroOptionDialog(
+                          title: 'Sternzeichen',
+                          message:
+                              'Deine Sternzeichen-Deutung wird hier später vertieft.',
+                        );
+                      },
                     ),
                     const SizedBox(height: 12),
-                    const _AstroOptionTile(
+                    _AstroOptionTile(
                       icon: Icons.favorite_rounded,
                       title: 'Liebe & Beziehungen',
+                      onTap: () {
+                        debugPrint(
+                          'Astrology option tapped: Liebe & Beziehungen',
+                        );
+                        _showAstroOptionDialog(
+                          title: 'Liebe & Beziehungen',
+                          message:
+                              'Madame Gatto lauscht später den leisen Zeichen deines Herzens.',
+                        );
+                      },
                     ),
                     const SizedBox(height: 12),
-                    const _AstroOptionTile(
+                    _AstroOptionTile(
                       icon: Icons.visibility_rounded,
                       title: 'Zukunftsausblick',
+                      onTap: () {
+                        debugPrint('Astrology option tapped: Zukunftsausblick');
+                        _showAstroOptionDialog(
+                          title: 'Zukunftsausblick',
+                          message:
+                              'Dieses Orakel bleibt symbolisch und dient deiner Reflexion.',
+                        );
+                      },
                     ),
                     const SizedBox(height: 10),
                   ],
@@ -1010,54 +1125,72 @@ class _StarDot extends StatelessWidget {
 }
 
 class _AstroOptionTile extends StatelessWidget {
-  const _AstroOptionTile({required this.icon, required this.title});
+  const _AstroOptionTile({
+    required this.icon,
+    required this.title,
+    required this.onTap,
+  });
 
   final IconData icon;
   final String title;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: const Color(0x2B161126),
-        border: Border.all(color: const Color(0x66D5B46B), width: 0.9),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x40100D1B),
-            blurRadius: 18,
-            offset: Offset(0, 8),
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: const Color(0x2B161126),
+              border: Border.all(color: const Color(0x66D5B46B), width: 0.9),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x40100D1B),
+                  blurRadius: 18,
+                  offset: Offset(0, 8),
+                ),
+                BoxShadow(
+                  color: Color(0x182F1F4F),
+                  blurRadius: 10,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            child: ListTile(
+              dense: false,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 6,
+              ),
+              leading: Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0x33432D63),
+                  border: Border.all(color: const Color(0x73E1C27A)),
+                ),
+                child: Icon(icon, size: 20, color: const Color(0xFFFFD98A)),
+              ),
+              title: Text(
+                title,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: const Color(0xFFF4E9FF),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              trailing: const Icon(
+                Icons.chevron_right_rounded,
+                color: Color(0xFFE5D0A0),
+              ),
+            ),
           ),
-          BoxShadow(
-            color: Color(0x182F1F4F),
-            blurRadius: 10,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: ListTile(
-        dense: false,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-        leading: Container(
-          width: 38,
-          height: 38,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: const Color(0x33432D63),
-            border: Border.all(color: const Color(0x73E1C27A)),
-          ),
-          child: Icon(icon, size: 20, color: const Color(0xFFFFD98A)),
-        ),
-        title: Text(
-          title,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: const Color(0xFFF4E9FF),
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        trailing: const Icon(
-          Icons.chevron_right_rounded,
-          color: Color(0xFFE5D0A0),
         ),
       ),
     );

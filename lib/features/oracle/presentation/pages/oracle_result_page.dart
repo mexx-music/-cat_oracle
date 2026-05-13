@@ -138,65 +138,103 @@ class OracleResultPage extends StatelessWidget {
         // pointer clicks are never stolen by the scroll view as drag gestures.
         child: ScrollConfiguration(
           behavior: ScrollConfiguration.of(context).copyWith(
-            dragDevices: {
-              PointerDeviceKind.touch,
-              PointerDeviceKind.stylus,
-            },
+            dragDevices: {PointerDeviceKind.touch, PointerDeviceKind.stylus},
           ),
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height - 100,
-            ),
-            child: Column(
-              children: [
-                // Hand Reading Section
-                _InterpretationCard(
-                  title: '✋ Handlinien-Deutung',
-                  items: palmItems,
-                ),
-                const SizedBox(height: 20),
-                // Astrology Section
-                _InterpretationCard(
-                  title: '✨ Astrologie-Deutung',
-                  items: astrologyItems,
-                ),
-                if (astrologyProfile != null) ...[
-                  const SizedBox(height: 10),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: colorScheme.secondary.withValues(alpha: 0.08),
-                      border: Border.all(
-                        color: colorScheme.secondary.withValues(alpha: 0.25),
-                      ),
-                    ),
-                    child: Text(
-                      'Hinweis: Mondzeichen und Aszendent sind aktuell Demo-Werte. Die professionelle Berechnung folgt später.',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.white.withValues(alpha: 0.75),
-                        height: 1.35,
-                      ),
-                    ),
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height - 100,
+              ),
+              child: Column(
+                children: [
+                  // Hand Reading Section
+                  _InterpretationCard(
+                    title: '✋ Handlinien-Deutung',
+                    items: palmItems,
                   ),
-                ],
-                if (dailyZodiacOracle != null) ...[
+                  const SizedBox(height: 20),
+                  // Astrology Section
+                  _InterpretationCard(
+                    title: '✨ Astrologie-Deutung',
+                    items: astrologyItems,
+                  ),
+                  if (astrologyProfile != null) ...[
+                    const SizedBox(height: 10),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: colorScheme.secondary.withValues(alpha: 0.08),
+                        border: Border.all(
+                          color: colorScheme.secondary.withValues(alpha: 0.25),
+                        ),
+                      ),
+                      child: Text(
+                        'Hinweis: Mondzeichen und Aszendent sind aktuell Demo-Werte. Die professionelle Berechnung folgt später.',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.white.withValues(alpha: 0.75),
+                          height: 1.35,
+                        ),
+                      ),
+                    ),
+                  ],
+                  if (dailyZodiacOracle != null) ...[
+                    const SizedBox(height: 20),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: colorScheme.primary.withValues(alpha: 0.3),
+                          width: 1,
+                        ),
+                        gradient: LinearGradient(
+                          colors: [
+                            colorScheme.primary.withValues(alpha: 0.1),
+                            colorScheme.secondary.withValues(alpha: 0.06),
+                          ],
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            '✨ Sternzeichen-Orakel',
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            dailyZodiacOracle,
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  color: Colors.white.withValues(alpha: 0.85),
+                                  height: 1.5,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 20),
                   Container(
+                    width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: colorScheme.primary.withValues(alpha: 0.3),
+                        color: colorScheme.secondary.withValues(alpha: 0.3),
                         width: 1,
                       ),
                       gradient: LinearGradient(
                         colors: [
-                          colorScheme.primary.withValues(alpha: 0.1),
-                          colorScheme.secondary.withValues(alpha: 0.06),
+                          colorScheme.secondary.withValues(alpha: 0.08),
+                          colorScheme.primary.withValues(alpha: 0.06),
                         ],
                       ),
                     ),
@@ -204,7 +242,7 @@ class OracleResultPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Text(
-                          '✨ Sternzeichen-Orakel',
+                          '🌙 Tages-Orakel',
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(
                                 color: Colors.white,
@@ -213,148 +251,137 @@ class OracleResultPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          dailyZodiacOracle,
+                          dailyOracle.message,
                           style: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(
                                 color: Colors.white.withValues(alpha: 0.85),
                                 height: 1.5,
                               ),
                         ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Stimmung: ${dailyOracle.mood}',
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: colorScheme.primary.withValues(
+                                  alpha: 0.9,
+                                ),
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
+                        const SizedBox(height: 14),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 48,
+                          child: OutlinedButton(
+                            onPressed: () {
+                              debugPrint('DAILY ORACLE BUTTON PRESSED');
+                              _showDailyOracleDialog(context, dailyOracle);
+                            },
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              side: BorderSide(
+                                color: colorScheme.secondary.withValues(
+                                  alpha: 0.55,
+                                ),
+                                width: 1.1,
+                              ),
+                              backgroundColor: colorScheme.secondary.withValues(
+                                alpha: 0.08,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text('Tages-Orakel öffnen'),
+                          ),
+                        ),
                       ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  // Combined Oracle Guidance
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: colorScheme.primary.withValues(alpha: 0.4),
+                        width: 2,
+                      ),
+                      gradient: LinearGradient(
+                        colors: [
+                          colorScheme.primary.withValues(alpha: 0.08),
+                          colorScheme.secondary.withValues(alpha: 0.06),
+                        ],
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          '🐾 Kombinierte Katzen-Orakel-Deutung',
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          combinedMessage,
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: Colors.white.withValues(alpha: 0.85),
+                                height: 1.6,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  Text(
+                    'Möge diese Deutung dir Klarheit schenken.',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.white.withValues(alpha: 0.6),
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Zurück'),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        debugPrint('TEST DIALOG PRESSED');
+                        showDialog<void>(
+                          context: context,
+                          builder: (dialogContext) => AlertDialog(
+                            title: const Text('Test'),
+                            content: const Text('Dialog funktioniert'),
+                            actions: [
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.of(dialogContext).pop(),
+                                child: const Text('Schließen'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      child: const Text('TEST DIALOG'),
                     ),
                   ),
                 ],
-                const SizedBox(height: 20),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: colorScheme.secondary.withValues(alpha: 0.3),
-                      width: 1,
-                    ),
-                    gradient: LinearGradient(
-                      colors: [
-                        colorScheme.secondary.withValues(alpha: 0.08),
-                        colorScheme.primary.withValues(alpha: 0.06),
-                      ],
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        '🌙 Tages-Orakel',
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        dailyOracle.message,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.85),
-                          height: 1.5,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Stimmung: ${dailyOracle.mood}',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: colorScheme.primary.withValues(alpha: 0.9),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 48,
-                        child: OutlinedButton(
-                          onPressed: () {
-                            debugPrint('DAILY ORACLE BUTTON PRESSED');
-                            _showDailyOracleSheet(context, dailyOracle);
-                          },
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            side: BorderSide(
-                              color: colorScheme.secondary.withValues(
-                                alpha: 0.55,
-                              ),
-                              width: 1.1,
-                            ),
-                            backgroundColor: colorScheme.secondary.withValues(
-                              alpha: 0.08,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          child: const Text('Tages-Orakel oeffnen'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                // Combined Oracle Guidance
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: colorScheme.primary.withValues(alpha: 0.4),
-                      width: 2,
-                    ),
-                    gradient: LinearGradient(
-                      colors: [
-                        colorScheme.primary.withValues(alpha: 0.08),
-                        colorScheme.secondary.withValues(alpha: 0.06),
-                      ],
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        '🐾 Kombinierte Katzen-Orakel-Deutung',
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        combinedMessage,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.85),
-                          height: 1.6,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 28),
-                Text(
-                  'Möge diese Deutung dir Klarheit schenken.',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.6),
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Zurück'),
-                ),
-              ],
-            ),
+              ),
             ),
           ),
         ),
@@ -363,59 +390,45 @@ class OracleResultPage extends StatelessWidget {
   }
 }
 
-Future<void> _showDailyOracleSheet(
+Future<void> _showDailyOracleDialog(
   BuildContext context,
   DailyCatOracle dailyOracle,
 ) {
-  return _showDailyOracleBottomSheet(
-    context: context,
-    dailyOracle: dailyOracle,
-  );
-}
-
-Future<void> _showDailyOracleBottomSheet({
-  required BuildContext context,
-  required DailyCatOracle dailyOracle,
-}) {
   final colorScheme = Theme.of(context).colorScheme;
-  // Capture height from the outer context. Inside the builder, sheetContext's
-  // MediaQuery.size.height can be 0 on Flutter Web/Desktop with isScrollControlled.
-  final screenHeight = MediaQuery.of(context).size.height;
-  debugPrint('_showDailyOracleBottomSheet called, screenHeight=$screenHeight');
-
-  return showModalBottomSheet<void>(
+  return showDialog<void>(
     context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
     builder: (sheetContext) {
-      debugPrint('BottomSheet builder running, sheetContext height=${MediaQuery.of(sheetContext).size.height}');
-      return SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-          child: Container(
-            constraints: BoxConstraints(
-              maxHeight: screenHeight * 0.8,
+      return Dialog(
+        backgroundColor: const Color(0xFF140F1F),
+        elevation: 0,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: colorScheme.secondary.withValues(alpha: 0.45),
+              width: 1.2,
             ),
-            decoration: BoxDecoration(
-              color: const Color(0xFF140F1F),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: colorScheme.secondary.withValues(alpha: 0.45),
-                width: 1.2,
+            boxShadow: [
+              BoxShadow(
+                color: colorScheme.primary.withValues(alpha: 0.22),
+                blurRadius: 22,
+                spreadRadius: 1,
+                offset: const Offset(0, 10),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: colorScheme.primary.withValues(alpha: 0.22),
-                  blurRadius: 22,
-                  offset: const Offset(0, 10),
-                ),
-              ],
+            ],
+          ),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: 560,
+              maxHeight: MediaQuery.of(sheetContext).size.height * 0.8,
             ),
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Center(
                     child: Container(
@@ -464,12 +477,20 @@ Future<void> _showDailyOracleBottomSheet({
                       ),
                     ),
                     child: Text(
-                      'Dieses Orakel erneuert sich taeglich.',
+                      'Dieses Orakel erneuert sich täglich.',
                       style: Theme.of(sheetContext).textTheme.bodySmall
                           ?.copyWith(
                             color: Colors.white.withValues(alpha: 0.76),
                             height: 1.35,
                           ),
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () => Navigator.of(sheetContext).pop(),
+                      child: const Text('Schließen'),
                     ),
                   ),
                 ],
