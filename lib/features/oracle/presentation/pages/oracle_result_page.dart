@@ -60,7 +60,12 @@ class OracleResultPage extends StatelessWidget {
                   ? 'später'
                   : _formatZodiacSign(astrologyProfile.moonSign!),
             ),
-            _DemoItem(label: 'Aszendent', text: 'später'),
+            _DemoItem(
+              label: 'Aszendent',
+              text: astrologyProfile.ascendant == null
+                  ? 'später'
+                  : _formatZodiacSign(astrologyProfile.ascendant!),
+            ),
             if (astrologyProfile.birthDate != null)
               _DemoItem(
                 label: 'Geburtsdatum',
