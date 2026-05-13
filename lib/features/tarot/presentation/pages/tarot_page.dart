@@ -435,16 +435,17 @@ class _TarotCardImagePreview extends StatelessWidget {
   Widget build(BuildContext context) {
     final assetPath = card.imageAsset;
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(14),
+    return SizedBox(
+      width: double.infinity,
+      height: 360,
       child: Container(
-        height: 260,
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [Color(0x402B1A46), Color(0x3224133A)],
           ),
+          borderRadius: BorderRadius.circular(24),
           border: Border.all(color: const Color(0x66D5B46B), width: 0.9),
           boxShadow: const [
             BoxShadow(
@@ -454,15 +455,21 @@ class _TarotCardImagePreview extends StatelessWidget {
             ),
           ],
         ),
-        child: assetPath == null
-            ? _TarotImageFallback(symbol: card.symbol)
-            : Image.asset(
-                assetPath,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return _TarotImageFallback(symbol: card.symbol);
-                },
-              ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: assetPath == null
+              ? _TarotImageFallback(symbol: card.symbol)
+              : Image.asset(
+                  assetPath,
+                  width: double.infinity,
+                  height: double.infinity,
+                  fit: BoxFit.contain,
+                  alignment: Alignment.center,
+                  errorBuilder: (context, error, stackTrace) {
+                    return _TarotImageFallback(symbol: card.symbol);
+                  },
+                ),
+        ),
       ),
     );
   }

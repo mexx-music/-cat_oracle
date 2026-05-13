@@ -578,15 +578,18 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
                                         color: Color(0xFFFFD98A),
                                       ),
                                       const SizedBox(width: 8),
-                                      Text(
-                                        '📍 Ort erkannt',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleSmall
-                                            ?.copyWith(
-                                              color: const Color(0xFFFFE9B0),
-                                              fontWeight: FontWeight.w700,
-                                            ),
+                                      Expanded(
+                                        child: Text(
+                                          '📍 Ort erkannt',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleSmall
+                                              ?.copyWith(
+                                                color: const Color(0xFFFFE9B0),
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -1145,6 +1148,7 @@ class _AstroOptionTile extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
           child: Container(
+            width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               color: const Color(0x2B161126),
@@ -1162,32 +1166,36 @@ class _AstroOptionTile extends StatelessWidget {
                 ),
               ],
             ),
-            child: ListTile(
-              dense: false,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 6,
-              ),
-              leading: Container(
-                width: 38,
-                height: 38,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: const Color(0x33432D63),
-                  border: Border.all(color: const Color(0x73E1C27A)),
-                ),
-                child: Icon(icon, size: 20, color: const Color(0xFFFFD98A)),
-              ),
-              title: Text(
-                title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: const Color(0xFFF4E9FF),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              trailing: const Icon(
-                Icons.chevron_right_rounded,
-                color: Color(0xFFE5D0A0),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              child: Row(
+                children: [
+                  Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: const Color(0x33432D63),
+                      border: Border.all(color: const Color(0x73E1C27A)),
+                    ),
+                    child: Icon(icon, size: 20, color: const Color(0xFFFFD98A)),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: const Color(0xFFF4E9FF),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Icon(
+                    Icons.chevron_right_rounded,
+                    color: Color(0xFFE5D0A0),
+                  ),
+                ],
               ),
             ),
           ),
