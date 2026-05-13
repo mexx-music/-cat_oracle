@@ -56,6 +56,30 @@ class OracleResultPage extends StatelessWidget {
             ),
             _DemoItem(label: 'Mondzeichen', text: 'später'),
             _DemoItem(label: 'Aszendent', text: 'später'),
+            if (astrologyProfile.birthDate != null)
+              _DemoItem(
+                label: 'Geburtsdatum',
+                text: _formatDate(astrologyProfile.birthDate!),
+              ),
+            if (astrologyProfile.birthTimeLabel != null)
+              _DemoItem(
+                label: 'Geburtszeit',
+                text: astrologyProfile.birthTimeLabel!,
+              ),
+            if (astrologyProfile.birthPlaceName != null &&
+                astrologyProfile.birthPlaceCountry != null)
+              _DemoItem(
+                label: 'Geburtsort',
+                text:
+                    '${astrologyProfile.birthPlaceName}, ${astrologyProfile.birthPlaceCountry}',
+              ),
+            if (astrologyProfile.latitude != null &&
+                astrologyProfile.longitude != null)
+              _DemoItem(
+                label: 'Koordinaten',
+                text:
+                    '${astrologyProfile.latitude!.toStringAsFixed(4)} / ${astrologyProfile.longitude!.toStringAsFixed(4)}',
+              ),
           ];
     final combinedMessage =
         demoCombinedOracleReading.combinedCatMessage.isNotEmpty
@@ -186,6 +210,13 @@ String _formatZodiacSign(ZodiacSign sign) {
     case ZodiacSign.pisces:
       return 'Fische';
   }
+}
+
+String _formatDate(DateTime date) {
+  final day = date.day.toString().padLeft(2, '0');
+  final month = date.month.toString().padLeft(2, '0');
+  final year = date.year.toString();
+  return '$day.$month.$year';
 }
 
 class _InterpretationCard extends StatelessWidget {

@@ -134,6 +134,20 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
     }
 
     final sunSign = calculateSunSign(birthDate);
+    final profile = AstrologyProfile(
+      sunSign: sunSign,
+      moonSign: null,
+      ascendant: null,
+      birthDate: _selectedBirthDate,
+      birthTimeLabel: _selectedBirthTime == null
+          ? null
+          : _formatTime(_selectedBirthTime!),
+      birthPlaceName: _resolvedBirthPlace?.cityName,
+      birthPlaceCountry: _resolvedBirthPlace?.country,
+      latitude: _resolvedBirthPlace?.latitude,
+      longitude: _resolvedBirthPlace?.longitude,
+    );
+
     final demoReading = demoAstrologyReadings.firstWhere(
       (reading) => reading.zodiacSign == sunSign,
       orElse: () => const AstrologyReading(
@@ -147,17 +161,11 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
     setState(() {
       _errorMessage = null;
       _calculatedSunSign = sunSign;
-      _preparedAstrologyProfile = AstrologyProfile(
-        sunSign: sunSign,
-        moonSign: null,
-        ascendant: null,
-      );
+      _preparedAstrologyProfile = profile;
       _calculatedAstrologyReading = demoReading;
     });
 
-    OracleSessionService.instance.setAstrologyProfile(
-      _preparedAstrologyProfile!,
-    );
+    OracleSessionService.instance.setAstrologyProfile(profile);
   }
 
   String _getZodiacSignName(ZodiacSign sign) {
