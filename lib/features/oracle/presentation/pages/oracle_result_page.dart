@@ -14,13 +14,16 @@ class OracleResultPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final astrologyProfile = OracleSessionService.instance.astrologyProfile;
-    final composedReading = astrologyProfile == null
-        ? null
-        : composeDemoAstrologyReading(
-            sunSign: astrologyProfile.sunSign,
-            moonSign: astrologyProfile.moonSign,
-            ascendant: astrologyProfile.ascendant,
-          );
+    final sessionResult = OracleSessionService.instance.astrologySessionResult;
+    final composedReading =
+        sessionResult?.composedReading ??
+        (astrologyProfile == null
+            ? null
+            : composeDemoAstrologyReading(
+                sunSign: astrologyProfile.sunSign,
+                moonSign: astrologyProfile.moonSign,
+                ascendant: astrologyProfile.ascendant,
+              ));
     final palmItems =
         (demoPalmistryReadings.isNotEmpty
                 ? demoPalmistryReadings

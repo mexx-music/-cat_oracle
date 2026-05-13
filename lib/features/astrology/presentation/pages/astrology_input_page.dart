@@ -8,6 +8,7 @@ import 'package:cat_oracle/features/astrology/logic/zodiac_calculator.dart';
 import 'package:cat_oracle/features/astrology/models/birth_place_coordinates.dart';
 import 'package:cat_oracle/features/astrology/models/astrology_profile.dart';
 import 'package:cat_oracle/features/astrology/models/astrology_reading.dart';
+import 'package:cat_oracle/features/astrology/models/astrology_session_result.dart';
 import 'package:cat_oracle/features/astrology/models/zodiac_sign.dart';
 import 'package:cat_oracle/services/oracle_session_service.dart';
 
@@ -105,6 +106,7 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
     });
 
     OracleSessionService.instance.clearAstrologyProfile();
+    OracleSessionService.instance.clearAstrologySessionResult();
   }
 
   Future<void> _pickBirthTime() async {
@@ -136,6 +138,7 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
       });
 
       OracleSessionService.instance.clearAstrologyProfile();
+      OracleSessionService.instance.clearAstrologySessionResult();
       return;
     }
 
@@ -183,6 +186,13 @@ class _AstrologyInputPageState extends State<AstrologyInputPage> {
     });
 
     OracleSessionService.instance.setAstrologyProfile(profile);
+    OracleSessionService.instance.setAstrologySessionResult(
+      AstrologySessionResult(
+        profile: profile,
+        composedReading: composedReading,
+        createdAt: DateTime.now(),
+      ),
+    );
   }
 
   String _getZodiacSignName(ZodiacSign sign) {
