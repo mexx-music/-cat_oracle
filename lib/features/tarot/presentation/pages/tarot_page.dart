@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../logic/daily_tarot_card_generator.dart';
+import '../../models/tarot_card.dart';
 
 class TarotPage extends StatelessWidget {
   const TarotPage({super.key});
@@ -115,91 +116,118 @@ class TarotPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 18),
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(18),
-                        color: const Color(0x32150F24),
-                        border: Border.all(
-                          color: const Color(0x88DAB86E),
-                          width: 1,
-                        ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x40100D1B),
-                            blurRadius: 18,
-                            offset: Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            '🃏 Tageskarte',
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(
-                                  color: const Color(0xFFFFE4A6),
-                                  fontWeight: FontWeight.w700,
+                    MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () =>
+                              _showDailyTarotDialog(context, dailyCard),
+                          borderRadius: BorderRadius.circular(18),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(18),
+                                color: const Color(0x32150F24),
+                                border: Border.all(
+                                  color: const Color(0x88DAB86E),
+                                  width: 1,
                                 ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            '${dailyCard.symbol} ${dailyCard.name}',
-                            style: Theme.of(context).textTheme.titleLarge
-                                ?.copyWith(
-                                  color: const Color(0xFFFFE9B0),
-                                  fontWeight: FontWeight.w700,
-                                ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            dailyCard.meaning,
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(
-                                  color: const Color(0xFFF1E9FF),
-                                  height: 1.45,
-                                ),
-                          ),
-                          const SizedBox(height: 10),
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: const Color(0x24130F1F),
-                              border: Border.all(
-                                color: const Color(0x44D0B16F),
-                              ),
-                            ),
-                            child: Text(
-                              dailyCard.catMessage,
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(
-                                    color: const Color(0xE8F1E9FF),
-                                    height: 1.45,
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color(0x40100D1B),
+                                    blurRadius: 18,
+                                    offset: Offset(0, 8),
                                   ),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          SizedBox(
-                            height: 46,
-                            child: OutlinedButton(
-                              onPressed: null,
-                              style: OutlinedButton.styleFrom(
-                                disabledForegroundColor: const Color(
-                                  0xFFEADBAF,
-                                ),
-                                side: const BorderSide(
-                                  color: Color(0x66D5B46B),
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
+                                ],
                               ),
-                              child: const Text('Neue Demo-Karte ansehen'),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Text(
+                                    '🃏 Tageskarte',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          color: const Color(0xFFFFE4A6),
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    '${dailyCard.symbol} ${dailyCard.name}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge
+                                        ?.copyWith(
+                                          color: const Color(0xFFFFE9B0),
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    dailyCard.meaning,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: const Color(0xFFF1E9FF),
+                                          height: 1.45,
+                                        ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      color: const Color(0x24130F1F),
+                                      border: Border.all(
+                                        color: const Color(0x44D0B16F),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      dailyCard.catMessage,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: const Color(0xE8F1E9FF),
+                                            height: 1.45,
+                                          ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  SizedBox(
+                                    height: 46,
+                                    child: OutlinedButton(
+                                      onPressed: () => _showDailyTarotDialog(
+                                        context,
+                                        dailyCard,
+                                      ),
+                                      style: OutlinedButton.styleFrom(
+                                        foregroundColor: const Color(
+                                          0xFFEADBAF,
+                                        ),
+                                        side: const BorderSide(
+                                          color: Color(0x66D5B46B),
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                      ),
+                                      child: const Text('Tageskarte öffnen'),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -237,6 +265,104 @@ class TarotPage extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> _showDailyTarotDialog(BuildContext context, TarotCard card) {
+  return showDialog<void>(
+    context: context,
+    builder: (dialogContext) {
+      return Dialog(
+        backgroundColor: const Color(0xFF140F1F),
+        elevation: 0,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: const Color(0x88DAB86E), width: 1.2),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x40100D1B),
+                blurRadius: 22,
+                offset: Offset(0, 10),
+              ),
+            ],
+          ),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '🃏 Tageskarte',
+                  style: Theme.of(dialogContext).textTheme.titleLarge?.copyWith(
+                    color: const Color(0xFFFFE9B0),
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  card.name,
+                  style: Theme.of(dialogContext).textTheme.titleMedium
+                      ?.copyWith(
+                        color: const Color(0xFFF4E9FF),
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  card.symbol,
+                  style: Theme.of(dialogContext).textTheme.headlineSmall
+                      ?.copyWith(color: const Color(0xFFFFD98A)),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  card.meaning,
+                  style: Theme.of(dialogContext).textTheme.bodyLarge?.copyWith(
+                    color: const Color(0xFFF1E9FF),
+                    height: 1.45,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: const Color(0x24130F1F),
+                    border: Border.all(color: const Color(0x44D0B16F)),
+                  ),
+                  child: Text(
+                    card.catMessage,
+                    style: Theme.of(dialogContext).textTheme.bodyMedium
+                        ?.copyWith(
+                          color: const Color(0xE8F1E9FF),
+                          height: 1.45,
+                        ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Diese Karte erneuert sich täglich.',
+                  style: Theme.of(dialogContext).textTheme.bodySmall?.copyWith(
+                    color: const Color(0xFFD8C8F7),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    child: const Text('Schließen'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }
 
 class _TarotOptionTile extends StatelessWidget {
