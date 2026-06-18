@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../logic/demo_graphology_reading_generator.dart';
+import '../../models/graphology_trait.dart';
+
 class GraphologyPage extends StatelessWidget {
   const GraphologyPage({super.key});
 
@@ -50,9 +53,7 @@ class GraphologyPage extends StatelessWidget {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: IconButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
+                        onPressed: () => Navigator.of(context).pop(),
                         icon: const Icon(Icons.arrow_back_rounded),
                         style: IconButton.styleFrom(
                           backgroundColor: const Color(0x33FFFFFF),
@@ -104,7 +105,7 @@ class GraphologyPage extends StatelessWidget {
                         ],
                       ),
                       child: Text(
-                        'Lade später eine Schriftprobe hoch und Madame Gatto liest Form, Rhythmus und Energie deiner Zeilen.',
+                        'Madame Gatto liest Form, Rhythmus und Energie deiner Schrift – symbolisch und ohne Urteil.',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           color: const Color(0xFFF1E9FF),
                           height: 1.45,
@@ -112,7 +113,10 @@ class GraphologyPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 18),
-                    const _GraphologyOptionTile(title: 'Schriftprobe'),
+                    _GraphologyOptionTile(
+                      title: 'Demo-Schriftdeutung starten',
+                      onTap: () => _showGraphologyDialog(context),
+                    ),
                     const SizedBox(height: 12),
                     const _GraphologyOptionTile(title: 'Charakter-Impuls'),
                     const SizedBox(height: 12),
@@ -150,14 +154,202 @@ class GraphologyPage extends StatelessWidget {
   }
 }
 
-class _GraphologyOptionTile extends StatelessWidget {
-  const _GraphologyOptionTile({required this.title});
+void _showGraphologyDialog(BuildContext context) {
+  final traits = generateDemoGraphologyReading();
+  final reading = composeDemoGraphologyReading(traits);
 
-  final String title;
+  showDialog<void>(
+    context: context,
+    builder: (dialogContext) {
+      return TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0.0, end: 1.0),
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutCubic,
+        builder: (_, t, child) => Opacity(
+          opacity: t,
+          child: Transform.scale(scale: 0.88 + 0.12 * t, child: child),
+        ),
+        child: Dialog(
+          backgroundColor: const Color(0xFF140F1F),
+          elevation: 0,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: const Color(0x88DAB86E), width: 1.2),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x40100D1B),
+                  blurRadius: 22,
+                  offset: Offset(0, 10),
+                ),
+              ],
+            ),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '✒️ Grafologie-Orakel',
+                    style: Theme.of(dialogContext).textTheme.titleLarge
+                        ?.copyWith(
+                          color: const Color(0xFFFFE9B0),
+                          fontWeight: FontWeight.w700,
+                        ),
+                  ),
+                  const SizedBox(height: 20),
+                  for (final trait in traits) ...[
+                    _TraitTile(trait: trait),
+                    const SizedBox(height: 10),
+                  ],
+                  const Divider(color: Color(0x44DAB86E), thickness: 0.8),
+                  const SizedBox(height: 14),
+                  Text(
+                    '✨ Gesamtdeutung',
+                    style: Theme.of(dialogContext).textTheme.titleSmall
+                        ?.copyWith(
+                          color: const Color(0xFFFFE9B0),
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.6,
+                        ),
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: const Color(0x2A130F1F),
+                      border: Border.all(color: const Color(0x66DAB86E)),
+                    ),
+                    child: Text(
+                      reading,
+                      style: Theme.of(dialogContext).textTheme.bodyMedium
+                          ?.copyWith(
+                            color: const Color(0xFFF1E9FF),
+                            height: 1.55,
+                          ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: const Color(0x1A130F1F),
+                      border: Border.all(color: const Color(0x33DAB86E)),
+                    ),
+                    child: Text(
+                      'Diese Deutung ist symbolisch und ersetzt keine Analyse.',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(dialogContext).textTheme.bodySmall
+                          ?.copyWith(
+                            color: const Color(0xFFD8C8F7),
+                            fontStyle: FontStyle.italic,
+                          ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () => Navigator.of(dialogContext).pop(),
+                      child: const Text('Schließen'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+class _TraitTile extends StatelessWidget {
+  const _TraitTile({required this.trait});
+
+  final GraphologyTrait trait;
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        color: const Color(0x2A150F24),
+        border: Border.all(color: const Color(0x77DAB86E), width: 1),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x3A100D1B),
+            blurRadius: 12,
+            offset: Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                trait.symbol,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                trait.title,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: const Color(0xFFFFE9B0),
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            trait.meaning,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: const Color(0xFFD4C8F0),
+              height: 1.45,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: const Color(0x24130F1F),
+              border: Border.all(color: const Color(0x44D0B16F)),
+            ),
+            child: Text(
+              trait.catMessage,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: const Color(0xE8F1E9FF),
+                height: 1.45,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _GraphologyOptionTile extends StatelessWidget {
+  const _GraphologyOptionTile({required this.title, this.onTap});
+
+  final String title;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final tile = Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: const Color(0x2B161126),
@@ -201,6 +393,20 @@ class _GraphologyOptionTile extends StatelessWidget {
         trailing: const Icon(
           Icons.chevron_right_rounded,
           color: Color(0xFFE5D0A0),
+        ),
+      ),
+    );
+
+    if (onTap == null) return tile;
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: tile,
         ),
       ),
     );
