@@ -6,6 +6,37 @@ import '../../data/demo_tarot_cards.dart';
 import '../../logic/daily_tarot_card_generator.dart';
 import '../../models/tarot_card.dart';
 
+const Map<String, List<String>> _cardThemes = {
+  'Die Katze': ['Leichtigkeit', 'Vertrauen', 'Neugier', 'Anfang', 'Mut'],
+  'Der Magier': ['Fokus', 'Gestaltungskraft', 'Schöpfung', 'Wille', 'Klarheit'],
+  'Die Hohepriesterin': ['Intuition', 'Stille', 'inneres Wissen', 'Weisheit', 'Grenzen'],
+  'Die Herrscherin': ['Fülle', 'Wachstum', 'Sinnlichkeit', 'Schöpfung', 'Natur'],
+  'Der Herrscher': ['Struktur', 'Stabilität', 'Ordnung', 'Verantwortung', 'Klarheit'],
+  'Der Hierophant': ['Tradition', 'Gemeinschaft', 'Wissen', 'Führung', 'Überlieferung'],
+  'Die Liebenden': ['Begegnung', 'Wahl', 'Verbindung', 'Harmonie', 'Aufrichtigkeit'],
+  'Der Wagen': ['Entschlossenheit', 'Richtung', 'Fokus', 'Bewegung', 'Kontrolle'],
+  'Die Stärke': ['Mut', 'Geduld', 'Gelassenheit', 'sanfte Kraft', 'Selbstvertrauen'],
+  'Die Einsiedlerin': ['Rückzug', 'inneres Licht', 'Stille', 'Klärung', 'Einkehr'],
+  'Das Rad': ['Wandel', 'Rhythmus', 'Zyklus', 'Perspektivwechsel', 'Fluss'],
+  'Die Gerechtigkeit': ['Abwägen', 'Ehrlichkeit', 'Ausgleich', 'Entscheidung', 'Klarheit'],
+  'Der Gehängte': ['Pause', 'Loslassen', 'neue Perspektive', 'Geduld', 'Innehalten'],
+  'Die Wandlung': ['Transformation', 'Loslassen', 'Übergang', 'Erneuerung', 'Neubeginn'],
+  'Die Mäßigung': ['Balance', 'Integration', 'Geduld', 'Fließen', 'Harmonie'],
+  'Der Teufel': ['Erkenntnis', 'Bewusstsein', 'Befreiung', 'Bindung', 'Schatten'],
+  'Der Turm': ['Umbruch', 'Ehrlichkeit', 'Befreiung', 'Loslassen', 'Wandel'],
+  'Der Stern': ['Zuversicht', 'Hoffnung', 'Erneuerung', 'Klarheit', 'Leichtigkeit'],
+  'Der Mond': ['Intuition', 'Tiefe', 'Ahnung', 'Unsicherheit', 'innere Welt'],
+  'Die Sonne': ['Freude', 'Wärme', 'Klarheit', 'Sichtbarkeit', 'Vitalität'],
+  'Das Gericht': ['Erneuerung', 'Erwachen', 'Selbstreflexion', 'Befreiung', 'Ruf'],
+  'Die Welt': ['Vollendung', 'Ankommen', 'Ganzheit', 'Erfüllung', 'Abschluss'],
+};
+
+String _t(TarotCard card, int index) {
+  final themes = _cardThemes[card.name];
+  if (themes == null || themes.isEmpty) return card.name;
+  return themes[index % themes.length];
+}
+
 class TarotPage extends StatelessWidget {
   const TarotPage({super.key});
 
@@ -572,25 +603,54 @@ String _composeThreeCardReading(
 
   switch (variant) {
     case 0:
-      return '${past.name} trägt eine Erinnerung in sich, die den heutigen Moment still mitformt. '
-          'Aus ihr heraus entfaltet sich ${present.name} – ein Gewahrsein dessen, was gerade wirklich ist. '
-          '${impulse.name} meldet sich als leiser innerer Hinweis, dem du auf deine eigene Weise begegnen darfst. '
-          'Zusammen erzählen diese drei Karten von einem Weg, der schon in dir ruht.';
+      return '${past.name} ist nicht einfach eine Karte der Vergangenheit – sie ist ein Resonanzraum. '
+          '${_t(past, 0)} und ${_t(past, 1)} wirken noch nach, auch wenn der Moment selbst vergangen ist. '
+          '${present.name} antwortet auf diesen Nachhall mit ${_t(present, 0)} – einer Qualität, die im Jetzt '
+          'besonders sichtbar wird, und die sich, wenn man genau hinsieht, auch als ${_t(present, 1)} zeigen kann. '
+          'Was zwischen diesen beiden Karten liegt, ist kein Bruch, sondern ein fließender Übergang: '
+          '${past.name} hat etwas in Bewegung gesetzt, das ${present.name} weiterführt. '
+          '${impulse.name} tritt als dritte Stimme hinzu und bringt ${_t(impulse, 0)} ins Gespräch – '
+          'keinen Befehl, sondern ein sanftes Signal. '
+          'Zusammen erzählen diese drei Karten von einer inneren Bewegung, die von ${_t(past, 0)} über '
+          '${_t(present, 0)} hin zu ${_t(impulse, 0)} führt. '
+          'Das ist keine Vorhersage. '
+          'Es ist eine Einladung, genauer hinzuschauen, was gerade in dir in Bewegung ist.';
     case 1:
-      return 'Was einmal war, spricht noch immer: ${past.name} hinterlässt eine Spur, die ins Jetzt führt. '
-          '${present.name} zeigt, wo diese Spur heute sichtbar wird – in deiner Haltung, in deiner Aufmerksamkeit. '
-          '${impulse.name} flüstert, welcher nächste Impuls sich leicht und stimmig anfühlen dürfte. '
-          'Madame Gatto sieht darin keinen Zufall – sie sieht eine Einladung zum Nachspüren.';
+      return 'Drei Karten, drei Stimmen – und alle sprechen gleichzeitig. '
+          '${past.name} trägt ${_t(past, 0)} in sich: etwas, das nachwirkt, '
+          'vielleicht ohne dass man es bewusst benennen kann. '
+          'Dass ${present.name} jetzt erscheint, ist kein Zufall – ${_t(present, 0)} und ${_t(present, 1)} '
+          'sind genau die Qualitäten, die gebraucht werden, um das zu verarbeiten, was ${past.name} hinterlassen hat. '
+          '${impulse.name} schließt den Bogen nicht, sondern öffnet ihn: ${_t(impulse, 0)} deutet auf eine '
+          'Möglichkeit hin, die noch nicht vollständig ergriffen wurde. '
+          'Auffällig ist, wie gut diese drei Karten aufeinander hören – '
+          'sie widersprechen sich nicht, sie ergänzen sich. '
+          'Das ist eine Einladung, die Verbindung zwischen ${_t(past, 0)}, ${_t(present, 0)} und '
+          '${_t(impulse, 0)} selbst weiterzudenken und dabei ehrlich zu bleiben.';
     case 2:
-      return 'Die Energie von ${past.name} hat diesen Moment mitgeprägt, ob bewusst oder als stille Unterlage. '
-          '${present.name} lädt ein, ehrlich hinzuschauen, was gerade trägt und was sich vielleicht wandeln möchte. '
-          '${impulse.name} bringt eine Qualität ins Licht, die als ruhige Inspiration wirken kann. '
-          'Diese drei Karten öffnen keinen Weg – sie beschreiben den, der ohnehin in dir liegt.';
+      return '${past.name} bringt ${_t(past, 0)} mit – eine Energie, die nicht einfach verschwindet, '
+          'weil ein Tag vergeht. '
+          'Sie hat den Boden geformt, auf dem ${present.name} jetzt steht. '
+          'Und ${present.name} steht tatsächlich: ${_t(present, 0)} ist die Qualität des gegenwärtigen Moments, '
+          'und darin steckt auch ${_t(present, 1)}, wenn man bereit ist, genauer hinzuschauen. '
+          'Das Verhältnis zwischen diesen beiden Karten ist eines der Kontinuität – '
+          'nicht der Wiederholung, sondern der Weiterentwicklung. '
+          '${impulse.name} erscheint als Antwort auf beide – auf das, was war, und auf das, was jetzt ist. '
+          '${_t(impulse, 0)} ist der Ton, den diese Karte anschlägt: '
+          'nicht als Forderung, sondern als stille Möglichkeit. '
+          'Vielleicht lohnt sich die Frage: Wie viel von ${_t(past, 0)} ist noch spürbar, '
+          'und wie viel Raum lässt du ${_t(impulse, 0)} bereits?';
     default:
-      return 'In ${past.name} liegt ein vertrautes Muster, das heute noch nachwirkt. '
-          '${present.name} zeigt, wie dieses Muster gerade lebendig ist – in dem, was du wahrnimmst und wie du dich dazu verhältst. '
-          '${impulse.name} stellt sich daneben als sanfte Einladung, einen eigenen Akzent zu setzen. '
-          'Was diese Legung vor allem trägt, ist die Stille zwischen ihren Worten.';
+      return 'Madame Gatto legt die Karten und schweigt einen Moment. '
+          '${past.name} – ${_t(past, 0)} und ${_t(past, 1)}, die noch nachwirken. '
+          '${present.name} – ${_t(present, 0)} und ${_t(present, 1)}, die jetzt gefragt sind. '
+          '${impulse.name} – ${_t(impulse, 0)}, das sich ankündigt. '
+          'Sie murmelt: Selten liegen drei Karten so kohärent beieinander. '
+          'Was ${past.name} hinterlassen hat, ist nicht verloren – es ist in ${present.name} übergegangen, '
+          'und ${impulse.name} zeigt, wohin dieser Übergang führen kann. '
+          'Das ist kein Versprechen und keine Warnung. '
+          'Es ist das, was die Karten flüstern, wenn man lange genug stillhält. '
+          'Madame Gatto legt die Hand auf den Tisch und nickt: Diese Legung lohnt sich, mehrmals zu lesen.';
   }
 }
 
@@ -751,27 +811,59 @@ String _composeLoveReading(
 
   switch (variant) {
     case 0:
-      return '${self.name} lädt dazu ein, die eigene Art zu lieben und wahrgenommen zu werden ehrlich zu betrachten. '
-          'In der Verbindung zeigt sich ${connection.name} – eine Qualität, die im Miteinander spürbar werden darf. '
-          '${impulse.name} trägt einen leisen Impuls in sich, der vielleicht noch auf Aufmerksamkeit wartet. '
-          'Diese drei Karten sprechen von Nähe, die nicht erzwungen wird, sondern sich im achtsamen Begegnen entfaltet.';
+      return '${self.name} beschreibt, wer du in diesem Moment in Beziehungen bist – '
+          'mit ${_t(self, 0)} als der Energie, die du in Begegnungen mitbringst. '
+          'Das ist weder Urteil noch Bestätigung; es ist einfach, was gerade da ist. '
+          '${connection.name} zeigt, welche Qualität in einer Verbindung lebendig sein kann: '
+          '${_t(connection, 0)} und ${_t(connection, 1)} – beides Aspekte, die echte Nähe erst möglich machen. '
+          'Interessant ist, wie ${self.name} und ${connection.name} miteinander in Beziehung stehen: '
+          '${_t(self, 0)} muss nicht identisch mit ${_t(connection, 0)} sein, um eine Brücke zu bilden. '
+          '${impulse.name} tritt als dritte Stimme hinzu und bringt ${_t(impulse, 0)} ins Gespräch – '
+          'eine Einladung, die weder Ungeduld noch Angst verlangt, sondern Aufmerksamkeit. '
+          'Echte Verbindung entsteht nicht dadurch, dass man die perfekte Begegnung findet, '
+          'sondern dadurch, dass man selbst anwesend und aufrichtig ist. '
+          'Diese drei Karten erzählen genau davon.';
     case 1:
-      return '${self.name} beschreibt, wer du gerade in Beziehungen bist – mit all deiner Wärme und deinen stillen Fragen. '
-          '${connection.name} zeigt, welche Energie zwischen Menschen lebendig sein kann, wenn Offenheit Raum bekommt. '
-          '${impulse.name} bringt einen weiteren Ton ins Spiel: einen Hinweis auf das, was vielleicht mehr Gehör verdient. '
-          'Vertrauen und Verständnis wachsen oft leise, in den Momenten echter gegenseitiger Aufmerksamkeit. '
-          'Madame Gatto lächelt: Echte Verbindung beginnt bei einem selbst.';
+      return 'Drei Karten, die gemeinsam von Verbindung sprechen – und jede auf ihre eigene Art. '
+          '${self.name} bringt ${_t(self, 0)} mit: das ist deine Haltung, dein Ausgangspunkt, '
+          'das, was du in Begegnungen verkörperst, bewusst oder unbewusst. '
+          '${connection.name} spricht von ${_t(connection, 0)} und ${_t(connection, 1)} – nicht als Versprechen, '
+          'sondern als Qualität, die möglich ist, wenn beide Seiten bereit sind, hinzuhören. '
+          'Dass ${impulse.name} hier erscheint, ist bedeutsam: ${_t(impulse, 0)} ist der Impuls, '
+          'der gerade am deutlichsten klingt. '
+          'Madame Gatto beobachtet diese Konstellation und sagt ruhig: Wenn ${_t(self, 0)} auf '
+          '${_t(connection, 0)} trifft, entsteht etwas – keine Garantie, aber eine echte Möglichkeit. '
+          'Was ${impulse.name} hinzufügt, ist ${_t(impulse, 0)}: die Erinnerung daran, '
+          'dass Verbindung Zeit und inneren Raum braucht. '
+          'Diese Legung erzählt weniger von dem, was fehlt, '
+          'als von dem, was bereits da ist und gesehen werden möchte.';
     case 2:
-      return 'Im Spiegel von ${self.name} zeigt sich, wie du Verbindung empfindest und was du dir in ihr wünschst. '
-          '${connection.name} beschreibt eine Qualität, die im Begegnen mit anderen aufleuchten kann. '
-          '${impulse.name} erinnert daran, dass Offenheit keine Schwäche ist, sondern eine stille Form von Mut. '
-          'Diese Karten sprechen weniger von Antworten als von aufmerksamem Wahrnehmen und ehrlichem Dasein.';
+      return '${self.name} ist der Ausgangspunkt dieser Legung: ${_t(self, 0)} beschreibt '
+          'deine innere Haltung gegenüber Nähe, Verbindung und dem Wahrnehmen anderer. '
+          '${connection.name} antwortet darauf mit ${_t(connection, 0)} – und wer die Karte länger betrachtet, '
+          'entdeckt auch ${_t(connection, 1)} darin. '
+          'Das Gespräch zwischen ${self.name} und ${connection.name} ist eigentlich das Herzstück dieser Legung: '
+          'nicht jede Karte einzeln, sondern das, was zwischen ihnen entsteht. '
+          '${impulse.name} tritt als Impuls hinzu: ${_t(impulse, 0)} erscheint als das, '
+          'was vielleicht noch mehr Raum verdient – in dir selbst und im Miteinander. '
+          'Echte Nähe braucht keine Vollständigkeit. '
+          'Sie braucht Aufrichtigkeit und die Bereitschaft, gesehen zu werden. '
+          'Diese drei Karten beschreiben den Weg von ${_t(self, 0)} über ${_t(connection, 0)} '
+          'hin zu ${_t(impulse, 0)} – und dieser Weg beginnt innen.';
     default:
-      return '${self.name} zeigt, welche innere Haltung du gerade in Beziehungen mitbringst. '
-          '${connection.name} beschreibt das Feld zwischen Menschen – jene unsichtbare Energie, die Verbindung nährt oder herausfordert. '
-          '${impulse.name} flüstert, wohin der nächste weiche Schritt führen dürfte. '
-          'Wahre Nähe braucht keine Perfektion – sie braucht Aufrichtigkeit und das Vertrauen, gesehen zu werden. '
-          'Madame Gatto nickt: Was du spürst, darf ausgesprochen werden.';
+      return 'Madame Gatto legt die Karten für Liebe und Verbindung – und nimmt sich bewusst Zeit. '
+          '${self.name} erscheint als erstes: ${_t(self, 0)}, das zeigt, wer du in Begegnungen bist. '
+          '${connection.name} folgt: ${_t(connection, 0)} und ${_t(connection, 1)} – '
+          'das Feld, in dem echte Verbindung entstehen kann, wenn beide Seiten offen sind. '
+          'Und schließlich ${impulse.name}: ${_t(impulse, 0)}, '
+          'der leise, aber bestimmte Impuls, der gerade klingt. '
+          'Madame Gatto bemerkt: Diese drei Karten harmonieren auf ungewöhnliche Weise miteinander. '
+          '${self.name} legt etwas offen, was ${connection.name} aufnimmt – '
+          'und ${impulse.name} erinnert daran, was dabei nicht verloren gehen sollte. '
+          '${_t(impulse, 0)} ist kein Hindernis. '
+          'Es ist eine Einladung. '
+          'Verbindung, die auch die eigene Stimme einschließt, ist tiefer und echter. '
+          'Diese Legung zeigt einen Weg dorthin – weder kurz noch einfach, aber aufrichtig.';
   }
 }
 

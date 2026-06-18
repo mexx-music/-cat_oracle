@@ -1,0 +1,7 @@
+{
+  "@@locale": "de",
+  "appTitle": "Madame Gatto Futuro",
+  "@appTitle": {
+    "description": "Der Titel der App"
+  }
+}
