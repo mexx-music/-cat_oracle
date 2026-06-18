@@ -314,7 +314,10 @@ class TarotPage extends StatelessWidget {
                       onTap: () => _showThreeCardSpreadDialog(context),
                     ),
                     const SizedBox(height: 12),
-                    const _TarotOptionTile(title: 'Liebe & Intuition'),
+                    _TarotOptionTile(
+                      title: '❤️ Liebe & Beziehungen',
+                      onTap: () => _showLoveSpreadDialog(context),
+                    ),
                     const SizedBox(height: 18),
                     Container(
                       padding: const EdgeInsets.all(14),
@@ -711,6 +714,187 @@ Future<void> _showThreeCardSpreadDialog(BuildContext context) {
                     ),
                     child: Text(
                       _composeThreeCardReading(cards[0], cards[1], cards[2]),
+                      style: Theme.of(dialogContext).textTheme.bodyMedium
+                          ?.copyWith(
+                            color: const Color(0xFFF1E9FF),
+                            height: 1.55,
+                          ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () => Navigator.of(dialogContext).pop(),
+                      child: const Text('Schließen'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+String _composeLoveReading(
+  TarotCard self,
+  TarotCard connection,
+  TarotCard impulse,
+) {
+  final selfIdx = demoTarotCards.indexOf(self);
+  final connectionIdx = demoTarotCards.indexOf(connection);
+  final impulseIdx = demoTarotCards.indexOf(impulse);
+  final variant = (selfIdx * 3 + connectionIdx * 11 + impulseIdx * 7).abs() % 4;
+
+  switch (variant) {
+    case 0:
+      return '${self.name} lädt dazu ein, die eigene Art zu lieben und wahrgenommen zu werden ehrlich zu betrachten. '
+          'In der Verbindung zeigt sich ${connection.name} – eine Qualität, die im Miteinander spürbar werden darf. '
+          '${impulse.name} trägt einen leisen Impuls in sich, der vielleicht noch auf Aufmerksamkeit wartet. '
+          'Diese drei Karten sprechen von Nähe, die nicht erzwungen wird, sondern sich im achtsamen Begegnen entfaltet.';
+    case 1:
+      return '${self.name} beschreibt, wer du gerade in Beziehungen bist – mit all deiner Wärme und deinen stillen Fragen. '
+          '${connection.name} zeigt, welche Energie zwischen Menschen lebendig sein kann, wenn Offenheit Raum bekommt. '
+          '${impulse.name} bringt einen weiteren Ton ins Spiel: einen Hinweis auf das, was vielleicht mehr Gehör verdient. '
+          'Vertrauen und Verständnis wachsen oft leise, in den Momenten echter gegenseitiger Aufmerksamkeit. '
+          'Madame Gatto lächelt: Echte Verbindung beginnt bei einem selbst.';
+    case 2:
+      return 'Im Spiegel von ${self.name} zeigt sich, wie du Verbindung empfindest und was du dir in ihr wünschst. '
+          '${connection.name} beschreibt eine Qualität, die im Begegnen mit anderen aufleuchten kann. '
+          '${impulse.name} erinnert daran, dass Offenheit keine Schwäche ist, sondern eine stille Form von Mut. '
+          'Diese Karten sprechen weniger von Antworten als von aufmerksamem Wahrnehmen und ehrlichem Dasein.';
+    default:
+      return '${self.name} zeigt, welche innere Haltung du gerade in Beziehungen mitbringst. '
+          '${connection.name} beschreibt das Feld zwischen Menschen – jene unsichtbare Energie, die Verbindung nährt oder herausfordert. '
+          '${impulse.name} flüstert, wohin der nächste weiche Schritt führen dürfte. '
+          'Wahre Nähe braucht keine Perfektion – sie braucht Aufrichtigkeit und das Vertrauen, gesehen zu werden. '
+          'Madame Gatto nickt: Was du spürst, darf ausgesprochen werden.';
+  }
+}
+
+Future<void> _showLoveSpreadDialog(BuildContext context) {
+  final shuffled = List.of(demoTarotCards)..shuffle(Random());
+  final cards = shuffled.take(3).toList();
+  const positions = ['Du', 'Verbindung', 'Impuls'];
+
+  return showDialog<void>(
+    context: context,
+    builder: (dialogContext) {
+      return TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0.0, end: 1.0),
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutCubic,
+        builder: (_, t, child) => Opacity(
+          opacity: t,
+          child: Transform.scale(scale: 0.88 + 0.12 * t, child: child),
+        ),
+        child: Dialog(
+          backgroundColor: const Color(0xFF140F1F),
+          elevation: 0,
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 24,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: const Color(0x88DAB86E), width: 1.2),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x40100D1B),
+                  blurRadius: 22,
+                  offset: Offset(0, 10),
+                ),
+              ],
+            ),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '❤️ Liebe & Beziehungen',
+                    style: Theme.of(dialogContext).textTheme.titleLarge
+                        ?.copyWith(
+                          color: const Color(0xFFFFE9B0),
+                          fontWeight: FontWeight.w700,
+                        ),
+                  ),
+                  const SizedBox(height: 20),
+                  LayoutBuilder(
+                    builder: (_, constraints) {
+                      final w = constraints.maxWidth;
+                      if (w >= 360) {
+                        return IntrinsicHeight(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              for (int i = 0; i < 3; i++) ...[
+                                if (i > 0) const SizedBox(width: 10),
+                                Expanded(
+                                  child: _SpreadCardTile(
+                                    position: positions[i],
+                                    card: cards[i],
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        );
+                      } else {
+                        final cardWidth = (w * 0.78).clamp(160.0, 260.0);
+                        return SizedBox(
+                          height: 420,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                for (int i = 0; i < 3; i++) ...[
+                                  if (i > 0) const SizedBox(width: 10),
+                                  SizedBox(
+                                    width: cardWidth,
+                                    child: _SpreadCardTile(
+                                      position: positions[i],
+                                      card: cards[i],
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  const Divider(color: Color(0x44DAB86E), thickness: 0.8),
+                  const SizedBox(height: 14),
+                  Text(
+                    '❤️ Liebesdeutung',
+                    style: Theme.of(dialogContext).textTheme.titleSmall
+                        ?.copyWith(
+                          color: const Color(0xFFFFE9B0),
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.6,
+                        ),
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: const Color(0x2A130F1F),
+                      border: Border.all(color: const Color(0x66DAB86E)),
+                    ),
+                    child: Text(
+                      _composeLoveReading(cards[0], cards[1], cards[2]),
                       style: Theme.of(dialogContext).textTheme.bodyMedium
                           ?.copyWith(
                             color: const Color(0xFFF1E9FF),
