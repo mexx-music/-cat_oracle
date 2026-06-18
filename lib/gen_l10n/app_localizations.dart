@@ -104,6 +104,24 @@ abstract class AppLocalizations {
   /// **'Madame Gatto Futuro'**
   String get appTitle;
 
+  /// Home: hero headline
+  ///
+  /// In en, this message translates to:
+  /// **'🐾 Cat Oracle 🔮'**
+  String get homeTitle;
+
+  /// Home: hero subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Your Cat Oracle Reading'**
+  String get homeSubtitle;
+
+  /// Home: hero description paragraph
+  ///
+  /// In en, this message translates to:
+  /// **'Discover tarot, astrology, graphology and palm reading in the mystical style of Madame Gatto Futuro.'**
+  String get homeDescription;
+
   /// Home: palmistry entry card title
   ///
   /// In en, this message translates to:
@@ -163,6 +181,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Writing reveals character'**
   String get homeGraphologySubtitle;
+
+  /// Tarot page headline
+  ///
+  /// In en, this message translates to:
+  /// **'Tarot'**
+  String get tarotTitle;
+
+  /// Tarot page subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'The cards whisper'**
+  String get tarotSubtitle;
+
+  /// Label for the daily tarot card
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Card'**
+  String get tarotDailyCard;
+
+  /// Button label to draw a random card
+  ///
+  /// In en, this message translates to:
+  /// **'Draw a Card'**
+  String get tarotDrawCard;
+
+  /// Menu entry and dialog title for the three-card spread
+  ///
+  /// In en, this message translates to:
+  /// **'Three-Card Spread'**
+  String get tarotThreeCardSpread;
+
+  /// Menu entry and dialog title for the love spread
+  ///
+  /// In en, this message translates to:
+  /// **'Love & Relationships'**
+  String get tarotLoveRelationships;
+
+  /// Sub-label shown below every tarot card name
+  ///
+  /// In en, this message translates to:
+  /// **'Major Arcana'**
+  String get tarotMajorArcana;
+
+  /// Close button label in tarot dialogs
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get tarotClose;
+
+  /// Position label: past in the three-card spread
+  ///
+  /// In en, this message translates to:
+  /// **'Past'**
+  String get tarotPast;
+
+  /// Position label: present in the three-card spread
+  ///
+  /// In en, this message translates to:
+  /// **'Present'**
+  String get tarotPresent;
+
+  /// Position label: impulse in spreads
+  ///
+  /// In en, this message translates to:
+  /// **'Impulse'**
+  String get tarotImpulse;
+
+  /// Position label: self in the love spread
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get tarotSelf;
+
+  /// Position label: connection in the love spread
+  ///
+  /// In en, this message translates to:
+  /// **'Connection'**
+  String get tarotConnection;
+
+  /// Section heading for the love reading interpretation
+  ///
+  /// In en, this message translates to:
+  /// **'Love Reading'**
+  String get tarotLoveReading;
+
+  /// Section heading for the overall three-card interpretation
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Reading'**
+  String get tarotOverallReading;
+
+  /// Footer hint in the daily card dialog
+  ///
+  /// In en, this message translates to:
+  /// **'This card renews daily.'**
+  String get tarotDailyRenewHint;
 }
 
 class _AppLocalizationsDelegate

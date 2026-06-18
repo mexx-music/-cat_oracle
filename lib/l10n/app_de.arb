@@ -1,6 +1,9 @@
 {
   "@@locale": "de",
   "appTitle": "Madame Gatto Futuro",
+  "homeTitle": "🐾 Cat Oracle 🔮",
+  "homeSubtitle": "Deine Katzen-Orakel-Lesung",
+  "homeDescription": "Entdecke Tarot, Astrologie, Grafologie und Handlesen im mystischen Stil von Madame Gatto Futuro.",
   "homePalmistryTitle": "Handlesen",
   "homePalmistrySubtitle": "Lies deine Linien",
   "homeOracleTitle": "Demo-Lesung",
@@ -10,5 +13,21 @@
   "homeTarotTitle": "Tarot",
   "homeTarotSubtitle": "Die Karten flüstern",
   "homeGraphologyTitle": "Grafologie",
-  "homeGraphologySubtitle": "Schrift offenbart Charakter"
+  "homeGraphologySubtitle": "Schrift offenbart Charakter",
+  "tarotTitle": "Tarot",
+  "tarotSubtitle": "Die Karten flüstern",
+  "tarotDailyCard": "Tageskarte",
+  "tarotDrawCard": "Eine Karte ziehen",
+  "tarotThreeCardSpread": "Drei-Karten-Legung",
+  "tarotLoveRelationships": "Liebe & Beziehungen",
+  "tarotMajorArcana": "Große Arkana",
+  "tarotClose": "Schließen",
+  "tarotPast": "Vergangenheit",
+  "tarotPresent": "Gegenwart",
+  "tarotImpulse": "Impuls",
+  "tarotSelf": "Du",
+  "tarotConnection": "Verbindung",
+  "tarotLoveReading": "Liebesdeutung",
+  "tarotOverallReading": "Gesamtdeutung",
+  "tarotDailyRenewHint": "Diese Karte erneuert sich täglich."
 }

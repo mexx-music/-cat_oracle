@@ -54,7 +54,7 @@ class HomePage extends StatelessWidget {
                     children: [
                       SizedBox(height: heroSpacing),
                       Text(
-                        '🐾 Cat Oracle 🔮',
+                        l10n.homeTitle,
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.headlineLarge
                             ?.copyWith(
@@ -65,7 +65,7 @@ class HomePage extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        'Deine Katzen-Orakel-Lesung',
+                        l10n.homeSubtitle,
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(
@@ -75,7 +75,7 @@ class HomePage extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        'Scanne deine Handlinien und erhalte eine charmante Katzen-Deutung.',
+                        l10n.homeDescription,
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           color: Colors.white.withValues(alpha: 0.78),

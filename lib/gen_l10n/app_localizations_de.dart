@@ -12,6 +12,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get appTitle => 'Madame Gatto Futuro';
 
   @override
+  String get homeTitle => '🐾 Cat Oracle 🔮';
+
+  @override
+  String get homeSubtitle => 'Deine Katzen-Orakel-Lesung';
+
+  @override
+  String get homeDescription =>
+      'Entdecke Tarot, Astrologie, Grafologie und Handlesen im mystischen Stil von Madame Gatto Futuro.';
+
+  @override
   String get homePalmistryTitle => 'Handlesen';
 
   @override
@@ -40,4 +50,52 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get homeGraphologySubtitle => 'Schrift offenbart Charakter';
+
+  @override
+  String get tarotTitle => 'Tarot';
+
+  @override
+  String get tarotSubtitle => 'Die Karten flüstern';
+
+  @override
+  String get tarotDailyCard => 'Tageskarte';
+
+  @override
+  String get tarotDrawCard => 'Eine Karte ziehen';
+
+  @override
+  String get tarotThreeCardSpread => 'Drei-Karten-Legung';
+
+  @override
+  String get tarotLoveRelationships => 'Liebe & Beziehungen';
+
+  @override
+  String get tarotMajorArcana => 'Große Arkana';
+
+  @override
+  String get tarotClose => 'Schließen';
+
+  @override
+  String get tarotPast => 'Vergangenheit';
+
+  @override
+  String get tarotPresent => 'Gegenwart';
+
+  @override
+  String get tarotImpulse => 'Impuls';
+
+  @override
+  String get tarotSelf => 'Du';
+
+  @override
+  String get tarotConnection => 'Verbindung';
+
+  @override
+  String get tarotLoveReading => 'Liebesdeutung';
+
+  @override
+  String get tarotOverallReading => 'Gesamtdeutung';
+
+  @override
+  String get tarotDailyRenewHint => 'Diese Karte erneuert sich täglich.';
 }

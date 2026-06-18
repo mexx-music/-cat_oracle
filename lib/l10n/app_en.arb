@@ -4,6 +4,18 @@
   "@appTitle": {
     "description": "The title of the application"
   },
+  "homeTitle": "🐾 Cat Oracle 🔮",
+  "@homeTitle": {
+    "description": "Home: hero headline"
+  },
+  "homeSubtitle": "Your Cat Oracle Reading",
+  "@homeSubtitle": {
+    "description": "Home: hero subtitle"
+  },
+  "homeDescription": "Discover tarot, astrology, graphology and palm reading in the mystical style of Madame Gatto Futuro.",
+  "@homeDescription": {
+    "description": "Home: hero description paragraph"
+  },
   "homePalmistryTitle": "Palm Reading",
   "@homePalmistryTitle": {
     "description": "Home: palmistry entry card title"
@@ -43,5 +55,69 @@
   "homeGraphologySubtitle": "Writing reveals character",
   "@homeGraphologySubtitle": {
     "description": "Home: graphology entry card subtitle"
+  },
+  "tarotTitle": "Tarot",
+  "@tarotTitle": {
+    "description": "Tarot page headline"
+  },
+  "tarotSubtitle": "The cards whisper",
+  "@tarotSubtitle": {
+    "description": "Tarot page subtitle"
+  },
+  "tarotDailyCard": "Daily Card",
+  "@tarotDailyCard": {
+    "description": "Label for the daily tarot card"
+  },
+  "tarotDrawCard": "Draw a Card",
+  "@tarotDrawCard": {
+    "description": "Button label to draw a random card"
+  },
+  "tarotThreeCardSpread": "Three-Card Spread",
+  "@tarotThreeCardSpread": {
+    "description": "Menu entry and dialog title for the three-card spread"
+  },
+  "tarotLoveRelationships": "Love & Relationships",
+  "@tarotLoveRelationships": {
+    "description": "Menu entry and dialog title for the love spread"
+  },
+  "tarotMajorArcana": "Major Arcana",
+  "@tarotMajorArcana": {
+    "description": "Sub-label shown below every tarot card name"
+  },
+  "tarotClose": "Close",
+  "@tarotClose": {
+    "description": "Close button label in tarot dialogs"
+  },
+  "tarotPast": "Past",
+  "@tarotPast": {
+    "description": "Position label: past in the three-card spread"
+  },
+  "tarotPresent": "Present",
+  "@tarotPresent": {
+    "description": "Position label: present in the three-card spread"
+  },
+  "tarotImpulse": "Impulse",
+  "@tarotImpulse": {
+    "description": "Position label: impulse in spreads"
+  },
+  "tarotSelf": "You",
+  "@tarotSelf": {
+    "description": "Position label: self in the love spread"
+  },
+  "tarotConnection": "Connection",
+  "@tarotConnection": {
+    "description": "Position label: connection in the love spread"
+  },
+  "tarotLoveReading": "Love Reading",
+  "@tarotLoveReading": {
+    "description": "Section heading for the love reading interpretation"
+  },
+  "tarotOverallReading": "Overall Reading",
+  "@tarotOverallReading": {
+    "description": "Section heading for the overall three-card interpretation"
+  },
+  "tarotDailyRenewHint": "This card renews daily.",
+  "@tarotDailyRenewHint": {
+    "description": "Footer hint in the daily card dialog"
   }
 }

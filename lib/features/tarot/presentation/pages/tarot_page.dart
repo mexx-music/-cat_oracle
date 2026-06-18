@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+import 'package:cat_oracle/gen_l10n/app_localizations.dart';
+
 import '../../data/demo_tarot_cards.dart';
 import '../../logic/daily_tarot_card_generator.dart';
 import '../../models/tarot_card.dart';
@@ -42,6 +44,7 @@ class TarotPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final dailyCard = generateDailyTarotCard();
     final screenHeight = MediaQuery.of(context).size.height;
     final safePadding = MediaQuery.of(context).padding.vertical;
@@ -100,7 +103,7 @@ class TarotPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '🃏 Tarot',
+                      '🃏 ${l10n.tarotTitle}',
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.headlineMedium
                           ?.copyWith(
@@ -111,7 +114,7 @@ class TarotPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Die Karten flüstern',
+                      l10n.tarotSubtitle,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: const Color(0xFFD8C8F7),
@@ -181,7 +184,7 @@ class TarotPage extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   Text(
-                                    '🃏 Tageskarte',
+                                    '🃏 ${l10n.tarotDailyCard}',
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleMedium
@@ -321,7 +324,7 @@ class TarotPage extends StatelessWidget {
                                 ),
                               ),
                               title: Text(
-                                'Eine Karte ziehen',
+                                l10n.tarotDrawCard,
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleMedium
@@ -341,12 +344,12 @@ class TarotPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     _TarotOptionTile(
-                      title: 'Drei-Karten-Legung',
+                      title: l10n.tarotThreeCardSpread,
                       onTap: () => _showThreeCardSpreadDialog(context),
                     ),
                     const SizedBox(height: 12),
                     _TarotOptionTile(
-                      title: '❤️ Liebe & Beziehungen',
+                      title: '❤️ ${l10n.tarotLoveRelationships}',
                       onTap: () => _showLoveSpreadDialog(context),
                     ),
                     const SizedBox(height: 18),
@@ -383,6 +386,7 @@ class TarotPage extends StatelessWidget {
 }
 
 Future<void> _showDailyTarotDialog(BuildContext context, TarotCard card) {
+  final l10n = AppLocalizations.of(context)!;
   return showDialog<void>(
     context: context,
     builder: (dialogContext) {
@@ -410,7 +414,7 @@ Future<void> _showDailyTarotDialog(BuildContext context, TarotCard card) {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  '🃏 Tageskarte',
+                  '🃏 ${l10n.tarotDailyCard}',
                   style: Theme.of(dialogContext).textTheme.titleLarge?.copyWith(
                     color: const Color(0xFFFFE9B0),
                     fontWeight: FontWeight.w700,
@@ -429,7 +433,7 @@ Future<void> _showDailyTarotDialog(BuildContext context, TarotCard card) {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Große Arkana',
+                  l10n.tarotMajorArcana,
                   style: Theme.of(dialogContext).textTheme.bodySmall?.copyWith(
                     color: const Color(0xFFD8C8F7),
                     letterSpacing: 0.8,
@@ -468,7 +472,7 @@ Future<void> _showDailyTarotDialog(BuildContext context, TarotCard card) {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Diese Karte erneuert sich täglich.',
+                  l10n.tarotDailyRenewHint,
                   style: Theme.of(dialogContext).textTheme.bodySmall?.copyWith(
                     color: const Color(0xFFD8C8F7),
                   ),
@@ -478,7 +482,7 @@ Future<void> _showDailyTarotDialog(BuildContext context, TarotCard card) {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () => Navigator.of(dialogContext).pop(),
-                    child: const Text('Schließen'),
+                    child: Text(l10n.tarotClose),
                   ),
                 ),
               ],
@@ -491,6 +495,7 @@ Future<void> _showDailyTarotDialog(BuildContext context, TarotCard card) {
 }
 
 Future<void> _showDrawnCardDialog(BuildContext context, TarotCard card) {
+  final l10n = AppLocalizations.of(context)!;
   return showDialog<void>(
     context: context,
     builder: (dialogContext) {
@@ -537,7 +542,7 @@ Future<void> _showDrawnCardDialog(BuildContext context, TarotCard card) {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Große Arkana',
+                  l10n.tarotMajorArcana,
                   style: Theme.of(dialogContext).textTheme.bodySmall?.copyWith(
                     color: const Color(0xFFD8C8F7),
                     letterSpacing: 0.8,
@@ -579,7 +584,7 @@ Future<void> _showDrawnCardDialog(BuildContext context, TarotCard card) {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () => Navigator.of(dialogContext).pop(),
-                    child: const Text('Schließen'),
+                    child: Text(l10n.tarotClose),
                   ),
                 ),
               ],
@@ -655,9 +660,10 @@ String _composeThreeCardReading(
 }
 
 Future<void> _showThreeCardSpreadDialog(BuildContext context) {
+  final l10n = AppLocalizations.of(context)!;
   final shuffled = List.of(demoTarotCards)..shuffle(Random());
   final cards = shuffled.take(3).toList();
-  const positions = ['Vergangenheit', 'Gegenwart', 'Impuls'];
+  final positions = [l10n.tarotPast, l10n.tarotPresent, l10n.tarotImpulse];
 
   return showDialog<void>(
     context: context,
@@ -699,7 +705,7 @@ Future<void> _showThreeCardSpreadDialog(BuildContext context) {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '🃏 Drei-Karten-Legung',
+                    '🃏 ${l10n.tarotThreeCardSpread}',
                     style: Theme.of(dialogContext).textTheme.titleLarge
                         ?.copyWith(
                           color: const Color(0xFFFFE9B0),
@@ -756,7 +762,7 @@ Future<void> _showThreeCardSpreadDialog(BuildContext context) {
                   const Divider(color: Color(0x44DAB86E), thickness: 0.8),
                   const SizedBox(height: 14),
                   Text(
-                    '✨ Gesamtdeutung',
+                    '✨ ${l10n.tarotOverallReading}',
                     style: Theme.of(dialogContext).textTheme.titleSmall
                         ?.copyWith(
                           color: const Color(0xFFFFE9B0),
@@ -786,7 +792,7 @@ Future<void> _showThreeCardSpreadDialog(BuildContext context) {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () => Navigator.of(dialogContext).pop(),
-                      child: const Text('Schließen'),
+                      child: Text(l10n.tarotClose),
                     ),
                   ),
                 ],
@@ -868,9 +874,10 @@ String _composeLoveReading(
 }
 
 Future<void> _showLoveSpreadDialog(BuildContext context) {
+  final l10n = AppLocalizations.of(context)!;
   final shuffled = List.of(demoTarotCards)..shuffle(Random());
   final cards = shuffled.take(3).toList();
-  const positions = ['Du', 'Verbindung', 'Impuls'];
+  final positions = [l10n.tarotSelf, l10n.tarotConnection, l10n.tarotImpulse];
 
   return showDialog<void>(
     context: context,
@@ -912,7 +919,7 @@ Future<void> _showLoveSpreadDialog(BuildContext context) {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '❤️ Liebe & Beziehungen',
+                    '❤️ ${l10n.tarotLoveRelationships}',
                     style: Theme.of(dialogContext).textTheme.titleLarge
                         ?.copyWith(
                           color: const Color(0xFFFFE9B0),
@@ -969,7 +976,7 @@ Future<void> _showLoveSpreadDialog(BuildContext context) {
                   const Divider(color: Color(0x44DAB86E), thickness: 0.8),
                   const SizedBox(height: 14),
                   Text(
-                    '❤️ Liebesdeutung',
+                    '❤️ ${l10n.tarotLoveReading}',
                     style: Theme.of(dialogContext).textTheme.titleSmall
                         ?.copyWith(
                           color: const Color(0xFFFFE9B0),
@@ -999,7 +1006,7 @@ Future<void> _showLoveSpreadDialog(BuildContext context) {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () => Navigator.of(dialogContext).pop(),
-                      child: const Text('Schließen'),
+                      child: Text(l10n.tarotClose),
                     ),
                   ),
                 ],
@@ -1020,6 +1027,7 @@ class _SpreadCardTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14),
@@ -1067,7 +1075,7 @@ class _SpreadCardTile extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Große Arkana',
+                  l10n.tarotMajorArcana,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: const Color(0xFFD8C8F7),
                     letterSpacing: 0.8,
