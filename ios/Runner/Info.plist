@@ -45,5 +45,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Madame Gatto benötigt die Kamera, um eine Schriftprobe zu fotografieren.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Madame Gatto benötigt Zugriff auf Fotos, um eine Schriftprobe auszuwählen.</string>
 </dict>
 </plist>
