@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
+import '../../data/demo_tarot_cards.dart';
 import '../../logic/daily_tarot_card_generator.dart';
 import '../../models/tarot_card.dart';
 
@@ -233,6 +236,79 @@ class TarotPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 12),
+                    MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () {
+                            final card = demoTarotCards[
+                                Random().nextInt(demoTarotCards.length)];
+                            _showDrawnCardDialog(context, card);
+                          },
+                          borderRadius: BorderRadius.circular(16),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              color: const Color(0x2B161126),
+                              border: Border.all(
+                                color: const Color(0x66D5B46B),
+                                width: 0.9,
+                              ),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0x40100D1B),
+                                  blurRadius: 18,
+                                  offset: Offset(0, 8),
+                                ),
+                                BoxShadow(
+                                  color: Color(0x182F1F4F),
+                                  blurRadius: 10,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 6,
+                              ),
+                              leading: Container(
+                                width: 38,
+                                height: 38,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: const Color(0x33432D63),
+                                  border: Border.all(
+                                    color: const Color(0x73E1C27A),
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.shuffle_rounded,
+                                  size: 20,
+                                  color: Color(0xFFFFD98A),
+                                ),
+                              ),
+                              title: Text(
+                                'Eine Karte ziehen',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(
+                                      color: const Color(0xFFF4E9FF),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                              ),
+                              trailing: const Icon(
+                                Icons.chevron_right_rounded,
+                                color: Color(0xFFE5D0A0),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
                     const _TarotOptionTile(title: 'Drei-Karten-Legung'),
                     const SizedBox(height: 12),
                     const _TarotOptionTile(title: 'Liebe & Intuition'),
@@ -314,7 +390,15 @@ Future<void> _showDailyTarotDialog(BuildContext context, TarotCard card) {
                         fontWeight: FontWeight.w600,
                       ),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 2),
+                Text(
+                  'Große Arkana',
+                  style: Theme.of(dialogContext).textTheme.bodySmall?.copyWith(
+                    color: const Color(0xFFD8C8F7),
+                    letterSpacing: 0.8,
+                  ),
+                ),
+                const SizedBox(height: 4),
                 Text(
                   card.symbol,
                   style: Theme.of(dialogContext).textTheme.headlineSmall
@@ -350,6 +434,107 @@ Future<void> _showDailyTarotDialog(BuildContext context, TarotCard card) {
                   'Diese Karte erneuert sich täglich.',
                   style: Theme.of(dialogContext).textTheme.bodySmall?.copyWith(
                     color: const Color(0xFFD8C8F7),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    child: const Text('Schließen'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+Future<void> _showDrawnCardDialog(BuildContext context, TarotCard card) {
+  return showDialog<void>(
+    context: context,
+    builder: (dialogContext) {
+      return Dialog(
+        backgroundColor: const Color(0xFF140F1F),
+        elevation: 0,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: const Color(0x88DAB86E), width: 1.2),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x40100D1B),
+                blurRadius: 22,
+                offset: Offset(0, 10),
+              ),
+            ],
+          ),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '🃏 Gezogene Karte',
+                  style: Theme.of(dialogContext).textTheme.titleLarge?.copyWith(
+                    color: const Color(0xFFFFE9B0),
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                _TarotCardImagePreview(card: card),
+                const SizedBox(height: 12),
+                Text(
+                  card.name,
+                  style: Theme.of(dialogContext).textTheme.titleMedium
+                      ?.copyWith(
+                        color: const Color(0xFFF4E9FF),
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Große Arkana',
+                  style: Theme.of(dialogContext).textTheme.bodySmall?.copyWith(
+                    color: const Color(0xFFD8C8F7),
+                    letterSpacing: 0.8,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  card.symbol,
+                  style: Theme.of(dialogContext).textTheme.headlineSmall
+                      ?.copyWith(color: const Color(0xFFFFD98A)),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  card.meaning,
+                  style: Theme.of(dialogContext).textTheme.bodyLarge?.copyWith(
+                    color: const Color(0xFFF1E9FF),
+                    height: 1.45,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: const Color(0x24130F1F),
+                    border: Border.all(color: const Color(0x44D0B16F)),
+                  ),
+                  child: Text(
+                    card.catMessage,
+                    style: Theme.of(dialogContext).textTheme.bodyMedium
+                        ?.copyWith(
+                          color: const Color(0xE8F1E9FF),
+                          height: 1.45,
+                        ),
                   ),
                 ),
                 const SizedBox(height: 16),
