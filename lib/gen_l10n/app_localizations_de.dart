@@ -98,4 +98,17 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get tarotDailyRenewHint => 'Diese Karte erneuert sich täglich.';
+
+  @override
+  String get tarotTeaserText =>
+      'Ziehe später deine Karten und Madame Gatto deutet ihre Symbole.';
+
+  @override
+  String get tarotOpenDailyCard => 'Tageskarte öffnen';
+
+  @override
+  String get tarotComingSoon => 'Tarot-Orakel erwacht bald';
+
+  @override
+  String get tarotDrawnCardTitle => 'Gezogene Karte';
 }

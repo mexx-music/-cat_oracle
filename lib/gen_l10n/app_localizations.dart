@@ -277,6 +277,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This card renews daily.'**
   String get tarotDailyRenewHint;
+
+  /// Teaser paragraph on the tarot main page
+  ///
+  /// In en, this message translates to:
+  /// **'Draw your cards later and Madame Gatto will read their symbols.'**
+  String get tarotTeaserText;
+
+  /// Button label to open the daily card dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Open Daily Card'**
+  String get tarotOpenDailyCard;
+
+  /// Coming-soon banner at the bottom of the tarot page
+  ///
+  /// In en, this message translates to:
+  /// **'The tarot oracle awakens soon'**
+  String get tarotComingSoon;
+
+  /// Title of the drawn card dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Drawn Card'**
+  String get tarotDrawnCardTitle;
 }
 
 class _AppLocalizationsDelegate

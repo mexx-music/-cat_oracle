@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/app_routes.dart';
+import '../../../../core/locale_controller.dart';
 import 'package:cat_oracle/gen_l10n/app_localizations.dart';
 
 class HomePage extends StatelessWidget {
@@ -52,6 +53,10 @@ class HomePage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: _LanguageButton(),
+                      ),
                       SizedBox(height: heroSpacing),
                       Text(
                         l10n.homeTitle,
@@ -235,4 +240,46 @@ class _EntryCard extends StatelessWidget {
       ),
     );
   }
+}
+
+class _LanguageButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final controller = LocaleScope.of(context);
+    final current = controller.locale.languageCode;
+    return PopupMenuButton<Locale>(
+      icon: const Icon(Icons.language_rounded),
+      iconColor: const Color(0xFFF3E6BD),
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.all(const Color(0x33FFFFFF)),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+        ),
+      ),
+      itemBuilder: (_) => [
+        PopupMenuItem(
+          value: const Locale('de'),
+          child: _localeItem('Deutsch', current == 'de'),
+        ),
+        PopupMenuItem(
+          value: const Locale('en'),
+          child: _localeItem('English', current == 'en'),
+        ),
+      ],
+      onSelected: controller.setLocale,
+    );
+  }
+
+  Widget _localeItem(String label, bool selected) => Row(
+    children: [
+      SizedBox(
+        width: 20,
+        child: selected
+            ? const Icon(Icons.check_rounded, size: 16)
+            : null,
+      ),
+      const SizedBox(width: 8),
+      Text(label),
+    ],
+  );
 }

@@ -145,7 +145,7 @@ class TarotPage extends StatelessWidget {
                         ],
                       ),
                       child: Text(
-                        'Ziehe später deine Karten und Madame Gatto deutet ihre Symbole.',
+                        l10n.tarotTeaserText,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           color: const Color(0xFFF1E9FF),
                           height: 1.45,
@@ -259,7 +259,7 @@ class TarotPage extends StatelessWidget {
                                           ),
                                         ),
                                       ),
-                                      child: const Text('Tageskarte öffnen'),
+                                      child: Text(l10n.tarotOpenDailyCard),
                                     ),
                                   ),
                                 ],
@@ -364,7 +364,7 @@ class TarotPage extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        'Tarot-Orakel erwacht bald',
+                        l10n.tarotComingSoon,
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(
@@ -523,7 +523,7 @@ Future<void> _showDrawnCardDialog(BuildContext context, TarotCard card) {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  '🃏 Gezogene Karte',
+                  '🃏 ${l10n.tarotDrawnCardTitle}',
                   style: Theme.of(dialogContext).textTheme.titleLarge?.copyWith(
                     color: const Color(0xFFFFE9B0),
                     fontWeight: FontWeight.w700,

@@ -29,5 +29,9 @@
   "tarotConnection": "Verbindung",
   "tarotLoveReading": "Liebesdeutung",
   "tarotOverallReading": "Gesamtdeutung",
-  "tarotDailyRenewHint": "Diese Karte erneuert sich täglich."
+  "tarotDailyRenewHint": "Diese Karte erneuert sich täglich.",
+  "tarotTeaserText": "Ziehe später deine Karten und Madame Gatto deutet ihre Symbole.",
+  "tarotOpenDailyCard": "Tageskarte öffnen",
+  "tarotComingSoon": "Tarot-Orakel erwacht bald",
+  "tarotDrawnCardTitle": "Gezogene Karte"
 }

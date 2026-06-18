@@ -98,4 +98,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tarotDailyRenewHint => 'This card renews daily.';
+
+  @override
+  String get tarotTeaserText =>
+      'Draw your cards later and Madame Gatto will read their symbols.';
+
+  @override
+  String get tarotOpenDailyCard => 'Open Daily Card';
+
+  @override
+  String get tarotComingSoon => 'The tarot oracle awakens soon';
+
+  @override
+  String get tarotDrawnCardTitle => 'Drawn Card';
 }
