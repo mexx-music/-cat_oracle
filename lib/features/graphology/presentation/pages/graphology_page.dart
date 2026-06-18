@@ -163,104 +163,127 @@ void _showGraphologyDialog(BuildContext context) {
     builder: (dialogContext) {
       return TweenAnimationBuilder<double>(
         tween: Tween(begin: 0.0, end: 1.0),
-        duration: const Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 320),
         curve: Curves.easeOutCubic,
         builder: (_, t, child) => Opacity(
           opacity: t,
-          child: Transform.scale(scale: 0.88 + 0.12 * t, child: child),
+          child: Transform.scale(scale: 0.86 + 0.14 * t, child: child),
         ),
         child: Dialog(
           backgroundColor: const Color(0xFF140F1F),
           elevation: 0,
           insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: const Color(0x88DAB86E), width: 1.2),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x40100D1B),
-                  blurRadius: 22,
-                  offset: Offset(0, 10),
-                ),
-              ],
-            ),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '✒️ Grafologie-Orakel',
-                    style: Theme.of(dialogContext).textTheme.titleLarge
-                        ?.copyWith(
-                          color: const Color(0xFFFFE9B0),
-                          fontWeight: FontWeight.w700,
-                        ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 540),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(color: const Color(0x99DAB86E), width: 1.2),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x50100D1B),
+                    blurRadius: 28,
+                    offset: Offset(0, 12),
                   ),
-                  const SizedBox(height: 20),
-                  for (final trait in traits) ...[
-                    _TraitTile(trait: trait),
-                    const SizedBox(height: 10),
-                  ],
-                  const Divider(color: Color(0x44DAB86E), thickness: 0.8),
-                  const SizedBox(height: 14),
-                  Text(
-                    '✨ Gesamtdeutung',
-                    style: Theme.of(dialogContext).textTheme.titleSmall
-                        ?.copyWith(
-                          color: const Color(0xFFFFE9B0),
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.6,
-                        ),
+                  BoxShadow(
+                    color: Color(0x1A7A4DCC),
+                    blurRadius: 18,
+                    offset: Offset(0, 6),
                   ),
-                  const SizedBox(height: 10),
-                  Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: const Color(0x2A130F1F),
-                      border: Border.all(color: const Color(0x66DAB86E)),
-                    ),
-                    child: Text(
-                      reading,
-                      style: Theme.of(dialogContext).textTheme.bodyMedium
+                ],
+              ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(22),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '✒️ Grafologie-Orakel',
+                      style: Theme.of(dialogContext).textTheme.titleLarge
                           ?.copyWith(
-                            color: const Color(0xFFF1E9FF),
-                            height: 1.55,
+                            color: const Color(0xFFFFE9B0),
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.4,
                           ),
                     ),
-                  ),
-                  const SizedBox(height: 14),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: const Color(0x1A130F1F),
-                      border: Border.all(color: const Color(0x33DAB86E)),
-                    ),
-                    child: Text(
-                      'Diese Deutung ist symbolisch und ersetzt keine Analyse.',
-                      textAlign: TextAlign.center,
+                    const SizedBox(height: 5),
+                    Text(
+                      'Madame Gatto liest die Spuren deiner Schrift',
                       style: Theme.of(dialogContext).textTheme.bodySmall
                           ?.copyWith(
                             color: const Color(0xFFD8C8F7),
-                            fontStyle: FontStyle.italic,
+                            letterSpacing: 0.3,
                           ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () => Navigator.of(dialogContext).pop(),
-                      child: const Text('Schließen'),
+                    const SizedBox(height: 22),
+                    for (final trait in traits) ...[
+                      _TraitTile(trait: trait),
+                      const SizedBox(height: 12),
+                    ],
+                    const Divider(color: Color(0x44DAB86E), thickness: 0.8),
+                    const SizedBox(height: 16),
+                    Text(
+                      '✨ Gesamtdeutung',
+                      style: Theme.of(dialogContext).textTheme.titleSmall
+                          ?.copyWith(
+                            color: const Color(0xFFFFE9B0),
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.6,
+                          ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(14),
+                        gradient: const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [Color(0x3A1A0F30), Color(0x2A14102A)],
+                        ),
+                        border: Border.all(color: const Color(0x77DAB86E)),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x2A100D1B),
+                            blurRadius: 10,
+                            offset: Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        reading,
+                        style: Theme.of(dialogContext).textTheme.bodyMedium
+                            ?.copyWith(
+                              color: const Color(0xFFF1E9FF),
+                              height: 1.65,
+                            ),
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    Text(
+                      'Diese Deutung ist symbolisch und ersetzt keine professionelle Analyse.',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(dialogContext).textTheme.bodySmall
+                          ?.copyWith(
+                            color: const Color(0x99D8C8F7),
+                            fontStyle: FontStyle.italic,
+                            height: 1.4,
+                          ),
+                    ),
+                    const SizedBox(height: 14),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(),
+                        child: const Text('Schließen'),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -278,16 +301,20 @@ class _TraitTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(14),
-        color: const Color(0x2A150F24),
-        border: Border.all(color: const Color(0x77DAB86E), width: 1),
+        borderRadius: BorderRadius.circular(16),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0x3C1A0F2E), Color(0x2A130F22)],
+        ),
+        border: Border.all(color: const Color(0x88DAB86E), width: 1),
         boxShadow: const [
           BoxShadow(
             color: Color(0x3A100D1B),
-            blurRadius: 12,
-            offset: Offset(0, 6),
+            blurRadius: 14,
+            offset: Offset(0, 7),
           ),
         ],
       ),
@@ -295,41 +322,61 @@ class _TraitTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 trait.symbol,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(width: 10),
-              Text(
-                trait.title,
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   color: const Color(0xFFFFE9B0),
-                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 2),
+                    Text(
+                      trait.title,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: const Color(0xFFFFE9B0),
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Merkmal',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: const Color(0xFFD8C8F7),
+                        letterSpacing: 1.4,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Text(
             trait.meaning,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: const Color(0xFFD4C8F0),
-              height: 1.45,
+              height: 1.55,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: const Color(0x24130F1F),
+              color: const Color(0x20130F1F),
               border: Border.all(color: const Color(0x44D0B16F)),
             ),
             child: Text(
               trait.catMessage,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: const Color(0xE8F1E9FF),
+                color: const Color(0xCCF1E9FF),
                 height: 1.45,
                 fontStyle: FontStyle.italic,
               ),
