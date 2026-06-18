@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/app_routes.dart';
+import 'package:cat_oracle/gen_l10n/app_localizations.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final screenHeight = MediaQuery.of(context).size.height;
     final safeAreaPadding = MediaQuery.of(context).padding.vertical;
     final heroSpacing = (screenHeight * 0.42).clamp(180.0, 340.0).toDouble();
@@ -83,8 +85,8 @@ class HomePage extends StatelessWidget {
                       const SizedBox(height: 40),
                       _EntryCard(
                         symbol: '✋',
-                        title: 'Handlesen',
-                        subtitle: 'Lies deine Linien',
+                        title: l10n.homePalmistryTitle,
+                        subtitle: l10n.homePalmistrySubtitle,
                         onTap: () {
                           Navigator.of(context).pushNamed(AppRoutes.handScan);
                         },
@@ -92,8 +94,8 @@ class HomePage extends StatelessWidget {
                       const SizedBox(height: 14),
                       _EntryCard(
                         symbol: '🔮',
-                        title: 'Demo-Lesung',
-                        subtitle: 'Katzen-Orakel ansehen',
+                        title: l10n.homeOracleTitle,
+                        subtitle: l10n.homeOracleSubtitle,
                         onTap: () {
                           Navigator.of(
                             context,
@@ -103,8 +105,8 @@ class HomePage extends StatelessWidget {
                       const SizedBox(height: 14),
                       _EntryCard(
                         symbol: '✨',
-                        title: 'Astrologie',
-                        subtitle: 'Sterne & Zeichen',
+                        title: l10n.homeAstrologyTitle,
+                        subtitle: l10n.homeAstrologySubtitle,
                         onTap: () {
                           Navigator.of(context).pushNamed(AppRoutes.astrology);
                         },
@@ -112,8 +114,8 @@ class HomePage extends StatelessWidget {
                       const SizedBox(height: 14),
                       _EntryCard(
                         symbol: '🃏',
-                        title: 'Tarot',
-                        subtitle: 'Die Karten flüstern',
+                        title: l10n.homeTarotTitle,
+                        subtitle: l10n.homeTarotSubtitle,
                         onTap: () {
                           Navigator.of(context).pushNamed(AppRoutes.tarot);
                         },
@@ -121,8 +123,8 @@ class HomePage extends StatelessWidget {
                       const SizedBox(height: 14),
                       _EntryCard(
                         symbol: '✒️',
-                        title: 'Grafologie',
-                        subtitle: 'Schrift offenbart Charakter',
+                        title: l10n.homeGraphologyTitle,
+                        subtitle: l10n.homeGraphologySubtitle,
                         onTap: () {
                           Navigator.of(context).pushNamed(AppRoutes.graphology);
                         },

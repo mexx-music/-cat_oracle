@@ -3,5 +3,45 @@
   "appTitle": "Madame Gatto Futuro",
   "@appTitle": {
     "description": "The title of the application"
+  },
+  "homePalmistryTitle": "Palm Reading",
+  "@homePalmistryTitle": {
+    "description": "Home: palmistry entry card title"
+  },
+  "homePalmistrySubtitle": "Read your lines",
+  "@homePalmistrySubtitle": {
+    "description": "Home: palmistry entry card subtitle"
+  },
+  "homeOracleTitle": "Demo Reading",
+  "@homeOracleTitle": {
+    "description": "Home: oracle entry card title"
+  },
+  "homeOracleSubtitle": "View the cat oracle",
+  "@homeOracleSubtitle": {
+    "description": "Home: oracle entry card subtitle"
+  },
+  "homeAstrologyTitle": "Astrology",
+  "@homeAstrologyTitle": {
+    "description": "Home: astrology entry card title"
+  },
+  "homeAstrologySubtitle": "Stars & signs",
+  "@homeAstrologySubtitle": {
+    "description": "Home: astrology entry card subtitle"
+  },
+  "homeTarotTitle": "Tarot",
+  "@homeTarotTitle": {
+    "description": "Home: tarot entry card title"
+  },
+  "homeTarotSubtitle": "The cards whisper",
+  "@homeTarotSubtitle": {
+    "description": "Home: tarot entry card subtitle"
+  },
+  "homeGraphologyTitle": "Graphology",
+  "@homeGraphologyTitle": {
+    "description": "Home: graphology entry card title"
+  },
+  "homeGraphologySubtitle": "Writing reveals character",
+  "@homeGraphologySubtitle": {
+    "description": "Home: graphology entry card subtitle"
   }
 }

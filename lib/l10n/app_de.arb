@@ -1,7 +1,14 @@
 {
   "@@locale": "de",
   "appTitle": "Madame Gatto Futuro",
-  "@appTitle": {
-    "description": "Der Titel der App"
-  }
+  "homePalmistryTitle": "Handlesen",
+  "homePalmistrySubtitle": "Lies deine Linien",
+  "homeOracleTitle": "Demo-Lesung",
+  "homeOracleSubtitle": "Katzen-Orakel ansehen",
+  "homeAstrologyTitle": "Astrologie",
+  "homeAstrologySubtitle": "Sterne & Zeichen",
+  "homeTarotTitle": "Tarot",
+  "homeTarotSubtitle": "Die Karten flüstern",
+  "homeGraphologyTitle": "Grafologie",
+  "homeGraphologySubtitle": "Schrift offenbart Charakter"
 }

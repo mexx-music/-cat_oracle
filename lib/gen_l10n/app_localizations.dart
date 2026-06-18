@@ -103,6 +103,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Madame Gatto Futuro'**
   String get appTitle;
+
+  /// Home: palmistry entry card title
+  ///
+  /// In en, this message translates to:
+  /// **'Palm Reading'**
+  String get homePalmistryTitle;
+
+  /// Home: palmistry entry card subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Read your lines'**
+  String get homePalmistrySubtitle;
+
+  /// Home: oracle entry card title
+  ///
+  /// In en, this message translates to:
+  /// **'Demo Reading'**
+  String get homeOracleTitle;
+
+  /// Home: oracle entry card subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'View the cat oracle'**
+  String get homeOracleSubtitle;
+
+  /// Home: astrology entry card title
+  ///
+  /// In en, this message translates to:
+  /// **'Astrology'**
+  String get homeAstrologyTitle;
+
+  /// Home: astrology entry card subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Stars & signs'**
+  String get homeAstrologySubtitle;
+
+  /// Home: tarot entry card title
+  ///
+  /// In en, this message translates to:
+  /// **'Tarot'**
+  String get homeTarotTitle;
+
+  /// Home: tarot entry card subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'The cards whisper'**
+  String get homeTarotSubtitle;
+
+  /// Home: graphology entry card title
+  ///
+  /// In en, this message translates to:
+  /// **'Graphology'**
+  String get homeGraphologyTitle;
+
+  /// Home: graphology entry card subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Writing reveals character'**
+  String get homeGraphologySubtitle;
 }
 
 class _AppLocalizationsDelegate

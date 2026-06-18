@@ -6,9 +6,9 @@ void main() {
   testWidgets('shows the Cat Oracle home page', (WidgetTester tester) async {
     await tester.pumpWidget(const CatOracleApp());
 
-    expect(find.text('Handlesen'), findsOneWidget);
-    expect(find.text('Astrologie'), findsOneWidget);
+    expect(find.text('Palm Reading'), findsOneWidget);
+    expect(find.text('Astrology'), findsOneWidget);
     expect(find.text('Tarot'), findsOneWidget);
-    expect(find.text('Grafologie'), findsOneWidget);
+    expect(find.text('Graphology'), findsOneWidget);
   });
 }
