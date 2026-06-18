@@ -50,7 +50,7 @@ class TarotDrawOverlay extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'Wähle eine Karte',
+                  '🃏 Wähle eine Karte',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: const Color(0xFFFFE9B0),
@@ -63,8 +63,9 @@ class TarotDrawOverlay extends StatelessWidget {
                   'Madame Gatto mischt das Deck',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: const Color(0xFFD8C8F7),
+                    color: const Color(0x99D8C8F7),
                     letterSpacing: 0.3,
+                    fontSize: 11,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -104,41 +105,66 @@ class TarotDrawOverlay extends StatelessWidget {
   }
 }
 
-class _CardBack extends StatelessWidget {
+class _CardBack extends StatefulWidget {
   final int index;
 
   const _CardBack({required this.index});
 
   @override
+  State<_CardBack> createState() => _CardBackState();
+}
+
+class _CardBackState extends State<_CardBack> {
+  bool _hovered = false;
+
+  @override
   Widget build(BuildContext context) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
       child: GestureDetector(
         onTap: () {
           final card = demoTarotCards[Random().nextInt(demoTarotCards.length)];
           Navigator.of(context).pop(card);
         },
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFF1A0F2E), Color(0xFF110C1F)],
+        child: AnimatedScale(
+          scale: _hovered ? 1.04 : 1.0,
+          duration: const Duration(milliseconds: 150),
+          curve: Curves.easeOut,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: const Color(0xFFDAB86E), width: 1.0),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x35DAB86E),
+                  blurRadius: 8,
+                  spreadRadius: 0,
+                ),
+              ],
             ),
-            border: Border.all(color: const Color(0xFFDAB86E), width: 1.0),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x35DAB86E),
-                blurRadius: 8,
-                spreadRadius: 0,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(9),
+              child: Image.asset(
+                'assets/images/tarot/tarot_back.png',
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Color(0xFF1A0F2E), Color(0xFF110C1F)],
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      widget.index.isEven ? '🐾' : '🃏',
+                      style: const TextStyle(fontSize: 22),
+                    ),
+                  ),
+                ),
               ),
-            ],
-          ),
-          child: Center(
-            child: Text(
-              index.isEven ? '🐾' : '🃏',
-              style: const TextStyle(fontSize: 22),
             ),
           ),
         ),
