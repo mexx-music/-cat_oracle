@@ -7,6 +7,7 @@ import 'package:cat_oracle/gen_l10n/app_localizations.dart';
 import '../../data/demo_tarot_cards.dart';
 import '../../logic/daily_tarot_card_generator.dart';
 import '../../models/tarot_card.dart';
+import '../widgets/tarot_draw_overlay.dart';
 
 const Map<String, List<String>> _cardThemes = {
   'Die Katze': ['Leichtigkeit', 'Vertrauen', 'Neugier', 'Anfang', 'Mut'],
@@ -275,9 +276,9 @@ class TarotPage extends StatelessWidget {
                       child: Material(
                         color: Colors.transparent,
                         child: InkWell(
-                          onTap: () {
-                            final card = demoTarotCards[
-                                Random().nextInt(demoTarotCards.length)];
+                          onTap: () async {
+                            final card = await showTarotDrawOverlay(context);
+                            if (card == null || !context.mounted) return;
                             _showDrawnCardDialog(context, card);
                           },
                           borderRadius: BorderRadius.circular(16),
