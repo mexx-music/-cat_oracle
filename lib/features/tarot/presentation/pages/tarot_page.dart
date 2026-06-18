@@ -608,54 +608,41 @@ String _composeThreeCardReading(
 
   switch (variant) {
     case 0:
-      return '${past.name} ist nicht einfach eine Karte der Vergangenheit – sie ist ein Resonanzraum. '
-          '${_t(past, 0)} und ${_t(past, 1)} wirken noch nach, auch wenn der Moment selbst vergangen ist. '
-          '${present.name} antwortet auf diesen Nachhall mit ${_t(present, 0)} – einer Qualität, die im Jetzt '
-          'besonders sichtbar wird, und die sich, wenn man genau hinsieht, auch als ${_t(present, 1)} zeigen kann. '
-          'Was zwischen diesen beiden Karten liegt, ist kein Bruch, sondern ein fließender Übergang: '
-          '${past.name} hat etwas in Bewegung gesetzt, das ${present.name} weiterführt. '
-          '${impulse.name} tritt als dritte Stimme hinzu und bringt ${_t(impulse, 0)} ins Gespräch – '
-          'keinen Befehl, sondern ein sanftes Signal. '
-          'Zusammen erzählen diese drei Karten von einer inneren Bewegung, die von ${_t(past, 0)} über '
-          '${_t(present, 0)} hin zu ${_t(impulse, 0)} führt. '
-          'Das ist keine Vorhersage. '
-          'Es ist eine Einladung, genauer hinzuschauen, was gerade in dir in Bewegung ist.';
+      return '${past.name} liegt in der Vergangenheit – sie steht für ${_t(past, 0)} und ${_t(past, 1)}. '
+          'Das hat Spuren hinterlassen, die heute noch zu spüren sind. '
+          '${present.name} beschreibt die Gegenwart: ${_t(present, 0)} ist das, womit du es gerade zu tun hast. '
+          'Dazu kommt ${_t(present, 1)} – beides gehört zu diesem Moment. '
+          '${impulse.name} steht als Impuls daneben und bringt ${_t(impulse, 0)} ins Spiel. '
+          'Das ist kein Befehl, sondern ein Hinweis. '
+          'Kurz gesagt: ${past.name} hat den Rahmen gesetzt, ${present.name} zeigt, wo du jetzt stehst – '
+          'und ${impulse.name} deutet an, worauf es ankommt.';
     case 1:
-      return 'Drei Karten, drei Stimmen – und alle sprechen gleichzeitig. '
-          '${past.name} trägt ${_t(past, 0)} in sich: etwas, das nachwirkt, '
-          'vielleicht ohne dass man es bewusst benennen kann. '
-          'Dass ${present.name} jetzt erscheint, ist kein Zufall – ${_t(present, 0)} und ${_t(present, 1)} '
-          'sind genau die Qualitäten, die gebraucht werden, um das zu verarbeiten, was ${past.name} hinterlassen hat. '
-          '${impulse.name} schließt den Bogen nicht, sondern öffnet ihn: ${_t(impulse, 0)} deutet auf eine '
-          'Möglichkeit hin, die noch nicht vollständig ergriffen wurde. '
-          'Auffällig ist, wie gut diese drei Karten aufeinander hören – '
-          'sie widersprechen sich nicht, sie ergänzen sich. '
-          'Das ist eine Einladung, die Verbindung zwischen ${_t(past, 0)}, ${_t(present, 0)} und '
-          '${_t(impulse, 0)} selbst weiterzudenken und dabei ehrlich zu bleiben.';
+      return 'Drei Karten, drei Positionen – alle sagen etwas Klares. '
+          '${past.name} kommt aus der Vergangenheit und trägt ${_t(past, 0)} in sich. '
+          'Diese Qualität ist nicht verschwunden, sie wirkt weiter. '
+          '${present.name} steht jetzt im Mittelpunkt: ${_t(present, 0)} und ${_t(present, 1)} beschreiben, was gerade da ist. '
+          '${impulse.name} als Impuls zeigt ${_t(impulse, 0)} – etwas, das vielleicht noch zu wenig Platz hat. '
+          'Alle drei Karten passen zusammen. '
+          'Kurz gesagt: Was ${past.name} angefangen hat, trägt ${present.name} weiter – '
+          'und ${impulse.name} zeigt, in welche Richtung.';
     case 2:
-      return '${past.name} bringt ${_t(past, 0)} mit – eine Energie, die nicht einfach verschwindet, '
-          'weil ein Tag vergeht. '
-          'Sie hat den Boden geformt, auf dem ${present.name} jetzt steht. '
-          'Und ${present.name} steht tatsächlich: ${_t(present, 0)} ist die Qualität des gegenwärtigen Moments, '
-          'und darin steckt auch ${_t(present, 1)}, wenn man bereit ist, genauer hinzuschauen. '
-          'Das Verhältnis zwischen diesen beiden Karten ist eines der Kontinuität – '
-          'nicht der Wiederholung, sondern der Weiterentwicklung. '
-          '${impulse.name} erscheint als Antwort auf beide – auf das, was war, und auf das, was jetzt ist. '
-          '${_t(impulse, 0)} ist der Ton, den diese Karte anschlägt: '
-          'nicht als Forderung, sondern als stille Möglichkeit. '
-          'Vielleicht lohnt sich die Frage: Wie viel von ${_t(past, 0)} ist noch spürbar, '
-          'und wie viel Raum lässt du ${_t(impulse, 0)} bereits?';
+      return '${past.name} hat die Vergangenheit geprägt: ${_t(past, 0)} war spürbar. '
+          'Das hat den Boden bereitet, auf dem ${present.name} jetzt steht. '
+          '${present.name} bringt ${_t(present, 0)} – das ist die Energie des jetzigen Moments. '
+          'Wenn man genau schaut, steckt auch ${_t(present, 1)} darin. '
+          '${impulse.name} erscheint als Impuls und spricht von ${_t(impulse, 0)}. '
+          'Das ist keine Warnung, sondern eine stille Möglichkeit. '
+          'Kurz gesagt: Die Linie von ${_t(past, 0)} über ${_t(present, 0)} zu ${_t(impulse, 0)} ist klar – '
+          'diese drei Karten erzählen eine zusammenhängende Geschichte.';
     default:
-      return 'Madame Gatto legt die Karten und schweigt einen Moment. '
-          '${past.name} – ${_t(past, 0)} und ${_t(past, 1)}, die noch nachwirken. '
-          '${present.name} – ${_t(present, 0)} und ${_t(present, 1)}, die jetzt gefragt sind. '
-          '${impulse.name} – ${_t(impulse, 0)}, das sich ankündigt. '
-          'Sie murmelt: Selten liegen drei Karten so kohärent beieinander. '
-          'Was ${past.name} hinterlassen hat, ist nicht verloren – es ist in ${present.name} übergegangen, '
-          'und ${impulse.name} zeigt, wohin dieser Übergang führen kann. '
-          'Das ist kein Versprechen und keine Warnung. '
-          'Es ist das, was die Karten flüstern, wenn man lange genug stillhält. '
-          'Madame Gatto legt die Hand auf den Tisch und nickt: Diese Legung lohnt sich, mehrmals zu lesen.';
+      return 'Madame Gatto legt die drei Karten und nickt. '
+          '${past.name} aus der Vergangenheit: ${_t(past, 0)} und ${_t(past, 1)} – beides hinterlässt Spuren. '
+          '${present.name} in der Gegenwart: ${_t(present, 0)}, das jetzt gefragt ist. '
+          '${impulse.name} als Impuls: ${_t(impulse, 0)}, leise, aber deutlich zu hören. '
+          '${past.name} und ${present.name} sprechen dieselbe Sprache – und ${impulse.name} ergänzt sie. '
+          'Diese Konstellation ist ungewöhnlich klar. '
+          'Kurz gesagt: Selten passen drei Karten so gut zusammen. '
+          'Madame Gatto sagt: Diese Legung lohnt sich, zweimal zu lesen.';
   }
 }
 
@@ -817,59 +804,41 @@ String _composeLoveReading(
 
   switch (variant) {
     case 0:
-      return '${self.name} beschreibt, wer du in diesem Moment in Beziehungen bist – '
-          'mit ${_t(self, 0)} als der Energie, die du in Begegnungen mitbringst. '
-          'Das ist weder Urteil noch Bestätigung; es ist einfach, was gerade da ist. '
-          '${connection.name} zeigt, welche Qualität in einer Verbindung lebendig sein kann: '
-          '${_t(connection, 0)} und ${_t(connection, 1)} – beides Aspekte, die echte Nähe erst möglich machen. '
-          'Interessant ist, wie ${self.name} und ${connection.name} miteinander in Beziehung stehen: '
-          '${_t(self, 0)} muss nicht identisch mit ${_t(connection, 0)} sein, um eine Brücke zu bilden. '
-          '${impulse.name} tritt als dritte Stimme hinzu und bringt ${_t(impulse, 0)} ins Gespräch – '
-          'eine Einladung, die weder Ungeduld noch Angst verlangt, sondern Aufmerksamkeit. '
-          'Echte Verbindung entsteht nicht dadurch, dass man die perfekte Begegnung findet, '
-          'sondern dadurch, dass man selbst anwesend und aufrichtig ist. '
-          'Diese drei Karten erzählen genau davon.';
+      return '${self.name} zeigt dich in dieser Situation: ${_t(self, 0)} ist das, was du in Begegnungen mitbringst. '
+          'Das ist weder gut noch schlecht – es ist einfach, was gerade da ist. '
+          '${connection.name} steht für die Verbindung: ${_t(connection, 0)} und ${_t(connection, 1)} '
+          'beschreiben, was echte Nähe möglich macht. '
+          '${impulse.name} kommt als Impuls dazu und bringt ${_t(impulse, 0)} ins Spiel. '
+          'Diese drei Karten passen zusammen und erzählen eine klare Geschichte. '
+          'Kurz gesagt: ${self.name} zeigt, wer du gerade bist – und ${connection.name} zeigt, was in einer '
+          'Verbindung möglich ist, wenn ${_t(impulse, 0)} Raum bekommt.';
     case 1:
-      return 'Drei Karten, die gemeinsam von Verbindung sprechen – und jede auf ihre eigene Art. '
-          '${self.name} bringt ${_t(self, 0)} mit: das ist deine Haltung, dein Ausgangspunkt, '
-          'das, was du in Begegnungen verkörperst, bewusst oder unbewusst. '
-          '${connection.name} spricht von ${_t(connection, 0)} und ${_t(connection, 1)} – nicht als Versprechen, '
-          'sondern als Qualität, die möglich ist, wenn beide Seiten bereit sind, hinzuhören. '
-          'Dass ${impulse.name} hier erscheint, ist bedeutsam: ${_t(impulse, 0)} ist der Impuls, '
-          'der gerade am deutlichsten klingt. '
-          'Madame Gatto beobachtet diese Konstellation und sagt ruhig: Wenn ${_t(self, 0)} auf '
-          '${_t(connection, 0)} trifft, entsteht etwas – keine Garantie, aber eine echte Möglichkeit. '
-          'Was ${impulse.name} hinzufügt, ist ${_t(impulse, 0)}: die Erinnerung daran, '
-          'dass Verbindung Zeit und inneren Raum braucht. '
-          'Diese Legung erzählt weniger von dem, was fehlt, '
-          'als von dem, was bereits da ist und gesehen werden möchte.';
+      return 'Drei Karten für Liebe und Verbindung. '
+          '${self.name} beschreibt dich: ${_t(self, 0)} ist deine Haltung, wenn du auf andere triffst. '
+          '${connection.name} zeigt die Verbindung: ${_t(connection, 0)} und ${_t(connection, 1)} stehen für das, '
+          'was zwischen zwei Menschen lebendig sein kann. '
+          '${impulse.name} als Impuls bringt ${_t(impulse, 0)} ins Bild – etwas, das gerade laut klingt. '
+          'Madame Gatto sieht diese drei Karten und sagt: Das ergibt Sinn. '
+          'Kurz gesagt: Was ${self.name} zeigt und was ${connection.name} beschreibt, liegt näher zusammen als gedacht – '
+          '${impulse.name} erinnert daran, was dabei nicht vergessen werden sollte.';
     case 2:
-      return '${self.name} ist der Ausgangspunkt dieser Legung: ${_t(self, 0)} beschreibt '
-          'deine innere Haltung gegenüber Nähe, Verbindung und dem Wahrnehmen anderer. '
-          '${connection.name} antwortet darauf mit ${_t(connection, 0)} – und wer die Karte länger betrachtet, '
-          'entdeckt auch ${_t(connection, 1)} darin. '
-          'Das Gespräch zwischen ${self.name} und ${connection.name} ist eigentlich das Herzstück dieser Legung: '
-          'nicht jede Karte einzeln, sondern das, was zwischen ihnen entsteht. '
-          '${impulse.name} tritt als Impuls hinzu: ${_t(impulse, 0)} erscheint als das, '
-          'was vielleicht noch mehr Raum verdient – in dir selbst und im Miteinander. '
-          'Echte Nähe braucht keine Vollständigkeit. '
-          'Sie braucht Aufrichtigkeit und die Bereitschaft, gesehen zu werden. '
-          'Diese drei Karten beschreiben den Weg von ${_t(self, 0)} über ${_t(connection, 0)} '
-          'hin zu ${_t(impulse, 0)} – und dieser Weg beginnt innen.';
+      return '${self.name} ist der Ausgangspunkt: ${_t(self, 0)} beschreibt deine Haltung zu Nähe und Verbindung. '
+          '${connection.name} antwortet darauf mit ${_t(connection, 0)}. '
+          'Wer länger hinsieht, entdeckt auch ${_t(connection, 1)} in dieser Karte. '
+          'Das Wichtigste an dieser Legung ist das, was zwischen ${self.name} und ${connection.name} steht. '
+          '${impulse.name} als Impuls zeigt ${_t(impulse, 0)} – das verdient mehr Aufmerksamkeit. '
+          'Echte Nähe braucht keine Vollständigkeit, nur Aufrichtigkeit. '
+          'Kurz gesagt: ${self.name} und ${connection.name} ergänzen sich gut – '
+          'und ${impulse.name} zeigt, was als nächstes zählt.';
     default:
-      return 'Madame Gatto legt die Karten für Liebe und Verbindung – und nimmt sich bewusst Zeit. '
-          '${self.name} erscheint als erstes: ${_t(self, 0)}, das zeigt, wer du in Begegnungen bist. '
-          '${connection.name} folgt: ${_t(connection, 0)} und ${_t(connection, 1)} – '
-          'das Feld, in dem echte Verbindung entstehen kann, wenn beide Seiten offen sind. '
-          'Und schließlich ${impulse.name}: ${_t(impulse, 0)}, '
-          'der leise, aber bestimmte Impuls, der gerade klingt. '
-          'Madame Gatto bemerkt: Diese drei Karten harmonieren auf ungewöhnliche Weise miteinander. '
+      return 'Madame Gatto legt die Karten für Liebe und Verbindung. '
+          '${self.name} erscheint zuerst: ${_t(self, 0)} zeigt, wer du in Beziehungen bist. '
+          '${connection.name} folgt: ${_t(connection, 0)} und ${_t(connection, 1)} – das sind die Qualitäten echter Verbindung. '
+          '${impulse.name} schließt ab: ${_t(impulse, 0)} ist der Impuls, der gerade klingt. '
           '${self.name} legt etwas offen, was ${connection.name} aufnimmt – '
           'und ${impulse.name} erinnert daran, was dabei nicht verloren gehen sollte. '
-          '${_t(impulse, 0)} ist kein Hindernis. '
-          'Es ist eine Einladung. '
-          'Verbindung, die auch die eigene Stimme einschließt, ist tiefer und echter. '
-          'Diese Legung zeigt einen Weg dorthin – weder kurz noch einfach, aber aufrichtig.';
+          'Kurz gesagt: ${_t(impulse, 0)} ist kein Hindernis, sondern eine Einladung. '
+          'Verbindung, die die eigene Stimme einschließt, ist echter.';
   }
 }
 
