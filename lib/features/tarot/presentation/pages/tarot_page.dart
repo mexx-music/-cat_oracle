@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 import 'package:cat_oracle/gen_l10n/app_localizations.dart';
@@ -647,10 +645,14 @@ String _composeThreeCardReading(
   }
 }
 
-Future<void> _showThreeCardSpreadDialog(BuildContext context) {
+Future<void> _showThreeCardSpreadDialog(BuildContext context) async {
   final l10n = AppLocalizations.of(context)!;
-  final shuffled = List.of(demoTarotCards)..shuffle(Random());
-  final cards = shuffled.take(3).toList();
+  final cards = await showTarotMultiDrawOverlay(
+    context,
+    count: 3,
+    positionLabels: [l10n.tarotPast, l10n.tarotPresent, l10n.tarotImpulse],
+  );
+  if (cards == null || cards.length < 3 || !context.mounted) return;
   final positions = [l10n.tarotPast, l10n.tarotPresent, l10n.tarotImpulse];
 
   return showDialog<void>(
@@ -843,10 +845,14 @@ String _composeLoveReading(
   }
 }
 
-Future<void> _showLoveSpreadDialog(BuildContext context) {
+Future<void> _showLoveSpreadDialog(BuildContext context) async {
   final l10n = AppLocalizations.of(context)!;
-  final shuffled = List.of(demoTarotCards)..shuffle(Random());
-  final cards = shuffled.take(3).toList();
+  final cards = await showTarotMultiDrawOverlay(
+    context,
+    count: 3,
+    positionLabels: [l10n.tarotSelf, l10n.tarotConnection, l10n.tarotImpulse],
+  );
+  if (cards == null || cards.length < 3 || !context.mounted) return;
   final positions = [l10n.tarotSelf, l10n.tarotConnection, l10n.tarotImpulse];
 
   return showDialog<void>(

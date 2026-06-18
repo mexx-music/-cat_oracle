@@ -5,13 +5,27 @@ import 'package:flutter/material.dart';
 import '../../data/demo_tarot_cards.dart';
 import '../../models/tarot_card.dart';
 
-Future<TarotCard?> showTarotDrawOverlay(BuildContext context) {
-  return showDialog<TarotCard>(
+/// Single-card draw — original API unchanged.
+Future<TarotCard?> showTarotDrawOverlay(BuildContext context) async {
+  final cards = await showTarotMultiDrawOverlay(context, count: 1);
+  return cards?.first;
+}
+
+/// Multi-card draw. [positionLabels] is shown in the subtitle while the user
+/// picks, e.g. ["Vergangenheit", "Gegenwart", "Impuls"].
+Future<List<TarotCard>?> showTarotMultiDrawOverlay(
+  BuildContext context, {
+  required int count,
+  List<String>? positionLabels,
+}) {
+  return showDialog<List<TarotCard>>(
     context: context,
     barrierColor: const Color(0xCC06030F),
-    builder: (_) => const TarotDrawOverlay(),
+    builder: (_) => TarotDrawOverlay(count: count, positionLabels: positionLabels),
   );
 }
+
+// ---------------------------------------------------------------------------
 
 int _gridCols(double width) {
   if (width >= 480) return 7;
@@ -19,28 +33,83 @@ int _gridCols(double width) {
   return 4;
 }
 
+String _staticTitle(int count) {
+  switch (count) {
+    case 1:
+      return '🃏 Wähle eine Karte';
+    case 3:
+      return '🃏 Wähle drei Karten';
+    default:
+      return '🃏 Wähle $count Karten';
+  }
+}
+
+// ---------------------------------------------------------------------------
+
 class TarotDrawOverlay extends StatefulWidget {
-  const TarotDrawOverlay({super.key});
+  final int count;
+  final List<String>? positionLabels;
+
+  const TarotDrawOverlay({
+    super.key,
+    this.count = 1,
+    this.positionLabels,
+  });
 
   @override
   State<TarotDrawOverlay> createState() => _TarotDrawOverlayState();
 }
 
 class _TarotDrawOverlayState extends State<TarotDrawOverlay> {
-  int? _selectedIndex;
-  TarotCard? _revealedCard;
+  final List<int> _selectedIndices = [];
+  final List<TarotCard> _revealedCards = [];
   bool _isRevealing = false;
+  bool _isDone = false;
+
+  bool get _blocked => _isRevealing || _isDone;
+
+  /// Subtitle shown below the title; updates with each card pick.
+  String get _subtitle {
+    if (_isDone) return 'Madame Gatto legt die Karten …';
+    final labels = widget.positionLabels;
+    if (labels != null && _revealedCards.length < labels.length) {
+      return 'Wähle die Karte für: ${labels[_revealedCards.length]}';
+    }
+    // Fallback for count=1 or no labels
+    return widget.count == 3
+        ? 'Wähle drei Karten nacheinander'
+        : 'Madame Gatto mischt das Deck';
+  }
 
   Future<void> _onCardTapped(int index) async {
-    if (_isRevealing) return;
-    final card = demoTarotCards[Random().nextInt(demoTarotCards.length)];
+    if (_blocked) return;
+    if (_selectedIndices.contains(index)) return;
+
+    final pool =
+        demoTarotCards.where((c) => !_revealedCards.contains(c)).toList();
+    if (pool.isEmpty) return;
+    final card = pool[Random().nextInt(pool.length)];
+
     setState(() {
-      _selectedIndex = index;
-      _revealedCard = card;
+      _selectedIndices.add(index);
+      _revealedCards.add(card);
       _isRevealing = true;
     });
-    await Future.delayed(const Duration(seconds: 1));
-    if (mounted) Navigator.of(context).pop(_revealedCard);
+
+    final allDone = _revealedCards.length >= widget.count;
+
+    if (!allDone) {
+      await Future.delayed(const Duration(milliseconds: 700));
+      if (!mounted) return;
+      setState(() => _isRevealing = false);
+    } else {
+      setState(() => _isDone = true);
+      await Future.delayed(const Duration(seconds: 1));
+      if (mounted) {
+        Navigator.of(context)
+            .pop(List<TarotCard>.unmodifiable(_revealedCards));
+      }
+    }
   }
 
   @override
@@ -71,7 +140,7 @@ class _TarotDrawOverlayState extends State<TarotDrawOverlay> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  '🃏 Wähle eine Karte',
+                  _staticTitle(widget.count),
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: const Color(0xFFFFE9B0),
@@ -80,13 +149,17 @@ class _TarotDrawOverlayState extends State<TarotDrawOverlay> {
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  'Madame Gatto mischt das Deck',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: const Color(0x99D8C8F7),
-                    letterSpacing: 0.3,
-                    fontSize: 11,
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: Text(
+                    _subtitle,
+                    key: ValueKey(_subtitle),
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: const Color(0x99D8C8F7),
+                      letterSpacing: 0.3,
+                      fontSize: 11,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -105,13 +178,18 @@ class _TarotDrawOverlayState extends State<TarotDrawOverlay> {
                         childAspectRatio: 0.65,
                       ),
                       itemCount: demoTarotCards.length,
-                      itemBuilder: (_, i) => _CardBack(
-                        index: i,
-                        isRevealing: _isRevealing,
-                        isSelected: _selectedIndex == i,
-                        revealedCard: _selectedIndex == i ? _revealedCard : null,
-                        onTap: () => _onCardTapped(i),
-                      ),
+                      itemBuilder: (_, i) {
+                        final pos = _selectedIndices.indexOf(i);
+                        final isSelected = pos >= 0;
+                        return _CardBack(
+                          index: i,
+                          blocked: _blocked,
+                          isSelected: isSelected,
+                          revealedCard:
+                              isSelected ? _revealedCards[pos] : null,
+                          onTap: () => _onCardTapped(i),
+                        );
+                      },
                     );
                   },
                 ),
@@ -119,7 +197,8 @@ class _TarotDrawOverlayState extends State<TarotDrawOverlay> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: _isRevealing ? null : () => Navigator.of(context).pop(),
+                    onPressed:
+                        _blocked ? null : () => Navigator.of(context).pop(),
                     child: const Text('Abbrechen'),
                   ),
                 ),
@@ -136,14 +215,14 @@ class _TarotDrawOverlayState extends State<TarotDrawOverlay> {
 
 class _CardBack extends StatefulWidget {
   final int index;
-  final bool isRevealing;
+  final bool blocked;
   final bool isSelected;
   final TarotCard? revealedCard;
   final VoidCallback onTap;
 
   const _CardBack({
     required this.index,
-    required this.isRevealing,
+    required this.blocked,
     required this.isSelected,
     required this.onTap,
     this.revealedCard,
@@ -157,7 +236,8 @@ class _CardBackState extends State<_CardBack> {
   bool _hovered = false;
 
   bool get _showFront => widget.isSelected && widget.revealedCard != null;
-  bool get _effectiveHovered => _hovered && !widget.isRevealing;
+  bool get _effectiveHovered =>
+      _hovered && !widget.blocked && !widget.isSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -170,13 +250,15 @@ class _CardBackState extends State<_CardBack> {
     final glowSpread = widget.isSelected ? 2.0 : 0.0;
 
     return MouseRegion(
-      cursor: widget.isRevealing
+      cursor: (widget.blocked || widget.isSelected)
           ? SystemMouseCursors.basic
           : SystemMouseCursors.click,
-      onEnter: widget.isRevealing ? null : (_) => setState(() => _hovered = true),
+      onEnter: (widget.blocked || widget.isSelected)
+          ? null
+          : (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
       child: GestureDetector(
-        onTap: widget.isRevealing ? null : widget.onTap,
+        onTap: (widget.blocked || widget.isSelected) ? null : widget.onTap,
         child: AnimatedScale(
           scale: (_effectiveHovered || widget.isSelected) ? 1.04 : 1.0,
           duration: const Duration(milliseconds: 150),
@@ -200,13 +282,12 @@ class _CardBackState extends State<_CardBack> {
                 transitionBuilder: (child, animation) => FadeTransition(
                   opacity: animation,
                   child: ScaleTransition(
-                    scale: Tween<double>(
-                      begin: 0.82,
-                      end: 1.0,
-                    ).animate(CurvedAnimation(
-                      parent: animation,
-                      curve: Curves.easeOut,
-                    )),
+                    scale: Tween<double>(begin: 0.82, end: 1.0).animate(
+                      CurvedAnimation(
+                        parent: animation,
+                        curve: Curves.easeOut,
+                      ),
+                    ),
                     child: child,
                   ),
                 ),
@@ -275,15 +356,10 @@ class _CardFrontImage extends StatelessWidget {
     );
   }
 
-  Widget _fallback() {
-    return Container(
-      color: const Color(0xFF1A0F2E),
-      child: Center(
-        child: Text(
-          card.symbol,
-          style: const TextStyle(fontSize: 28),
+  Widget _fallback() => Container(
+        color: const Color(0xFF1A0F2E),
+        child: Center(
+          child: Text(card.symbol, style: const TextStyle(fontSize: 28)),
         ),
-      ),
-    );
-  }
+      );
 }
