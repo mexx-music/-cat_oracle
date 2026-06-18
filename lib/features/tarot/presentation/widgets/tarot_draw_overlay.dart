@@ -19,8 +19,29 @@ int _gridCols(double width) {
   return 4;
 }
 
-class TarotDrawOverlay extends StatelessWidget {
+class TarotDrawOverlay extends StatefulWidget {
   const TarotDrawOverlay({super.key});
+
+  @override
+  State<TarotDrawOverlay> createState() => _TarotDrawOverlayState();
+}
+
+class _TarotDrawOverlayState extends State<TarotDrawOverlay> {
+  int? _selectedIndex;
+  TarotCard? _revealedCard;
+  bool _isRevealing = false;
+
+  Future<void> _onCardTapped(int index) async {
+    if (_isRevealing) return;
+    final card = demoTarotCards[Random().nextInt(demoTarotCards.length)];
+    setState(() {
+      _selectedIndex = index;
+      _revealedCard = card;
+      _isRevealing = true;
+    });
+    await Future.delayed(const Duration(seconds: 1));
+    if (mounted) Navigator.of(context).pop(_revealedCard);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +105,13 @@ class TarotDrawOverlay extends StatelessWidget {
                         childAspectRatio: 0.65,
                       ),
                       itemCount: demoTarotCards.length,
-                      itemBuilder: (_, i) => _CardBack(index: i),
+                      itemBuilder: (_, i) => _CardBack(
+                        index: i,
+                        isRevealing: _isRevealing,
+                        isSelected: _selectedIndex == i,
+                        revealedCard: _selectedIndex == i ? _revealedCard : null,
+                        onTap: () => _onCardTapped(i),
+                      ),
                     );
                   },
                 ),
@@ -92,7 +119,7 @@ class TarotDrawOverlay extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: _isRevealing ? null : () => Navigator.of(context).pop(),
                     child: const Text('Abbrechen'),
                   ),
                 ),
@@ -105,10 +132,22 @@ class TarotDrawOverlay extends StatelessWidget {
   }
 }
 
+// ---------------------------------------------------------------------------
+
 class _CardBack extends StatefulWidget {
   final int index;
+  final bool isRevealing;
+  final bool isSelected;
+  final TarotCard? revealedCard;
+  final VoidCallback onTap;
 
-  const _CardBack({required this.index});
+  const _CardBack({
+    required this.index,
+    required this.isRevealing,
+    required this.isSelected,
+    required this.onTap,
+    this.revealedCard,
+  });
 
   @override
   State<_CardBack> createState() => _CardBackState();
@@ -117,56 +156,132 @@ class _CardBack extends StatefulWidget {
 class _CardBackState extends State<_CardBack> {
   bool _hovered = false;
 
+  bool get _showFront => widget.isSelected && widget.revealedCard != null;
+  bool get _effectiveHovered => _hovered && !widget.isRevealing;
+
   @override
   Widget build(BuildContext context) {
+    final borderColor =
+        widget.isSelected ? const Color(0xFFFFD700) : const Color(0xFFDAB86E);
+    final borderWidth = widget.isSelected ? 2.0 : 1.0;
+    final glowColor =
+        widget.isSelected ? const Color(0x66FFD700) : const Color(0x35DAB86E);
+    final glowBlur = widget.isSelected ? 18.0 : 8.0;
+    final glowSpread = widget.isSelected ? 2.0 : 0.0;
+
     return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _hovered = true),
+      cursor: widget.isRevealing
+          ? SystemMouseCursors.basic
+          : SystemMouseCursors.click,
+      onEnter: widget.isRevealing ? null : (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
       child: GestureDetector(
-        onTap: () {
-          final card = demoTarotCards[Random().nextInt(demoTarotCards.length)];
-          Navigator.of(context).pop(card);
-        },
+        onTap: widget.isRevealing ? null : widget.onTap,
         child: AnimatedScale(
-          scale: _hovered ? 1.04 : 1.0,
+          scale: (_effectiveHovered || widget.isSelected) ? 1.04 : 1.0,
           duration: const Duration(milliseconds: 150),
           curve: Curves.easeOut,
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: const Color(0xFFDAB86E), width: 1.0),
-              boxShadow: const [
+              border: Border.all(color: borderColor, width: borderWidth),
+              boxShadow: [
                 BoxShadow(
-                  color: Color(0x35DAB86E),
-                  blurRadius: 8,
-                  spreadRadius: 0,
+                  color: glowColor,
+                  blurRadius: glowBlur,
+                  spreadRadius: glowSpread,
                 ),
               ],
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(9),
-              child: Image.asset(
-                'assets/images/tarot/tarot_back.png',
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Color(0xFF1A0F2E), Color(0xFF110C1F)],
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      widget.index.isEven ? '🐾' : '🃏',
-                      style: const TextStyle(fontSize: 22),
-                    ),
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 350),
+                transitionBuilder: (child, animation) => FadeTransition(
+                  opacity: animation,
+                  child: ScaleTransition(
+                    scale: Tween<double>(
+                      begin: 0.82,
+                      end: 1.0,
+                    ).animate(CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOut,
+                    )),
+                    child: child,
                   ),
                 ),
+                child: _showFront
+                    ? _CardFrontImage(
+                        key: const ValueKey('front'),
+                        card: widget.revealedCard!,
+                      )
+                    : _CardBackImage(
+                        key: ValueKey('back_${widget.index}'),
+                        index: widget.index,
+                      ),
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+
+class _CardBackImage extends StatelessWidget {
+  final int index;
+
+  const _CardBackImage({super.key, required this.index});
+
+  @override
+  Widget build(BuildContext context) {
+    return Image.asset(
+      'assets/images/tarot/tarot_back.png',
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF1A0F2E), Color(0xFF110C1F)],
+          ),
+        ),
+        child: Center(
+          child: Text(
+            index.isEven ? '🐾' : '🃏',
+            style: const TextStyle(fontSize: 22),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CardFrontImage extends StatelessWidget {
+  final TarotCard card;
+
+  const _CardFrontImage({super.key, required this.card});
+
+  @override
+  Widget build(BuildContext context) {
+    final asset = card.imageAsset;
+    if (asset == null) return _fallback();
+    return Image.asset(
+      asset,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => _fallback(),
+    );
+  }
+
+  Widget _fallback() {
+    return Container(
+      color: const Color(0xFF1A0F2E),
+      child: Center(
+        child: Text(
+          card.symbol,
+          style: const TextStyle(fontSize: 28),
         ),
       ),
     );
