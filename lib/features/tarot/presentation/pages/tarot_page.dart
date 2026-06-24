@@ -7,36 +7,205 @@ import '../../logic/daily_tarot_card_generator.dart';
 import '../../models/tarot_card.dart';
 import '../widgets/tarot_draw_overlay.dart';
 
-const Map<String, List<String>> _cardThemes = {
-  'Die Katze': ['Leichtigkeit', 'Vertrauen', 'Neugier', 'Anfang', 'Mut'],
-  'Der Magier': ['Fokus', 'Gestaltungskraft', 'Schöpfung', 'Wille', 'Klarheit'],
-  'Die Hohepriesterin': ['Intuition', 'Stille', 'inneres Wissen', 'Weisheit', 'Grenzen'],
-  'Die Herrscherin': ['Fülle', 'Wachstum', 'Sinnlichkeit', 'Schöpfung', 'Natur'],
-  'Der Herrscher': ['Struktur', 'Stabilität', 'Ordnung', 'Verantwortung', 'Klarheit'],
-  'Der Hierophant': ['Tradition', 'Gemeinschaft', 'Wissen', 'Führung', 'Überlieferung'],
-  'Die Liebenden': ['Begegnung', 'Wahl', 'Verbindung', 'Harmonie', 'Aufrichtigkeit'],
-  'Der Wagen': ['Entschlossenheit', 'Richtung', 'Fokus', 'Bewegung', 'Kontrolle'],
-  'Die Stärke': ['Mut', 'Geduld', 'Gelassenheit', 'sanfte Kraft', 'Selbstvertrauen'],
-  'Die Einsiedlerin': ['Rückzug', 'inneres Licht', 'Stille', 'Klärung', 'Einkehr'],
-  'Das Rad': ['Wandel', 'Rhythmus', 'Zyklus', 'Perspektivwechsel', 'Fluss'],
-  'Die Gerechtigkeit': ['Abwägen', 'Ehrlichkeit', 'Ausgleich', 'Entscheidung', 'Klarheit'],
-  'Der Gehängte': ['Pause', 'Loslassen', 'neue Perspektive', 'Geduld', 'Innehalten'],
-  'Die Wandlung': ['Transformation', 'Loslassen', 'Übergang', 'Erneuerung', 'Neubeginn'],
-  'Die Mäßigung': ['Balance', 'Integration', 'Geduld', 'Fließen', 'Harmonie'],
-  'Der Teufel': ['Erkenntnis', 'Bewusstsein', 'Befreiung', 'Bindung', 'Schatten'],
-  'Der Turm': ['Umbruch', 'Ehrlichkeit', 'Befreiung', 'Loslassen', 'Wandel'],
-  'Der Stern': ['Zuversicht', 'Hoffnung', 'Erneuerung', 'Klarheit', 'Leichtigkeit'],
-  'Der Mond': ['Intuition', 'Tiefe', 'Ahnung', 'Unsicherheit', 'innere Welt'],
-  'Die Sonne': ['Freude', 'Wärme', 'Klarheit', 'Sichtbarkeit', 'Vitalität'],
-  'Das Gericht': ['Erneuerung', 'Erwachen', 'Selbstreflexion', 'Befreiung', 'Ruf'],
-  'Die Welt': ['Vollendung', 'Ankommen', 'Ganzheit', 'Erfüllung', 'Abschluss'],
+// Alltagssprachliche Bedeutung jeder Karte für eine Situation im Leben.
+// Jeder Eintrag ist ein eigenständiger, einfacher Satz, der in jeder Position
+// (Vergangenheit oder Gegenwart) verständlich bleibt.
+const Map<String, String> _cardEveryday = {
+  'Die Katze':
+      'Vielleicht hast du Lust, etwas Neues auszuprobieren, ohne lange zu grübeln, ob es perfekt klappt.',
+  'Der Magier':
+      'Vielleicht spürst du, dass du eine Sache wirklich angehen könntest, wenn du dich darauf konzentrierst.',
+  'Die Hohepriesterin':
+      'Vielleicht weißt du innerlich schon, was stimmt, auch wenn du es noch nicht laut ausgesprochen hast.',
+  'Die Herrscherin':
+      'Vielleicht möchtest du dich um etwas kümmern, das dir am Herzen liegt, und es in Ruhe wachsen lassen.',
+  'Der Herrscher':
+      'Vielleicht suchst du gerade nach etwas Halt und einer klaren Struktur in einer Sache.',
+  'Der Hierophant':
+      'Vielleicht denkst du über etwas nach, das du so gelernt hast, und fragst dich, ob es noch zu dir passt.',
+  'Die Liebenden':
+      'Vielleicht steht eine Entscheidung an, bei der dein Herz mitreden möchte.',
+  'Der Wagen':
+      'Vielleicht möchtest du in einer Sache endlich vorankommen und ein klares Ziel verfolgen.',
+  'Die Stärke':
+      'Vielleicht brauchst du gerade etwas Geduld mit dir selbst und mit einer Situation.',
+  'Die Einsiedlerin':
+      'Vielleicht brauchst du einen Moment für dich, um in Ruhe nachzudenken.',
+  'Das Rad':
+      'Vielleicht merkst du, dass sich gerade etwas verändert, auch wenn du es nicht ganz steuern kannst.',
+  'Die Gerechtigkeit':
+      'Vielleicht hast du in letzter Zeit versucht, eine Situation möglichst fair zu beurteilen, und lange nach der richtigen Entscheidung gesucht.',
+  'Der Gehängte':
+      'Vielleicht steckst du in einer Sache fest und kommst mit Anstrengung nicht recht weiter.',
+  'Die Wandlung':
+      'Vielleicht geht gerade etwas zu Ende, und du spürst, dass etwas Neues Platz braucht.',
+  'Die Mäßigung':
+      'Vielleicht versuchst du gerade, zwei Dinge unter einen Hut zu bringen und ein gutes Maß zu finden.',
+  'Der Teufel':
+      'Vielleicht gibt es eine Gewohnheit oder einen Gedanken, der dich mehr festhält, als dir guttut.',
+  'Der Turm':
+      'Vielleicht ist gerade etwas ins Wanken geraten, mit dem du fest gerechnet hattest.',
+  'Der Stern':
+      'Vielleicht wünschst du dir gerade etwas Zuversicht und das Gefühl, dass es weitergeht.',
+  'Der Mond':
+      'Vielleicht ist gerade nicht alles klar, und du bist dir bei einer Sache noch unsicher.',
+  'Die Sonne':
+      'Vielleicht läuft gerade etwas gut, oder du spürst wieder mehr Freude an einer Sache.',
+  'Das Gericht':
+      'Vielleicht schaust du auf etwas zurück und überlegst, was du daraus mitnimmst.',
+  'Die Welt':
+      'Vielleicht hast du etwas zu einem guten Abschluss gebracht oder bist an einem Ziel angekommen.',
 };
 
-String _t(TarotCard card, int index) {
-  final themes = _cardThemes[card.name];
-  if (themes == null || themes.isEmpty) return card.name;
-  return themes[index % themes.length];
-}
+// Sanfter Vorschlag für den nächsten Schritt – kein Befehl, keine Vorhersage.
+const Map<String, String> _cardImpulse = {
+  'Die Katze':
+      'Manchmal hilft es, einfach den ersten Schritt zu machen und unterwegs zu schauen, wie es sich anfühlt.',
+  'Der Magier':
+      'Es kann sein, dass du schon alles hast, was du brauchst – du musst es nur bündeln und anfangen.',
+  'Die Hohepriesterin':
+      'Es kann sich lohnen, kurz still zu werden und auf dein Bauchgefühl zu hören, statt sofort zu handeln.',
+  'Die Herrscherin':
+      'Es kann guttun, gut für dich zu sorgen und Dingen Zeit zu geben, statt sie zu erzwingen.',
+  'Der Herrscher':
+      'Es kann helfen, dir ein paar einfache Regeln zu setzen, an denen du dich festhalten kannst.',
+  'Der Hierophant':
+      'Es kann sich lohnen, Ratschläge anzuhören, am Ende aber selbst zu entscheiden, was für dich stimmt.',
+  'Die Liebenden':
+      'Es kann helfen, dich für das zu entscheiden, was sich für dich wirklich stimmig anfühlt.',
+  'Der Wagen':
+      'Es kann helfen, dich auf eine Richtung festzulegen, statt dich von zu vielen Möglichkeiten ablenken zu lassen.',
+  'Die Stärke':
+      'Es kann sein, dass Ruhe und Gelassenheit dir hier mehr weiterhelfen als Druck oder Härte.',
+  'Die Einsiedlerin':
+      'Es kann guttun, dir bewusst etwas Zeit allein zu nehmen, bevor du eine Entscheidung triffst.',
+  'Das Rad':
+      'Es kann leichter sein, mit einer Veränderung mitzugehen, als sich dagegen zu stemmen.',
+  'Die Gerechtigkeit':
+      'Es kann helfen, ehrlich zu dir selbst zu sein und zu schauen, was wirklich fair ist – auch dir gegenüber.',
+  'Der Gehängte':
+      'Es kann helfen, kurz innezuhalten und die Sache einmal aus einem anderen Blickwinkel anzusehen.',
+  'Die Wandlung':
+      'Es kann guttun, etwas loszulassen, das nicht mehr passt, um Raum für Neues zu schaffen.',
+  'Die Mäßigung':
+      'Es kann helfen, ruhig zu bleiben und nach der gesunden Mitte zu suchen, statt von einem Extrem ins andere zu fallen.',
+  'Der Teufel':
+      'Es kann befreien, ehrlich hinzuschauen, was dich gerade bindet, und zu prüfen, ob du das so willst.',
+  'Der Turm':
+      'Es kann sein, dass nach dem ersten Schreck Platz für etwas Ehrlicheres entsteht.',
+  'Der Stern':
+      'Der Stern erinnert daran, dass nicht jede Antwort sofort gefunden werden muss – manchmal reicht es, dem eigenen Weg etwas Zeit zu geben.',
+  'Der Mond':
+      'Es kann helfen, nicht alles sofort verstehen zu wollen und auch mal mit Unsicherheit auszuhalten.',
+  'Die Sonne':
+      'Es kann guttun, dich über das zu freuen, was schön ist, ohne es kleinzureden.',
+  'Das Gericht':
+      'Es kann helfen, ehrlich auf das Vergangene zu blicken und dann bewusst nach vorn zu schauen.',
+  'Die Welt':
+      'Es kann guttun, kurz innezuhalten und anzuerkennen, was du schon geschafft hast.',
+};
+
+// Bedeutung der Karte für Liebe und Beziehungen.
+const Map<String, String> _cardLove = {
+  'Die Katze':
+      'Vielleicht möchtest du in einer Beziehung wieder mehr Leichtigkeit, ohne dauernd nachzudenken, was richtig ist.',
+  'Der Magier':
+      'Vielleicht hast du in einer Verbindung mehr Einfluss, als du denkst, wenn du klar sagst, was du willst.',
+  'Die Hohepriesterin':
+      'Vielleicht spürst du in einer Verbindung mehr, als bisher offen ausgesprochen wurde.',
+  'Die Herrscherin':
+      'Vielleicht wünschst du dir Wärme und Geborgenheit in einer Verbindung.',
+  'Der Herrscher':
+      'Vielleicht wünschst du dir in einer Beziehung Verlässlichkeit und das Gefühl, dass man sich aufeinander verlassen kann.',
+  'Der Hierophant':
+      'Vielleicht beschäftigt dich, wie ihr als Paar mit Gewohnheiten oder Erwartungen umgeht.',
+  'Die Liebenden':
+      'Vielleicht wünschst du dir mehr Klarheit in einer Verbindung und das Gefühl, auf Augenhöhe zu sein.',
+  'Der Wagen':
+      'Vielleicht möchtest du in einer Beziehung wissen, wohin das Ganze eigentlich geht.',
+  'Die Stärke':
+      'Vielleicht braucht eine Verbindung gerade etwas Geduld und ein sanftes Miteinander.',
+  'Die Einsiedlerin':
+      'Vielleicht möchtest du erst für dich klären, was du in einer Verbindung wirklich brauchst.',
+  'Das Rad':
+      'Vielleicht ist in einer Verbindung gerade einiges in Veränderung.',
+  'Die Gerechtigkeit':
+      'Vielleicht beschäftigt dich, ob in einer Verbindung gerade alles ausgeglichen ist.',
+  'Der Gehängte':
+      'Vielleicht hängt in einer Verbindung gerade etwas in der Schwebe.',
+  'Die Wandlung':
+      'Vielleicht verändert sich gerade etwas in einer Verbindung.',
+  'Die Mäßigung':
+      'Vielleicht geht es in einer Verbindung gerade darum, eine gute Balance zu finden.',
+  'Der Teufel':
+      'Vielleicht beschäftigt dich ein Muster in einer Verbindung, das sich immer wiederholt.',
+  'Der Turm':
+      'Vielleicht hat sich in einer Verbindung etwas verändert, das vorher sicher schien.',
+  'Der Stern':
+      'Vielleicht hoffst du in einer Verbindung auf einen freundlichen, ruhigen Neuanfang.',
+  'Der Mond':
+      'Vielleicht gibt es in einer Verbindung etwas, das noch nicht ganz ausgesprochen ist.',
+  'Die Sonne':
+      'Vielleicht erlebst du in einer Verbindung gerade unbeschwerte, schöne Momente.',
+  'Das Gericht':
+      'Vielleicht denkst du über eine Verbindung nach und darüber, wie es weitergehen soll.',
+  'Die Welt':
+      'Vielleicht fühlt sich eine Verbindung gerade rund und stimmig an.',
+};
+
+// Sanfter Beziehungs-Hinweis für den nächsten Schritt.
+const Map<String, String> _cardLoveImpulse = {
+  'Die Katze':
+      'Es kann guttun, neugierig zu bleiben und der anderen Person unvoreingenommen zu begegnen.',
+  'Der Magier':
+      'Manchmal reicht ein ehrliches Wort, um etwas zwischen euch zu klären.',
+  'Die Hohepriesterin':
+      'Manchmal hilft es, erst in Ruhe zu fühlen, was du wirklich brauchst, bevor du darüber redest.',
+  'Die Herrscherin':
+      'Manchmal entsteht Nähe einfach dadurch, dass man füreinander da ist, ohne Druck.',
+  'Der Herrscher':
+      'Manchmal schafft schon eine klare Absprache mehr Ruhe zwischen zwei Menschen.',
+  'Der Hierophant':
+      'Manchmal hilft es, gemeinsam zu schauen, welche Gewohnheiten euch wirklich guttun und welche nicht.',
+  'Die Liebenden':
+      'Nähe bedeutet nicht, immer dieselbe Meinung zu haben – es reicht, ehrlich zueinander zu sein.',
+  'Der Wagen':
+      'Manchmal hilft es, gemeinsam zu klären, was ihr beide wollt, statt es offen zu lassen.',
+  'Die Stärke':
+      'Manchmal kommt man weiter, wenn man freundlich bleibt, auch wenn es schwierig wird.',
+  'Die Einsiedlerin':
+      'Manchmal hilft ein bisschen Abstand, um danach wieder offener aufeinander zuzugehen.',
+  'Das Rad':
+      'Manchmal lohnt es sich, abzuwarten, wie sich die Dinge entwickeln, bevor man alles festlegt.',
+  'Die Gerechtigkeit':
+      'Manchmal hilft ein offenes Gespräch, damit sich beide gerecht behandelt fühlen.',
+  'Der Gehängte':
+      'Manchmal löst sich etwas, wenn man es nicht erzwingt, sondern der Sache Zeit lässt.',
+  'Die Wandlung':
+      'Manchmal muss etwas Altes enden, damit zwischen euch etwas Frisches entstehen kann.',
+  'Die Mäßigung':
+      'Manchmal entsteht Nähe genau dann, wenn beide ein bisschen aufeinander zugehen.',
+  'Der Teufel':
+      'Manchmal hilft es, offen anzusprechen, was zwischen euch nicht guttut.',
+  'Der Turm':
+      'Manchmal zeigt eine ehrliche Klärung, was wirklich tragfähig ist.',
+  'Der Stern':
+      'Manchmal reicht es, hoffnungsvoll zu bleiben und der Sache etwas Zeit zu geben.',
+  'Der Mond':
+      'Manchmal hilft ein offenes Gespräch, um Missverständnisse aus dem Weg zu räumen.',
+  'Die Sonne':
+      'Manchmal darf man Nähe einfach genießen, ohne sie zu hinterfragen.',
+  'Das Gericht':
+      'Manchmal hilft ein klarer Blick zurück, um zu entscheiden, was du dir wünschst.',
+  'Die Welt':
+      'Manchmal darf man einfach genießen, dass etwas gut zusammenpasst.',
+};
+
+String _everyday(TarotCard card) => _cardEveryday[card.name] ?? card.meaning;
+String _impulse(TarotCard card) => _cardImpulse[card.name] ?? card.meaning;
+String _love(TarotCard card) => _cardLove[card.name] ?? card.meaning;
+String _loveImpulse(TarotCard card) =>
+    _cardLoveImpulse[card.name] ?? card.meaning;
 
 class TarotPage extends StatelessWidget {
   const TarotPage({super.key});
@@ -607,41 +776,40 @@ String _composeThreeCardReading(
 
   switch (variant) {
     case 0:
-      return '${past.name} liegt in der Vergangenheit – sie steht für ${_t(past, 0)} und ${_t(past, 1)}. '
-          'Das hat Spuren hinterlassen, die heute noch zu spüren sind. '
-          '${present.name} beschreibt die Gegenwart: ${_t(present, 0)} ist das, womit du es gerade zu tun hast. '
-          'Dazu kommt ${_t(present, 1)} – beides gehört zu diesem Moment. '
-          '${impulse.name} steht als Impuls daneben und bringt ${_t(impulse, 0)} ins Spiel. '
-          'Das ist kein Befehl, sondern ein Hinweis. '
-          'Kurz gesagt: ${past.name} hat den Rahmen gesetzt, ${present.name} zeigt, wo du jetzt stehst – '
-          'und ${impulse.name} deutet an, worauf es ankommt.';
+      return '${past.name} steht für die Vergangenheit. ${_everyday(past)} '
+          'Das spürst du heute vielleicht noch. '
+          'In der Gegenwart zeigt sich ${present.name}. ${_everyday(present)} '
+          'Vieles davon hat seinen Ursprung in dem, was vorher war. '
+          'Als Anstoß für den nächsten Schritt kommt ${impulse.name} dazu. ${_impulse(impulse)}\n\n'
+          'Kurz gesagt:\n'
+          'Du hast vermutlich schon eine Weile über etwas nachgedacht. '
+          'Die Karten schlagen vor, etwas weniger zu kontrollieren und etwas mehr auf den nächsten Schritt zu vertrauen.';
     case 1:
-      return 'Drei Karten, drei Positionen – alle sagen etwas Klares. '
-          '${past.name} kommt aus der Vergangenheit und trägt ${_t(past, 0)} in sich. '
-          'Diese Qualität ist nicht verschwunden, sie wirkt weiter. '
-          '${present.name} steht jetzt im Mittelpunkt: ${_t(present, 0)} und ${_t(present, 1)} beschreiben, was gerade da ist. '
-          '${impulse.name} als Impuls zeigt ${_t(impulse, 0)} – etwas, das vielleicht noch zu wenig Platz hat. '
-          'Alle drei Karten passen zusammen. '
-          'Kurz gesagt: Was ${past.name} angefangen hat, trägt ${present.name} weiter – '
-          'und ${impulse.name} zeigt, in welche Richtung.';
+      return 'Beginnen wir bei ${past.name} in der Vergangenheit. ${_everyday(past)} '
+          'Das hat den Boden für das bereitet, was jetzt da ist. '
+          'Heute steht ${present.name} im Mittelpunkt. ${_everyday(present)} '
+          'So erklärt sich auch, warum dich gerade dieser eine Gedanke beschäftigt. '
+          '${impulse.name} zeigt, was dir als nächstes helfen könnte. ${_impulse(impulse)}\n\n'
+          'Kurz gesagt:\n'
+          'Was früher passiert ist, wirkt noch in deine Gegenwart hinein. '
+          'Die drei Karten erinnern dich daran, dass du den nächsten Schritt selbst in der Hand hast – ohne dich zu hetzen.';
     case 2:
-      return '${past.name} hat die Vergangenheit geprägt: ${_t(past, 0)} war spürbar. '
-          'Das hat den Boden bereitet, auf dem ${present.name} jetzt steht. '
-          '${present.name} bringt ${_t(present, 0)} – das ist die Energie des jetzigen Moments. '
-          'Wenn man genau schaut, steckt auch ${_t(present, 1)} darin. '
-          '${impulse.name} erscheint als Impuls und spricht von ${_t(impulse, 0)}. '
-          'Das ist keine Warnung, sondern eine stille Möglichkeit. '
-          'Kurz gesagt: Die Linie von ${_t(past, 0)} über ${_t(present, 0)} zu ${_t(impulse, 0)} ist klar – '
-          'diese drei Karten erzählen eine zusammenhängende Geschichte.';
+      return '${past.name} erzählt von dem, was hinter dir liegt. ${_everyday(past)} '
+          'Diese Erfahrung trägst du noch mit dir. '
+          '${present.name} beschreibt, wo du gerade stehst. ${_everyday(present)} '
+          'Das eine geht ziemlich nahtlos in das andere über. '
+          'Und ${impulse.name} macht einen Vorschlag für den weiteren Weg. ${_impulse(impulse)}\n\n'
+          'Kurz gesagt:\n'
+          'Die drei Karten erzählen zusammen eine kleine Geschichte: woher du kommst, wo du stehst und was dir guttun könnte. '
+          'Vielleicht darfst du einfach etwas freundlicher mit dir sein.';
     default:
-      return 'Madame Gatto legt die drei Karten und nickt. '
-          '${past.name} aus der Vergangenheit: ${_t(past, 0)} und ${_t(past, 1)} – beides hinterlässt Spuren. '
-          '${present.name} in der Gegenwart: ${_t(present, 0)}, das jetzt gefragt ist. '
-          '${impulse.name} als Impuls: ${_t(impulse, 0)}, leise, aber deutlich zu hören. '
-          '${past.name} und ${present.name} sprechen dieselbe Sprache – und ${impulse.name} ergänzt sie. '
-          'Diese Konstellation ist ungewöhnlich klar. '
-          'Kurz gesagt: Selten passen drei Karten so gut zusammen. '
-          'Madame Gatto sagt: Diese Legung lohnt sich, zweimal zu lesen.';
+      return 'Madame Gatto legt drei Karten und schaut in Ruhe. '
+          '${past.name} steht für die Vergangenheit. ${_everyday(past)} '
+          '${present.name} zeigt die Gegenwart. ${_everyday(present)} '
+          'Und ${impulse.name} deutet an, was als nächstes dran sein könnte. ${_impulse(impulse)}\n\n'
+          'Kurz gesagt:\n'
+          'Madame Gatto würde vermutlich sagen: Nicht jede Tür muss heute geöffnet werden. '
+          'Manche zeigen erst morgen, wohin sie führen.';
   }
 }
 
@@ -807,41 +975,37 @@ String _composeLoveReading(
 
   switch (variant) {
     case 0:
-      return '${self.name} zeigt dich in dieser Situation: ${_t(self, 0)} ist das, was du in Begegnungen mitbringst. '
-          'Das ist weder gut noch schlecht – es ist einfach, was gerade da ist. '
-          '${connection.name} steht für die Verbindung: ${_t(connection, 0)} und ${_t(connection, 1)} '
-          'beschreiben, was echte Nähe möglich macht. '
-          '${impulse.name} kommt als Impuls dazu und bringt ${_t(impulse, 0)} ins Spiel. '
-          'Diese drei Karten passen zusammen und erzählen eine klare Geschichte. '
-          'Kurz gesagt: ${self.name} zeigt, wer du gerade bist – und ${connection.name} zeigt, was in einer '
-          'Verbindung möglich ist, wenn ${_t(impulse, 0)} Raum bekommt.';
+      return '${self.name} zeigt, wie es dir selbst gerade geht. ${_love(self)} '
+          '${connection.name} steht für die Verbindung zwischen euch. ${_love(connection)} '
+          'Was du mitbringst und was zwischen euch passiert, hängt enger zusammen, als es scheint. '
+          '${impulse.name} gibt einen Hinweis für den nächsten Schritt. ${_loveImpulse(impulse)}\n\n'
+          'Kurz gesagt:\n'
+          'Vielleicht wünschst du dir gerade mehr Klarheit in einer Verbindung. '
+          'Die Karten erinnern daran, dass Nähe nicht bedeutet, immer dieselbe Meinung haben zu müssen.';
     case 1:
-      return 'Drei Karten für Liebe und Verbindung. '
-          '${self.name} beschreibt dich: ${_t(self, 0)} ist deine Haltung, wenn du auf andere triffst. '
-          '${connection.name} zeigt die Verbindung: ${_t(connection, 0)} und ${_t(connection, 1)} stehen für das, '
-          'was zwischen zwei Menschen lebendig sein kann. '
-          '${impulse.name} als Impuls bringt ${_t(impulse, 0)} ins Bild – etwas, das gerade laut klingt. '
-          'Madame Gatto sieht diese drei Karten und sagt: Das ergibt Sinn. '
-          'Kurz gesagt: Was ${self.name} zeigt und was ${connection.name} beschreibt, liegt näher zusammen als gedacht – '
-          '${impulse.name} erinnert daran, was dabei nicht vergessen werden sollte.';
+      return 'Schauen wir zuerst auf dich: ${self.name}. ${_love(self)} '
+          'Das beeinflusst auch, wie du anderen begegnest. '
+          '${connection.name} beschreibt, was zwischen euch lebendig ist. ${_love(connection)} '
+          '${impulse.name} zeigt, worauf es jetzt ankommt. ${_loveImpulse(impulse)}\n\n'
+          'Kurz gesagt:\n'
+          'Wie du dich fühlst und was zwischen euch passiert, gehört zusammen. '
+          'Vielleicht hilft es, ehrlich zu sagen, was du dir wünschst, statt darauf zu warten, dass es von selbst klar wird.';
     case 2:
-      return '${self.name} ist der Ausgangspunkt: ${_t(self, 0)} beschreibt deine Haltung zu Nähe und Verbindung. '
-          '${connection.name} antwortet darauf mit ${_t(connection, 0)}. '
-          'Wer länger hinsieht, entdeckt auch ${_t(connection, 1)} in dieser Karte. '
-          'Das Wichtigste an dieser Legung ist das, was zwischen ${self.name} und ${connection.name} steht. '
-          '${impulse.name} als Impuls zeigt ${_t(impulse, 0)} – das verdient mehr Aufmerksamkeit. '
-          'Echte Nähe braucht keine Vollständigkeit, nur Aufrichtigkeit. '
-          'Kurz gesagt: ${self.name} und ${connection.name} ergänzen sich gut – '
-          'und ${impulse.name} zeigt, was als nächstes zählt.';
+      return '${self.name} sagt etwas darüber, wie du gerade in Beziehungen unterwegs bist. ${_love(self)} '
+          '${connection.name} antwortet darauf und zeigt die Verbindung. ${_love(connection)} '
+          'Das Spannende liegt in dem, was zwischen diesen beiden Karten steht. '
+          '${impulse.name} erinnert dich an etwas Wichtiges. ${_loveImpulse(impulse)}\n\n'
+          'Kurz gesagt:\n'
+          'Nähe braucht keine Perfektion, nur Ehrlichkeit. '
+          'Vielleicht darfst du dir und der anderen Person ein bisschen mehr Zeit geben.';
     default:
       return 'Madame Gatto legt die Karten für Liebe und Verbindung. '
-          '${self.name} erscheint zuerst: ${_t(self, 0)} zeigt, wer du in Beziehungen bist. '
-          '${connection.name} folgt: ${_t(connection, 0)} und ${_t(connection, 1)} – das sind die Qualitäten echter Verbindung. '
-          '${impulse.name} schließt ab: ${_t(impulse, 0)} ist der Impuls, der gerade klingt. '
-          '${self.name} legt etwas offen, was ${connection.name} aufnimmt – '
-          'und ${impulse.name} erinnert daran, was dabei nicht verloren gehen sollte. '
-          'Kurz gesagt: ${_t(impulse, 0)} ist kein Hindernis, sondern eine Einladung. '
-          'Verbindung, die die eigene Stimme einschließt, ist echter.';
+          '${self.name} zeigt dich: ${_love(self)} '
+          '${connection.name} zeigt, was zwischen euch lebendig ist: ${_love(connection)} '
+          '${impulse.name} flüstert noch einen Hinweis: ${_loveImpulse(impulse)}\n\n'
+          'Kurz gesagt:\n'
+          'Madame Gatto würde vermutlich sagen: Zwei Menschen müssen nicht gleich sein, um sich nah zu sein. '
+          'Es reicht, ehrlich zueinander zu bleiben.';
   }
 }
 

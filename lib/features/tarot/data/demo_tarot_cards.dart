@@ -6,197 +6,197 @@ const List<TarotCard> demoTarotCards = [
     symbol: '🐈',
     imageAsset: 'assets/images/tarot/cat_fool.png',
     meaning:
-        'Diese Karte steht für geschmeidige Aufmerksamkeit und sanfte Selbstführung. Sie erinnert daran, den eigenen Rhythmus mit Ruhe zu ehren.',
+        'Vielleicht hast du gerade Lust, etwas Neues auszuprobieren, ohne lange zu grübeln, ob es perfekt klappt. Manchmal hilft es, einfach den ersten Schritt zu machen und unterwegs zu schauen, wie es sich anfühlt.',
     catMessage:
-        'Madame Gatto flüstert: Vertraue heute den leisen Schritten, sie kennen den Weg schon.',
+        'Madame Gatto sagt: Trau dich heute, einfach mal loszulegen – du musst nicht alles vorher wissen.',
   ),
   TarotCard(
     name: 'Der Magier',
     symbol: '🪄',
     imageAsset: 'assets/images/tarot/cat_magic.png',
     meaning:
-        'Der Magier steht für konzentrierte Schöpferkraft und klaren Willen. Er erinnert daran, dass die eigenen Fähigkeiten stille Wunder wirken.',
+        'Vielleicht spürst du, dass du eine Sache wirklich angehen könntest, wenn du dich darauf konzentrierst. Es kann sein, dass du schon alles hast, was du brauchst – du musst es nur bündeln und anfangen.',
     catMessage:
-        'Madame Gatto lächelt: Was du in den Pfoten hältst, darf heute mit Absicht eingesetzt werden.',
+        'Madame Gatto sagt: Du kannst mehr bewegen, als du denkst. Fang einfach mit einer Sache an.',
   ),
   TarotCard(
     name: 'Die Hohepriesterin',
     symbol: '🔮',
     imageAsset: 'assets/images/tarot/cat_highpriest.png',
     meaning:
-        'Diese Karte erinnert an innere Weisheit und feine Grenzen. Wissen darf heute in Ruhe reifen, statt laut erklärt zu werden.',
+        'Vielleicht weißt du innerlich schon, was stimmt, auch wenn du es noch nicht laut ausgesprochen hast. Es kann sich lohnen, kurz still zu werden und auf dein Bauchgefühl zu hören, statt sofort zu handeln.',
     catMessage:
-        'Die Orakelkatze raunt: Nicht jede Antwort braucht Eile, manche brauchen Stille.',
+        'Madame Gatto sagt: Hör heute ruhig mal auf dein Bauchgefühl, es weiß oft mehr als der Kopf.',
   ),
   TarotCard(
     name: 'Die Herrscherin',
     symbol: '🌿',
     imageAsset: 'assets/images/tarot/cat_empress.png',
     meaning:
-        'Die Herrscherin verkörpert sanfte Fülle und schöpferische Stille. Sie lädt ein, das Wachsen zuzulassen, ohne es zu erzwingen.',
+        'Vielleicht möchtest du dich gerade um etwas kümmern, das dir am Herzen liegt, und es in Ruhe wachsen lassen. Es kann guttun, gut für dich zu sorgen und Dingen Zeit zu geben, statt sie zu erzwingen.',
     catMessage:
-        'Die grüne Katze flüstert: Nähre, was dir lieb ist, und lass es in eigenem Tempo gedeihen.',
+        'Madame Gatto sagt: Sei heute gut zu dir und gib den Dingen Zeit zu wachsen.',
   ),
   TarotCard(
     name: 'Der Herrscher',
     symbol: '👑',
     imageAsset: 'assets/images/tarot/cat_emporer.png',
     meaning:
-        'Der Herrscher steht für ruhige Ordnung und klare Struktur. Er erinnert daran, dass Stabilität aus innerer Haltung entsteht.',
+        'Vielleicht suchst du gerade nach etwas Halt und einer klaren Struktur in einer Sache. Es kann helfen, dir ein paar einfache Regeln zu setzen, an denen du dich festhalten kannst.',
     catMessage:
-        'Madame Gatto nickt: Eine sanfte Autorität über dich selbst braucht keinen Lärm.',
+        'Madame Gatto sagt: Ein bisschen Ordnung gibt dir gerade Halt – such dir einen klaren Anfang.',
   ),
   TarotCard(
     name: 'Der Hierophant',
     symbol: '📜',
     imageAsset: 'assets/images/tarot/cat_hierophant.png',
     meaning:
-        'Der Hierophant steht für Tradition und gelebtes Wissen. Er lädt ein, das Bewährte mit neuem Blick zu betrachten.',
+        'Vielleicht denkst du über etwas nach, das du so gelernt hast, und fragst dich, ob es noch zu dir passt. Es kann sich lohnen, Ratschläge anzuhören, am Ende aber selbst zu entscheiden, was für dich stimmt.',
     catMessage:
-        'Die weise Katze sagt: Manchmal liegt die tiefste Erkenntnis im Vertrauten, das wir übersehen.',
+        'Madame Gatto sagt: Hör dir Rat an, aber entscheide am Ende selbst, was zu dir passt.',
   ),
   TarotCard(
     name: 'Die Liebenden',
     symbol: '💞',
     imageAsset: 'assets/images/tarot/cat_lovers.png',
     meaning:
-        'Diese Karte steht für bewusste Wahl und Verbindung auf Augenhöhe. Sie betont Harmonie, die aus Klarheit und Respekt erwächst.',
+        'Vielleicht steht gerade eine Entscheidung an, bei der dein Herz mitreden möchte. Es kann helfen, dich für das zu entscheiden, was sich für dich wirklich stimmig anfühlt.',
     catMessage:
-        'Die Herzkatze flüstert: Entscheide dich für das, was warm und stimmig in dir klingt.',
+        'Madame Gatto sagt: Entscheide dich für das, was sich wirklich gut und ehrlich anfühlt.',
   ),
   TarotCard(
     name: 'Der Wagen',
     symbol: '⚡',
     imageAsset: 'assets/images/tarot/cat_chariot.png',
     meaning:
-        'Der Wagen steht für fokussierte Energie und ruhige Entschlossenheit. Er zeigt, dass Richtung wichtiger ist als Geschwindigkeit.',
+        'Vielleicht möchtest du in einer Sache endlich vorankommen und ein klares Ziel verfolgen. Es kann helfen, dich auf eine Richtung festzulegen, statt dich von zu vielen Möglichkeiten ablenken zu lassen.',
     catMessage:
-        'Madame Gatto schnurrt: Bleib klar in deiner Mitte, dann bewegt sich alles mit dir.',
+        'Madame Gatto sagt: Such dir eine Richtung und bleib ruhig dran – Tempo ist nicht alles.',
   ),
   TarotCard(
     name: 'Die Stärke',
     symbol: '🦁',
     imageAsset: 'assets/images/tarot/cat_strenght.png',
     meaning:
-        'Die Stärke spricht von sanfter Kraft und innerem Gleichmut. Sie zeigt, dass Mut oft leise und beständig wirkt.',
+        'Vielleicht brauchst du gerade etwas Geduld mit dir selbst und mit einer Situation. Es kann sein, dass Ruhe und Gelassenheit dir hier mehr weiterhelfen als Druck oder Härte.',
     catMessage:
-        'Die Löwenkatze flüstert: Wahre Stärke braucht keine laute Geste, sie ruht einfach in dir.',
+        'Madame Gatto sagt: Bleib freundlich und geduldig, auch mit dir selbst.',
   ),
   TarotCard(
     name: 'Die Einsiedlerin',
     symbol: '🕯️',
     imageAsset: 'assets/images/tarot/cat_hermit.png',
     meaning:
-        'Die Einsiedlerin trägt ein inneres Licht durch stille Wege. Sie erinnert daran, dass Rückzug klärend und heilsam wirken darf.',
+        'Vielleicht brauchst du gerade einen Moment für dich, um in Ruhe nachzudenken. Es kann guttun, dir bewusst etwas Zeit allein zu nehmen, bevor du eine Entscheidung triffst.',
     catMessage:
-        'Die Laternenkatze sagt: Ein ruhiger Moment für dich allein kann mehr erhellen als viele Worte.',
+        'Madame Gatto sagt: Gönn dir einen ruhigen Moment für dich, das klärt oft mehr als viele Worte.',
   ),
   TarotCard(
     name: 'Das Rad',
     symbol: '🜁',
     imageAsset: 'assets/images/tarot/cat_wheeloffortune.png',
     meaning:
-        'Das Rad steht für Wandel als natürlichen Fluss. Kleine Verschiebungen können neue Perspektiven mit Eleganz öffnen.',
+        'Vielleicht merkst du, dass sich gerade etwas verändert, auch wenn du es nicht ganz steuern kannst. Es kann leichter sein, mit einer Veränderung mitzugehen, als sich dagegen zu stemmen.',
     catMessage:
-        'Madame Gatto nickt: Wenn sich etwas dreht, darfst du weich mitgehen statt festhalten.',
+        'Madame Gatto sagt: Wenn sich etwas ändert, geh ruhig mit, statt dich dagegen zu stemmen.',
   ),
   TarotCard(
     name: 'Die Gerechtigkeit',
     symbol: '⚖️',
     imageAsset: 'assets/images/tarot/cat_Justice.png',
     meaning:
-        'Die Gerechtigkeit steht für klares Abwägen und ehrliche Haltung. Sie erinnert daran, dass Ausgewogenheit innerer Stärke entspringt.',
+        'Vielleicht hast du in letzter Zeit versucht, eine Situation möglichst fair zu beurteilen, und lange nach der richtigen Entscheidung gesucht. Es kann helfen, ehrlich zu dir selbst zu sein und zu schauen, was wirklich fair ist – auch dir gegenüber.',
     catMessage:
-        'Madame Gatto sieht: Eine faire Entscheidung beginnt bei der Ehrlichkeit mit sich selbst.',
+        'Madame Gatto sagt: Sei ehrlich zu dir selbst, dann fällt dir die faire Entscheidung leichter.',
   ),
   TarotCard(
     name: 'Der Gehängte',
     symbol: '🌀',
     imageAsset: 'assets/images/tarot/cat_hangedman.png',
     meaning:
-        'Der Gehängte lädt ein, inne zu halten und die Dinge von einem neuen Winkel zu betrachten. Pause kann ein weiser Akt sein.',
+        'Vielleicht steckst du gerade in einer Sache fest und kommst mit Anstrengung nicht recht weiter. Es kann helfen, kurz innezuhalten und die Sache einmal aus einem anderen Blickwinkel anzusehen.',
     catMessage:
-        'Die geduldige Katze flüstert: Manchmal ist Stillhalten die klügste Bewegung von allen.',
+        'Madame Gatto sagt: Manchmal ist Abwarten klüger als Anstrengung. Gib der Sache Zeit.',
   ),
   TarotCard(
     name: 'Die Wandlung',
     symbol: '🍂',
     imageAsset: 'assets/images/tarot/cat_death.png',
     meaning:
-        'Die Wandlung steht für das sanfte Loslassen des Alten. Sie zeigt, dass in jedem Ende ein neuer Anfang ruhig wartet.',
+        'Vielleicht geht gerade etwas zu Ende, und du spürst, dass etwas Neues Platz braucht. Es kann guttun, etwas loszulassen, das nicht mehr passt, um Raum für Neues zu schaffen.',
     catMessage:
-        'Madame Gatto nickt: Was geht, schafft Raum für das, was kommen möchte.',
+        'Madame Gatto sagt: Was geht, macht Platz für etwas Neues. Lass ruhig los.',
   ),
   TarotCard(
     name: 'Die Mäßigung',
     symbol: '🌊',
     imageAsset: 'assets/images/tarot/cat_temperance.png',
     meaning:
-        'Die Mäßigung steht für Ausgewogenheit und fließendes Gleichgewicht. Sie erinnert daran, dass Harmonie durch achtsames Mischen entsteht.',
+        'Vielleicht versuchst du gerade, zwei Dinge unter einen Hut zu bringen und ein gutes Maß zu finden. Es kann helfen, ruhig zu bleiben und nach der gesunden Mitte zu suchen, statt von einem Extrem ins andere zu fallen.',
     catMessage:
-        'Die Gleichgewichtskatze sagt: Geduld und Sanftheit sind eine stille Form von Weisheit.',
+        'Madame Gatto sagt: Such die gesunde Mitte, dann wird vieles leichter.',
   ),
   TarotCard(
     name: 'Der Teufel',
     symbol: '🔗',
     imageAsset: 'assets/images/tarot/cat_devil.png',
     meaning:
-        'Der Teufel macht Bindungen sichtbar, die unbewusst Energie kosten. Er lädt ein, diese mit klarem Blick wahrzunehmen.',
+        'Vielleicht gibt es eine Gewohnheit oder einen Gedanken, der dich mehr festhält, als dir guttut. Es kann befreien, ehrlich hinzuschauen, was dich gerade bindet, und zu prüfen, ob du das so willst.',
     catMessage:
-        'Madame Gatto schaut scharf: Was zieht deine Aufmerksamkeit? Manchmal lohnt ein zweiter Blick.',
+        'Madame Gatto sagt: Schau ehrlich hin, was dich festhält – und ob du das wirklich willst.',
   ),
   TarotCard(
     name: 'Der Turm',
     symbol: '🜂',
     imageAsset: 'assets/images/tarot/cat_tower.png',
     meaning:
-        'Der Turm zeigt den Moment, in dem alte Muster sichtbar werden. Daraus kann ehrliche Neuordnung mit ruhiger Haltung entstehen.',
+        'Vielleicht ist gerade etwas ins Wanken geraten, mit dem du fest gerechnet hattest. Es kann sein, dass nach dem ersten Schreck Platz für etwas Ehrlicheres entsteht.',
     catMessage:
-        'Madame Gatto meint: Wenn etwas wackelt, entsteht Raum für etwas Wahrhaftigeres.',
+        'Madame Gatto sagt: Wenn etwas wackelt, entsteht Platz für etwas Ehrlicheres.',
   ),
   TarotCard(
     name: 'Der Stern',
     symbol: '⭐',
     imageAsset: 'assets/images/tarot/cat_star.png',
     meaning:
-        'Der Stern schenkt eine stille Aussicht auf Zuversicht. Er steht für Klarheit, die aus Sanftmut und Geduld entsteht.',
+        'Vielleicht wünschst du dir gerade etwas Zuversicht und das Gefühl, dass es weitergeht. Der Stern erinnert daran, dass nicht jede Antwort sofort gefunden werden muss – manchmal reicht es, dem eigenen Weg etwas Zeit zu geben.',
     catMessage:
-        'Madame Gatto sieht einen feinen Glanz über deinen Gedanken. Atme tief und bleibe freundlich mit dir.',
+        'Madame Gatto sagt: Bleib zuversichtlich. Nicht jede Antwort muss heute schon da sein.',
   ),
   TarotCard(
     name: 'Der Mond',
     symbol: '🌙',
     imageAsset: 'assets/images/tarot/cat_moon.png',
     meaning:
-        'Der Mond lädt dazu ein, innere Stimmungen behutsam wahrzunehmen. Zwischen Licht und Schatten darf Intuition weich wachsen.',
+        'Vielleicht ist gerade nicht alles klar, und du bist dir bei einer Sache noch unsicher. Es kann helfen, nicht alles sofort verstehen zu wollen und auch mal mit Unsicherheit auszuhalten.',
     catMessage:
-        'Die Nachtkatze sagt: Was unklar wirkt, darf heute poetisch und offen bleiben.',
+        'Madame Gatto sagt: Du musst noch nicht alles verstehen. Lass der Sache etwas Zeit.',
   ),
   TarotCard(
     name: 'Die Sonne',
     symbol: '☀️',
     imageAsset: 'assets/images/tarot/cat_sun.png',
     meaning:
-        'Die Sonne bringt warme Klarheit in den Tag. Sie erinnert an spielerische Kraft, die ohne Druck leuchten darf.',
+        'Vielleicht läuft gerade etwas gut, oder du spürst wieder mehr Freude an einer Sache. Es kann guttun, dich über das zu freuen, was schön ist, ohne es kleinzureden.',
     catMessage:
-        'Die Sonnenkatze schnurrt: Zeig dich heute freundlich und aufrichtig, das reicht vollkommen.',
+        'Madame Gatto sagt: Freu dich ruhig über das, was gerade schön ist.',
   ),
   TarotCard(
     name: 'Das Gericht',
     symbol: '🔔',
     imageAsset: 'assets/images/tarot/cat_judgement.png',
     meaning:
-        'Das Gericht steht für Erneuerung und das Erwachen zu sich selbst. Es lädt ein, mit Wohlwollen auf den eigenen Weg zurückzuschauen.',
+        'Vielleicht schaust du gerade auf etwas zurück und überlegst, was du daraus mitnimmst. Es kann helfen, ehrlich auf das Vergangene zu blicken und dann bewusst nach vorn zu schauen.',
     catMessage:
-        'Die rufende Katze sagt: Höre auf dein innerstes Ja, es kennt die nächste Richtung.',
+        'Madame Gatto sagt: Schau ehrlich zurück und dann freundlich nach vorn.',
   ),
   TarotCard(
     name: 'Die Welt',
     symbol: '🌍',
     imageAsset: 'assets/images/tarot/cat_world.png',
     meaning:
-        'Die Welt steht für Vollendung und ganzheitliches Ankommen. Sie erinnert daran, dass Abschlüsse auch Erfüllungen sein dürfen.',
+        'Vielleicht hast du gerade etwas zu einem guten Abschluss gebracht oder bist an einem Ziel angekommen. Es kann guttun, kurz innezuhalten und anzuerkennen, was du schon geschafft hast.',
     catMessage:
-        'Madame Gatto tanzt: Dieser Moment darf als vollständig erfahren werden, genau so wie er ist.',
+        'Madame Gatto sagt: Halt kurz inne und erkenne an, was du schon geschafft hast.',
   ),
 ];
