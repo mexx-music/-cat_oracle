@@ -207,6 +207,121 @@ String _love(TarotCard card) => _cardLove[card.name] ?? card.meaning;
 String _loveImpulse(TarotCard card) =>
     _cardLoveImpulse[card.name] ?? card.meaning;
 
+// ---------------------------------------------------------------------------
+// Kontext-Thema
+// ---------------------------------------------------------------------------
+
+class _TarotTopic {
+  const _TarotTopic({
+    required this.label,
+    required this.name,
+    required this.focus,
+  });
+
+  final String label; // mit Emoji, für den Button
+  final String name;  // ohne Emoji, für den Deutungstext
+  final String focus; // Fokus-Satz für Madame Gatto
+}
+
+const List<_TarotTopic> _topics = [
+  _TarotTopic(
+    label: '❤️ Liebe & Beziehung',
+    name: 'Liebe & Beziehung',
+    focus: 'Nähe, Vertrauen und gegenseitiges Verstehen',
+  ),
+  _TarotTopic(
+    label: '💼 Beruf & Geld',
+    name: 'Beruf & Geld',
+    focus: 'Entscheidungen, Verantwortung und praktische Schritte',
+  ),
+  _TarotTopic(
+    label: '🏠 Familie & Zuhause',
+    name: 'Familie & Zuhause',
+    focus: 'Ruhe, Grenzen und Zusammenhalt',
+  ),
+  _TarotTopic(
+    label: '🔄 Veränderung & Entscheidung',
+    name: 'Veränderung & Entscheidung',
+    focus: 'Klarheit, Loslassen und den nächsten Schritt',
+  ),
+  _TarotTopic(
+    label: '🌙 Allgemeine Reflexion',
+    name: 'Allgemeine Reflexion',
+    focus: 'innere Orientierung, Ruhe und Selbstvertrauen',
+  ),
+  _TarotTopic(
+    label: '✍️ Etwas anderes',
+    name: 'Etwas anderes',
+    focus: 'offen betrachten, ohne vorschnell zu urteilen',
+  ),
+];
+
+Future<_TarotTopic?> _showContextDialog(BuildContext context) {
+  return showDialog<_TarotTopic>(
+    context: context,
+    builder: (dialogContext) {
+      return Dialog(
+        backgroundColor: const Color(0xFF140F1F),
+        elevation: 0,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: const Color(0x88DAB86E), width: 1.2),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x40100D1B),
+                blurRadius: 22,
+                offset: Offset(0, 10),
+              ),
+            ],
+          ),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Was beschäftigt dich gerade?',
+                  style: Theme.of(dialogContext).textTheme.titleLarge?.copyWith(
+                    color: const Color(0xFFFFE9B0),
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Wähle ein Thema – Madame Gatto richtet ihren Blick dann darauf.',
+                  style: Theme.of(dialogContext).textTheme.bodySmall?.copyWith(
+                    color: const Color(0xFFD8C8F7),
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                for (final t in _topics) ...[
+                  _TopicTile(
+                    topic: t,
+                    onTap: () => Navigator.of(dialogContext).pop(t),
+                  ),
+                  const SizedBox(height: 8),
+                ],
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    child: const Text('Abbrechen'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
 class TarotPage extends StatelessWidget {
   const TarotPage({super.key});
 
@@ -767,8 +882,13 @@ Future<void> _showDrawnCardDialog(BuildContext context, TarotCard card) {
 String _composeThreeCardReading(
   TarotCard past,
   TarotCard present,
-  TarotCard impulse,
-) {
+  TarotCard impulse, {
+  _TarotTopic? topic,
+}) {
+  final prefix = topic != null
+      ? 'Du hast diese Legung mit dem Thema ${topic.name} geöffnet. '
+        'Deshalb schaut Madame Gatto besonders auf ${topic.focus}.\n\n'
+      : '';
   final pastIdx = demoTarotCards.indexOf(past);
   final presentIdx = demoTarotCards.indexOf(present);
   final impulseIdx = demoTarotCards.indexOf(impulse);
@@ -776,7 +896,7 @@ String _composeThreeCardReading(
 
   switch (variant) {
     case 0:
-      return '${past.name} steht für die Vergangenheit. ${_everyday(past)} '
+      return '$prefix${past.name} steht für die Vergangenheit. ${_everyday(past)} '
           'Das spürst du heute vielleicht noch. '
           'In der Gegenwart zeigt sich ${present.name}. ${_everyday(present)} '
           'Vieles davon hat seinen Ursprung in dem, was vorher war. '
@@ -785,7 +905,7 @@ String _composeThreeCardReading(
           'Du hast vermutlich schon eine Weile über etwas nachgedacht. '
           'Die Karten schlagen vor, etwas weniger zu kontrollieren und etwas mehr auf den nächsten Schritt zu vertrauen.';
     case 1:
-      return 'Beginnen wir bei ${past.name} in der Vergangenheit. ${_everyday(past)} '
+      return '${prefix}Beginnen wir bei ${past.name} in der Vergangenheit. ${_everyday(past)} '
           'Das hat den Boden für das bereitet, was jetzt da ist. '
           'Heute steht ${present.name} im Mittelpunkt. ${_everyday(present)} '
           'So erklärt sich auch, warum dich gerade dieser eine Gedanke beschäftigt. '
@@ -794,7 +914,7 @@ String _composeThreeCardReading(
           'Was früher passiert ist, wirkt noch in deine Gegenwart hinein. '
           'Die drei Karten erinnern dich daran, dass du den nächsten Schritt selbst in der Hand hast – ohne dich zu hetzen.';
     case 2:
-      return '${past.name} erzählt von dem, was hinter dir liegt. ${_everyday(past)} '
+      return '$prefix${past.name} erzählt von dem, was hinter dir liegt. ${_everyday(past)} '
           'Diese Erfahrung trägst du noch mit dir. '
           '${present.name} beschreibt, wo du gerade stehst. ${_everyday(present)} '
           'Das eine geht ziemlich nahtlos in das andere über. '
@@ -803,7 +923,7 @@ String _composeThreeCardReading(
           'Die drei Karten erzählen zusammen eine kleine Geschichte: woher du kommst, wo du stehst und was dir guttun könnte. '
           'Vielleicht darfst du einfach etwas freundlicher mit dir sein.';
     default:
-      return 'Madame Gatto legt drei Karten und schaut in Ruhe. '
+      return '${prefix}Madame Gatto legt drei Karten und schaut in Ruhe. '
           '${past.name} steht für die Vergangenheit. ${_everyday(past)} '
           '${present.name} zeigt die Gegenwart. ${_everyday(present)} '
           'Und ${impulse.name} deutet an, was als nächstes dran sein könnte. ${_impulse(impulse)}\n\n'
@@ -814,6 +934,8 @@ String _composeThreeCardReading(
 }
 
 Future<void> _showThreeCardSpreadDialog(BuildContext context) async {
+  final topic = await _showContextDialog(context);
+  if (topic == null || !context.mounted) return;
   final l10n = AppLocalizations.of(context)!;
   final cards = await showTarotMultiDrawOverlay(
     context,
@@ -937,7 +1059,12 @@ Future<void> _showThreeCardSpreadDialog(BuildContext context) async {
                       border: Border.all(color: const Color(0x66DAB86E)),
                     ),
                     child: Text(
-                      _composeThreeCardReading(cards[0], cards[1], cards[2]),
+                      _composeThreeCardReading(
+                        cards[0],
+                        cards[1],
+                        cards[2],
+                        topic: topic,
+                      ),
                       style: Theme.of(dialogContext).textTheme.bodyMedium
                           ?.copyWith(
                             color: const Color(0xFFF1E9FF),
@@ -966,8 +1093,13 @@ Future<void> _showThreeCardSpreadDialog(BuildContext context) async {
 String _composeLoveReading(
   TarotCard self,
   TarotCard connection,
-  TarotCard impulse,
-) {
+  TarotCard impulse, {
+  _TarotTopic? topic,
+}) {
+  final prefix = topic != null
+      ? 'Du hast diese Legung mit dem Thema ${topic.name} geöffnet. '
+        'Deshalb schaut Madame Gatto besonders auf ${topic.focus}.\n\n'
+      : '';
   final selfIdx = demoTarotCards.indexOf(self);
   final connectionIdx = demoTarotCards.indexOf(connection);
   final impulseIdx = demoTarotCards.indexOf(impulse);
@@ -975,7 +1107,7 @@ String _composeLoveReading(
 
   switch (variant) {
     case 0:
-      return '${self.name} zeigt, wie es dir selbst gerade geht. ${_love(self)} '
+      return '$prefix${self.name} zeigt, wie es dir selbst gerade geht. ${_love(self)} '
           '${connection.name} steht für die Verbindung zwischen euch. ${_love(connection)} '
           'Was du mitbringst und was zwischen euch passiert, hängt enger zusammen, als es scheint. '
           '${impulse.name} gibt einen Hinweis für den nächsten Schritt. ${_loveImpulse(impulse)}\n\n'
@@ -983,7 +1115,7 @@ String _composeLoveReading(
           'Vielleicht wünschst du dir gerade mehr Klarheit in einer Verbindung. '
           'Die Karten erinnern daran, dass Nähe nicht bedeutet, immer dieselbe Meinung haben zu müssen.';
     case 1:
-      return 'Schauen wir zuerst auf dich: ${self.name}. ${_love(self)} '
+      return '${prefix}Schauen wir zuerst auf dich: ${self.name}. ${_love(self)} '
           'Das beeinflusst auch, wie du anderen begegnest. '
           '${connection.name} beschreibt, was zwischen euch lebendig ist. ${_love(connection)} '
           '${impulse.name} zeigt, worauf es jetzt ankommt. ${_loveImpulse(impulse)}\n\n'
@@ -991,7 +1123,7 @@ String _composeLoveReading(
           'Wie du dich fühlst und was zwischen euch passiert, gehört zusammen. '
           'Vielleicht hilft es, ehrlich zu sagen, was du dir wünschst, statt darauf zu warten, dass es von selbst klar wird.';
     case 2:
-      return '${self.name} sagt etwas darüber, wie du gerade in Beziehungen unterwegs bist. ${_love(self)} '
+      return '$prefix${self.name} sagt etwas darüber, wie du gerade in Beziehungen unterwegs bist. ${_love(self)} '
           '${connection.name} antwortet darauf und zeigt die Verbindung. ${_love(connection)} '
           'Das Spannende liegt in dem, was zwischen diesen beiden Karten steht. '
           '${impulse.name} erinnert dich an etwas Wichtiges. ${_loveImpulse(impulse)}\n\n'
@@ -999,7 +1131,7 @@ String _composeLoveReading(
           'Nähe braucht keine Perfektion, nur Ehrlichkeit. '
           'Vielleicht darfst du dir und der anderen Person ein bisschen mehr Zeit geben.';
     default:
-      return 'Madame Gatto legt die Karten für Liebe und Verbindung. '
+      return '${prefix}Madame Gatto legt die Karten für Liebe und Verbindung. '
           '${self.name} zeigt dich: ${_love(self)} '
           '${connection.name} zeigt, was zwischen euch lebendig ist: ${_love(connection)} '
           '${impulse.name} flüstert noch einen Hinweis: ${_loveImpulse(impulse)}\n\n'
@@ -1010,6 +1142,8 @@ String _composeLoveReading(
 }
 
 Future<void> _showLoveSpreadDialog(BuildContext context) async {
+  final topic = await _showContextDialog(context);
+  if (topic == null || !context.mounted) return;
   final l10n = AppLocalizations.of(context)!;
   final cards = await showTarotMultiDrawOverlay(
     context,
@@ -1133,7 +1267,12 @@ Future<void> _showLoveSpreadDialog(BuildContext context) async {
                       border: Border.all(color: const Color(0x66DAB86E)),
                     ),
                     child: Text(
-                      _composeLoveReading(cards[0], cards[1], cards[2]),
+                      _composeLoveReading(
+                        cards[0],
+                        cards[1],
+                        cards[2],
+                        topic: topic,
+                      ),
                       style: Theme.of(dialogContext).textTheme.bodyMedium
                           ?.copyWith(
                             color: const Color(0xFFF1E9FF),
@@ -1233,6 +1372,39 @@ class _SpreadCardTile extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _TopicTile extends StatelessWidget {
+  const _TopicTile({required this.topic, required this.onTap});
+
+  final _TarotTopic topic;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: const Color(0x2A150F24),
+            border: Border.all(color: const Color(0x66DAB86E)),
+          ),
+          child: Text(
+            topic.label,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: const Color(0xFFF1E9FF),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
       ),
     );
   }
