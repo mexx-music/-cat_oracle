@@ -105,107 +105,8 @@ const Map<String, String> _cardImpulse = {
       'Es kann guttun, kurz innezuhalten und anzuerkennen, was du schon geschafft hast.',
 };
 
-// Bedeutung der Karte für Liebe und Beziehungen.
-const Map<String, String> _cardLove = {
-  'Die Katze':
-      'Vielleicht möchtest du in einer Beziehung wieder mehr Leichtigkeit, ohne dauernd nachzudenken, was richtig ist.',
-  'Der Magier':
-      'Vielleicht hast du in einer Verbindung mehr Einfluss, als du denkst, wenn du klar sagst, was du willst.',
-  'Die Hohepriesterin':
-      'Vielleicht spürst du in einer Verbindung mehr, als bisher offen ausgesprochen wurde.',
-  'Die Herrscherin':
-      'Vielleicht wünschst du dir Wärme und Geborgenheit in einer Verbindung.',
-  'Der Herrscher':
-      'Vielleicht wünschst du dir in einer Beziehung Verlässlichkeit und das Gefühl, dass man sich aufeinander verlassen kann.',
-  'Der Hierophant':
-      'Vielleicht beschäftigt dich, wie ihr als Paar mit Gewohnheiten oder Erwartungen umgeht.',
-  'Die Liebenden':
-      'Vielleicht wünschst du dir mehr Klarheit in einer Verbindung und das Gefühl, auf Augenhöhe zu sein.',
-  'Der Wagen':
-      'Vielleicht möchtest du in einer Beziehung wissen, wohin das Ganze eigentlich geht.',
-  'Die Stärke':
-      'Vielleicht braucht eine Verbindung gerade etwas Geduld und ein sanftes Miteinander.',
-  'Die Einsiedlerin':
-      'Vielleicht möchtest du erst für dich klären, was du in einer Verbindung wirklich brauchst.',
-  'Das Rad':
-      'Vielleicht ist in einer Verbindung gerade einiges in Veränderung.',
-  'Die Gerechtigkeit':
-      'Vielleicht beschäftigt dich, ob in einer Verbindung gerade alles ausgeglichen ist.',
-  'Der Gehängte':
-      'Vielleicht hängt in einer Verbindung gerade etwas in der Schwebe.',
-  'Die Wandlung':
-      'Vielleicht verändert sich gerade etwas in einer Verbindung.',
-  'Die Mäßigung':
-      'Vielleicht geht es in einer Verbindung gerade darum, eine gute Balance zu finden.',
-  'Der Teufel':
-      'Vielleicht beschäftigt dich ein Muster in einer Verbindung, das sich immer wiederholt.',
-  'Der Turm':
-      'Vielleicht hat sich in einer Verbindung etwas verändert, das vorher sicher schien.',
-  'Der Stern':
-      'Vielleicht hoffst du in einer Verbindung auf einen freundlichen, ruhigen Neuanfang.',
-  'Der Mond':
-      'Vielleicht gibt es in einer Verbindung etwas, das noch nicht ganz ausgesprochen ist.',
-  'Die Sonne':
-      'Vielleicht erlebst du in einer Verbindung gerade unbeschwerte, schöne Momente.',
-  'Das Gericht':
-      'Vielleicht denkst du über eine Verbindung nach und darüber, wie es weitergehen soll.',
-  'Die Welt':
-      'Vielleicht fühlt sich eine Verbindung gerade rund und stimmig an.',
-};
-
-// Sanfter Beziehungs-Hinweis für den nächsten Schritt.
-const Map<String, String> _cardLoveImpulse = {
-  'Die Katze':
-      'Es kann guttun, neugierig zu bleiben und der anderen Person unvoreingenommen zu begegnen.',
-  'Der Magier':
-      'Manchmal reicht ein ehrliches Wort, um etwas zwischen euch zu klären.',
-  'Die Hohepriesterin':
-      'Manchmal hilft es, erst in Ruhe zu fühlen, was du wirklich brauchst, bevor du darüber redest.',
-  'Die Herrscherin':
-      'Manchmal entsteht Nähe einfach dadurch, dass man füreinander da ist, ohne Druck.',
-  'Der Herrscher':
-      'Manchmal schafft schon eine klare Absprache mehr Ruhe zwischen zwei Menschen.',
-  'Der Hierophant':
-      'Manchmal hilft es, gemeinsam zu schauen, welche Gewohnheiten euch wirklich guttun und welche nicht.',
-  'Die Liebenden':
-      'Nähe bedeutet nicht, immer dieselbe Meinung zu haben – es reicht, ehrlich zueinander zu sein.',
-  'Der Wagen':
-      'Manchmal hilft es, gemeinsam zu klären, was ihr beide wollt, statt es offen zu lassen.',
-  'Die Stärke':
-      'Manchmal kommt man weiter, wenn man freundlich bleibt, auch wenn es schwierig wird.',
-  'Die Einsiedlerin':
-      'Manchmal hilft ein bisschen Abstand, um danach wieder offener aufeinander zuzugehen.',
-  'Das Rad':
-      'Manchmal lohnt es sich, abzuwarten, wie sich die Dinge entwickeln, bevor man alles festlegt.',
-  'Die Gerechtigkeit':
-      'Manchmal hilft ein offenes Gespräch, damit sich beide gerecht behandelt fühlen.',
-  'Der Gehängte':
-      'Manchmal löst sich etwas, wenn man es nicht erzwingt, sondern der Sache Zeit lässt.',
-  'Die Wandlung':
-      'Manchmal muss etwas Altes enden, damit zwischen euch etwas Frisches entstehen kann.',
-  'Die Mäßigung':
-      'Manchmal entsteht Nähe genau dann, wenn beide ein bisschen aufeinander zugehen.',
-  'Der Teufel':
-      'Manchmal hilft es, offen anzusprechen, was zwischen euch nicht guttut.',
-  'Der Turm':
-      'Manchmal zeigt eine ehrliche Klärung, was wirklich tragfähig ist.',
-  'Der Stern':
-      'Manchmal reicht es, hoffnungsvoll zu bleiben und der Sache etwas Zeit zu geben.',
-  'Der Mond':
-      'Manchmal hilft ein offenes Gespräch, um Missverständnisse aus dem Weg zu räumen.',
-  'Die Sonne':
-      'Manchmal darf man Nähe einfach genießen, ohne sie zu hinterfragen.',
-  'Das Gericht':
-      'Manchmal hilft ein klarer Blick zurück, um zu entscheiden, was du dir wünschst.',
-  'Die Welt':
-      'Manchmal darf man einfach genießen, dass etwas gut zusammenpasst.',
-};
-
 String _everyday(TarotCard card) => _cardEveryday[card.name] ?? card.meaning;
 String _impulse(TarotCard card) => _cardImpulse[card.name] ?? card.meaning;
-String _love(TarotCard card) => _cardLove[card.name] ?? card.meaning;
-String _loveImpulse(TarotCard card) =>
-    _cardLoveImpulse[card.name] ?? card.meaning;
 
 // ---------------------------------------------------------------------------
 // Kontext-Thema
@@ -632,8 +533,10 @@ class TarotPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     _TarotOptionTile(
-                      title: '❤️ ${l10n.tarotLoveRelationships}',
-                      onTap: () => _showLoveSpreadDialog(context),
+                      title: 'Fünf-Karten-Legung',
+                      subtitle: 'Madame Gattos größerer Rat',
+                      icon: Icons.auto_awesome_rounded,
+                      onTap: () => _showFiveCardSpreadDialog(context),
                     ),
                     const SizedBox(height: 18),
                     Container(
@@ -1090,68 +993,92 @@ Future<void> _showThreeCardSpreadDialog(BuildContext context) async {
   );
 }
 
-String _composeLoveReading(
-  TarotCard self,
-  TarotCard connection,
-  TarotCard impulse, {
+
+// ---------------------------------------------------------------------------
+// Fünf-Karten-Legung
+// ---------------------------------------------------------------------------
+
+String _composeFiveCardReading(
+  TarotCard situation,
+  TarotCard challenge,
+  TarotCard help,
+  TarotCard release,
+  TarotCard nextStep, {
   _TarotTopic? topic,
 }) {
   final prefix = topic != null
       ? 'Du hast diese Legung mit dem Thema ${topic.name} geöffnet. '
         'Deshalb schaut Madame Gatto besonders auf ${topic.focus}.\n\n'
       : '';
-  final selfIdx = demoTarotCards.indexOf(self);
-  final connectionIdx = demoTarotCards.indexOf(connection);
-  final impulseIdx = demoTarotCards.indexOf(impulse);
-  final variant = (selfIdx * 3 + connectionIdx * 11 + impulseIdx * 7).abs() % 4;
+  final variant = (demoTarotCards.indexOf(situation) * 2 +
+              demoTarotCards.indexOf(challenge) * 5 +
+              demoTarotCards.indexOf(help) * 11 +
+              demoTarotCards.indexOf(release) * 7 +
+              demoTarotCards.indexOf(nextStep) * 3)
+          .abs() %
+      4;
 
   switch (variant) {
     case 0:
-      return '$prefix${self.name} zeigt, wie es dir selbst gerade geht. ${_love(self)} '
-          '${connection.name} steht für die Verbindung zwischen euch. ${_love(connection)} '
-          'Was du mitbringst und was zwischen euch passiert, hängt enger zusammen, als es scheint. '
-          '${impulse.name} gibt einen Hinweis für den nächsten Schritt. ${_loveImpulse(impulse)}\n\n'
+      return '$prefix${situation.name} beschreibt, womit du es gerade zu tun hast. ${_everyday(situation)} '
+          '${challenge.name} zeigt, was dabei erschwerend dazukommt. ${_everyday(challenge)} '
+          'Vielleicht erklärt das, warum die Sache sich etwas zäher anfühlt als erwartet. '
+          '${help.name} gibt dir etwas an die Hand, das wirklich nützen könnte. ${_impulse(help)} '
+          '${release.name} erinnert dich daran, was du gerade nicht mehr brauchst. ${_everyday(release)} '
+          'Und ${nextStep.name} deutet an, was als nächstes sinnvoll sein könnte. ${_everyday(nextStep)}\n\n'
           'Kurz gesagt:\n'
-          'Vielleicht wünschst du dir gerade mehr Klarheit in einer Verbindung. '
-          'Die Karten erinnern daran, dass Nähe nicht bedeutet, immer dieselbe Meinung haben zu müssen.';
+          'Fünf Karten, fünf unterschiedliche Blickwinkel – alle auf dich. '
+          'Die Karten schlagen vor, bei dem anzufangen, was sich am leichtesten anfühlt.';
     case 1:
-      return '${prefix}Schauen wir zuerst auf dich: ${self.name}. ${_love(self)} '
-          'Das beeinflusst auch, wie du anderen begegnest. '
-          '${connection.name} beschreibt, was zwischen euch lebendig ist. ${_love(connection)} '
-          '${impulse.name} zeigt, worauf es jetzt ankommt. ${_loveImpulse(impulse)}\n\n'
+      return '${prefix}Diese fünf Karten erzählen zusammen eine Geschichte. '
+          '${situation.name} steht am Anfang: ${_everyday(situation)} '
+          'Dann taucht ${challenge.name} auf: ${_everyday(challenge)} '
+          'Was dabei helfen kann, zeigt ${help.name}. ${_impulse(help)} '
+          '${release.name} erinnert daran, was du loslassen dürftest, damit Raum entsteht. ${_everyday(release)} '
+          'Den Abschluss macht ${nextStep.name}: ${_everyday(nextStep)}\n\n'
           'Kurz gesagt:\n'
-          'Wie du dich fühlst und was zwischen euch passiert, gehört zusammen. '
-          'Vielleicht hilft es, ehrlich zu sagen, was du dir wünschst, statt darauf zu warten, dass es von selbst klar wird.';
+          'Die Karten zeigen nicht, was du tun musst – sie zeigen, was du vielleicht schon weißt. '
+          'Vielleicht traust du dir einfach etwas mehr zu.';
     case 2:
-      return '$prefix${self.name} sagt etwas darüber, wie du gerade in Beziehungen unterwegs bist. ${_love(self)} '
-          '${connection.name} antwortet darauf und zeigt die Verbindung. ${_love(connection)} '
-          'Das Spannende liegt in dem, was zwischen diesen beiden Karten steht. '
-          '${impulse.name} erinnert dich an etwas Wichtiges. ${_loveImpulse(impulse)}\n\n'
+      return '${prefix}Manchmal sagen fünf Karten mehr als eine. '
+          '${situation.name} ist der Ausgangspunkt: ${_everyday(situation)} '
+          'Die Schwierigkeit dabei trägt den Namen ${challenge.name}. ${_everyday(challenge)} '
+          'Was helfen kann, zeigt ${help.name}: ${_impulse(help)} '
+          '${release.name} schlägt vor, Platz zu schaffen: ${_everyday(release)} '
+          'Für den nächsten Schritt schaut Madame Gatto auf ${nextStep.name}: ${_impulse(nextStep)}\n\n'
           'Kurz gesagt:\n'
-          'Nähe braucht keine Perfektion, nur Ehrlichkeit. '
-          'Vielleicht darfst du dir und der anderen Person ein bisschen mehr Zeit geben.';
+          'Vielleicht reicht schon ein kleiner Schritt, um das Ganze etwas leichter zu machen. '
+          'Die Karten legen einen konkreten Anfang nahe.';
     default:
-      return '${prefix}Madame Gatto legt die Karten für Liebe und Verbindung. '
-          '${self.name} zeigt dich: ${_love(self)} '
-          '${connection.name} zeigt, was zwischen euch lebendig ist: ${_love(connection)} '
-          '${impulse.name} flüstert noch einen Hinweis: ${_loveImpulse(impulse)}\n\n'
+      return '${prefix}Madame Gatto legt fünf Karten und schaut sie lange an. '
+          '${situation.name}: ${_everyday(situation)} '
+          '${challenge.name} kommt dazu: ${_everyday(challenge)} '
+          '${help.name} zeigt, was die Sache erleichtern kann: ${_impulse(help)} '
+          '${release.name} erinnert daran, was du nicht mehr brauchst: ${_everyday(release)} '
+          '${nextStep.name} schließt die Legung ab: ${_impulse(nextStep)}\n\n'
           'Kurz gesagt:\n'
-          'Madame Gatto würde vermutlich sagen: Zwei Menschen müssen nicht gleich sein, um sich nah zu sein. '
-          'Es reicht, ehrlich zueinander zu bleiben.';
+          'Madame Gatto würde vermutlich sagen: Fünf Karten sind fünf Möglichkeiten, nicht fünf Aufgaben. '
+          'Fang mit der einfachsten an.';
   }
 }
 
-Future<void> _showLoveSpreadDialog(BuildContext context) async {
+Future<void> _showFiveCardSpreadDialog(BuildContext context) async {
   final topic = await _showContextDialog(context);
   if (topic == null || !context.mounted) return;
   final l10n = AppLocalizations.of(context)!;
+  const positions = [
+    'Situation',
+    'Herausforderung',
+    'Was hilft',
+    'Was loslassen',
+    'Nächster Schritt',
+  ];
   final cards = await showTarotMultiDrawOverlay(
     context,
-    count: 3,
-    positionLabels: [l10n.tarotSelf, l10n.tarotConnection, l10n.tarotImpulse],
+    count: 5,
+    positionLabels: positions,
   );
-  if (cards == null || cards.length < 3 || !context.mounted) return;
-  final positions = [l10n.tarotSelf, l10n.tarotConnection, l10n.tarotImpulse];
+  if (cards == null || cards.length < 5 || !context.mounted) return;
 
   return showDialog<void>(
     context: context,
@@ -1168,8 +1095,8 @@ Future<void> _showLoveSpreadDialog(BuildContext context) async {
           backgroundColor: const Color(0xFF140F1F),
           elevation: 0,
           insetPadding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 24,
+            horizontal: 16,
+            vertical: 20,
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
@@ -1193,7 +1120,7 @@ Future<void> _showLoveSpreadDialog(BuildContext context) async {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '❤️ ${l10n.tarotLoveRelationships}',
+                    '🃏 Fünf-Karten-Legung',
                     style: Theme.of(dialogContext).textTheme.titleLarge
                         ?.copyWith(
                           color: const Color(0xFFFFE9B0),
@@ -1204,13 +1131,13 @@ Future<void> _showLoveSpreadDialog(BuildContext context) async {
                   LayoutBuilder(
                     builder: (_, constraints) {
                       final w = constraints.maxWidth;
-                      if (w >= 360) {
+                      if (w >= 560) {
                         return IntrinsicHeight(
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              for (int i = 0; i < 3; i++) ...[
-                                if (i > 0) const SizedBox(width: 10),
+                              for (int i = 0; i < 5; i++) ...[
+                                if (i > 0) const SizedBox(width: 8),
                                 Expanded(
                                   child: _SpreadCardTile(
                                     position: positions[i],
@@ -1222,15 +1149,15 @@ Future<void> _showLoveSpreadDialog(BuildContext context) async {
                           ),
                         );
                       } else {
-                        final cardWidth = (w * 0.78).clamp(160.0, 260.0);
+                        final cardWidth = (w * 0.58).clamp(130.0, 200.0);
                         return SizedBox(
-                          height: 420,
+                          height: 380,
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Row(
                               children: [
-                                for (int i = 0; i < 3; i++) ...[
-                                  if (i > 0) const SizedBox(width: 10),
+                                for (int i = 0; i < 5; i++) ...[
+                                  if (i > 0) const SizedBox(width: 8),
                                   SizedBox(
                                     width: cardWidth,
                                     child: _SpreadCardTile(
@@ -1250,7 +1177,7 @@ Future<void> _showLoveSpreadDialog(BuildContext context) async {
                   const Divider(color: Color(0x44DAB86E), thickness: 0.8),
                   const SizedBox(height: 14),
                   Text(
-                    '❤️ ${l10n.tarotLoveReading}',
+                    '✨ ${l10n.tarotOverallReading}',
                     style: Theme.of(dialogContext).textTheme.titleSmall
                         ?.copyWith(
                           color: const Color(0xFFFFE9B0),
@@ -1267,10 +1194,12 @@ Future<void> _showLoveSpreadDialog(BuildContext context) async {
                       border: Border.all(color: const Color(0x66DAB86E)),
                     ),
                     child: Text(
-                      _composeLoveReading(
+                      _composeFiveCardReading(
                         cards[0],
                         cards[1],
                         cards[2],
+                        cards[3],
+                        cards[4],
                         topic: topic,
                       ),
                       style: Theme.of(dialogContext).textTheme.bodyMedium
@@ -1411,9 +1340,16 @@ class _TopicTile extends StatelessWidget {
 }
 
 class _TarotOptionTile extends StatelessWidget {
-  const _TarotOptionTile({required this.title, this.onTap});
+  const _TarotOptionTile({
+    required this.title,
+    this.subtitle,
+    this.icon,
+    this.onTap,
+  });
 
   final String title;
+  final String? subtitle;
+  final IconData? icon;
   final VoidCallback? onTap;
 
   @override
@@ -1446,10 +1382,10 @@ class _TarotOptionTile extends StatelessWidget {
             color: const Color(0x33432D63),
             border: Border.all(color: const Color(0x73E1C27A)),
           ),
-          child: const Icon(
-            Icons.style_rounded,
+          child: Icon(
+            icon ?? Icons.style_rounded,
             size: 20,
-            color: Color(0xFFFFD98A),
+            color: const Color(0xFFFFD98A),
           ),
         ),
         title: Text(
@@ -1459,6 +1395,14 @@ class _TarotOptionTile extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
+        subtitle: subtitle != null
+            ? Text(
+                subtitle!,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: const Color(0xFFD8C8F7),
+                ),
+              )
+            : null,
         trailing: const Icon(
           Icons.chevron_right_rounded,
           color: Color(0xFFE5D0A0),
