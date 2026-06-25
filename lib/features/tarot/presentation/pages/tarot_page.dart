@@ -1149,15 +1149,15 @@ Future<void> _showFiveCardSpreadDialog(BuildContext context) async {
                           ),
                         );
                       } else {
-                        final cardWidth = (w * 0.58).clamp(130.0, 200.0);
+                        final cardWidth = (w * 0.60).clamp(150.0, 210.0);
                         return SizedBox(
-                          height: 380,
+                          height: 330,
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Row(
                               children: [
                                 for (int i = 0; i < 5; i++) ...[
-                                  if (i > 0) const SizedBox(width: 8),
+                                  if (i > 0) const SizedBox(width: 10),
                                   SizedBox(
                                     width: cardWidth,
                                     child: _SpreadCardTile(
@@ -1268,9 +1268,9 @@ class _SpreadCardTile extends StatelessWidget {
               ),
             ),
           ),
-          _TarotCardImagePreview(card: card, height: 160),
+          _TarotCardImagePreview(card: card, height: 200),
           Padding(
-            padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
+            padding: const EdgeInsets.fromLTRB(10, 8, 10, 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1287,14 +1287,6 @@ class _SpreadCardTile extends StatelessWidget {
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: const Color(0xFFD8C8F7),
                     letterSpacing: 0.8,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  card.meaning,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: const Color(0xFFD4C8F0),
-                    height: 1.45,
                   ),
                 ),
               ],
