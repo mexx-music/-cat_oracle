@@ -1,11 +1,12 @@
-import 'dart:io';
-
 import 'package:cat_oracle/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../../../../features/palmistry/logic/palmistry_reading_engine.dart';
 import '../../../../features/palmistry/models/palm_trait.dart';
+import '../../../../shared/services/image_pick_service.dart';
+
+typedef _NoCam = CameraNotAvailableException;
+typedef _NoPerm = CameraPermissionDeniedException;
 
 class HandScanPage extends StatelessWidget {
   const HandScanPage({super.key});
@@ -135,24 +136,52 @@ class HandScanPage extends StatelessWidget {
 // ── Image upload flow ───────────────────────────────────────────────────────
 
 Future<void> _handleImageUpload(BuildContext context) async {
-  final source = await _pickSource(context);
-  if (source == null) return;
+  final l10n = AppLocalizations.of(context)!;
 
-  XFile? image;
+  // Desktop / web: skip Camera/Gallery dialog — open file picker directly.
+  // Mobile: ask the user which source to use.
+  ImagePickSource source = ImagePickSource.gallery;
+  if (ImagePickService.supportsCamera) {
+    final chosen = await _pickSource(context);
+    if (chosen == null) return;
+    source = chosen;
+  }
+
+  ImagePickResult? result;
   try {
-    image = await ImagePicker().pickImage(source: source, imageQuality: 85);
+    result = await ImagePickService.pick(source: source);
+  } on _NoCam {
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(l10n.cameraMacOSNotAvailable),
+        duration: const Duration(seconds: 5),
+      ),
+    );
+    return;
+  } on _NoPerm {
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.cameraPermissionDenied)),
+    );
+    return;
   } catch (_) {
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.imagePickError)),
+    );
     return;
   }
-  if (image == null) return;
+
+  if (result == null) return; // user cancelled
   if (!context.mounted) return;
 
-  _showImagePreviewDialog(context, image.path);
+  _showImagePreviewDialog(context, result);
 }
 
-Future<ImageSource?> _pickSource(BuildContext context) {
+Future<ImagePickSource?> _pickSource(BuildContext context) {
   final l10n = AppLocalizations.of(context)!;
-  return showDialog<ImageSource>(
+  return showDialog<ImagePickSource>(
     context: context,
     builder: (dialogContext) => Dialog(
       backgroundColor: const Color(0xFF0E0818),
@@ -194,14 +223,14 @@ Future<ImageSource?> _pickSource(BuildContext context) {
               icon: Icons.camera_alt_rounded,
               label: l10n.palmistryCamera,
               onTap: () =>
-                  Navigator.pop(dialogContext, ImageSource.camera),
+                  Navigator.pop(dialogContext, ImagePickSource.camera),
             ),
             const SizedBox(height: 10),
             _SourceButton(
               icon: Icons.photo_library_rounded,
               label: l10n.palmistryGallery,
               onTap: () =>
-                  Navigator.pop(dialogContext, ImageSource.gallery),
+                  Navigator.pop(dialogContext, ImagePickSource.gallery),
             ),
             const SizedBox(height: 12),
             Align(
@@ -218,7 +247,7 @@ Future<ImageSource?> _pickSource(BuildContext context) {
   );
 }
 
-void _showImagePreviewDialog(BuildContext context, String imagePath) {
+void _showImagePreviewDialog(BuildContext context, ImagePickResult result) {
   final l10n = AppLocalizations.of(context)!;
   showDialog<void>(
     context: context,
@@ -291,8 +320,8 @@ void _showImagePreviewDialog(BuildContext context, String imagePath) {
                           ),
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        child: Image.file(
-                          File(imagePath),
+                        child: Image.memory(
+                          result.bytes,
                           fit: BoxFit.contain,
                           errorBuilder: (_, __, ___) => Container(
                             height: 160,
@@ -332,7 +361,10 @@ void _showImagePreviewDialog(BuildContext context, String imagePath) {
                         onPressed: () {
                           Navigator.of(dialogContext).pop();
                           if (context.mounted) {
-                            _showAnalysisDialog(context, imagePath);
+                            _showAnalysisDialog(
+                              context,
+                              result.seedString,
+                            );
                           }
                         },
                         icon: const Icon(
@@ -372,9 +404,9 @@ void _showImagePreviewDialog(BuildContext context, String imagePath) {
   );
 }
 
-void _showAnalysisDialog(BuildContext context, String imagePath) {
+void _showAnalysisDialog(BuildContext context, String seedString) {
   final l10n = AppLocalizations.of(context)!;
-  final profile = profileFromImagePath(imagePath);
+  final profile = profileFromImagePath(seedString);
   final traits = traitsFromProfile(profile);
   final reading = readingFromProfile(profile);
 

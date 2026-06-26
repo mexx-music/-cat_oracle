@@ -174,6 +174,18 @@
   "@palmistryCamera": { "description": "Camera option in source picker" },
   "palmistryGallery": "Gallery",
   "@palmistryGallery": { "description": "Gallery option in source picker" },
+  "imagePickError": "The image could not be loaded. Please try again.",
+  "@imagePickError": {
+    "description": "Error message shown when image picking fails"
+  },
+  "cameraMacOSNotAvailable": "Camera capture is not yet available on macOS in this version. Please use 'Select image' instead.",
+  "@cameraMacOSNotAvailable": {
+    "description": "Info message when camera is tapped on macOS but no delegate is registered"
+  },
+  "cameraPermissionDenied": "Camera access was denied. Please allow access in System Settings.",
+  "@cameraPermissionDenied": {
+    "description": "Error message when camera permission is denied"
+  },
   "graphologySubtitle": "Your writing whispers softly",
   "@graphologySubtitle": {
     "description": "Subtitle on the graphology main page"

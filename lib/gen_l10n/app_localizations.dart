@@ -422,6 +422,24 @@ abstract class AppLocalizations {
   /// **'Gallery'**
   String get palmistryGallery;
 
+  /// Error message shown when image picking fails
+  ///
+  /// In en, this message translates to:
+  /// **'The image could not be loaded. Please try again.'**
+  String get imagePickError;
+
+  /// Info message when camera is tapped on macOS but no delegate is registered
+  ///
+  /// In en, this message translates to:
+  /// **'Camera capture is not yet available on macOS in this version. Please use \'Select image\' instead.'**
+  String get cameraMacOSNotAvailable;
+
+  /// Error message when camera permission is denied
+  ///
+  /// In en, this message translates to:
+  /// **'Camera access was denied. Please allow access in System Settings.'**
+  String get cameraPermissionDenied;
+
   /// Subtitle on the graphology main page
   ///
   /// In en, this message translates to:

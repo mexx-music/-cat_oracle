@@ -28,5 +28,7 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Madame Gatto benötigt Kamerazugriff, um Hand- oder Schriftbilder aufzunehmen.</string>
 </dict>
 </plist>

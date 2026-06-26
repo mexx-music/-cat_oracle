@@ -179,6 +179,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get palmistryGallery => 'Galerie';
 
   @override
+  String get imagePickError =>
+      'Bild konnte nicht geladen werden. Bitte versuche es erneut.';
+
+  @override
+  String get cameraMacOSNotAvailable =>
+      'Kameraaufnahme ist auf macOS in dieser Version noch nicht verfügbar. Bitte verwende \'Bild auswaehlen\'.';
+
+  @override
+  String get cameraPermissionDenied =>
+      'Kamerazugriff wurde verweigert. Bitte erlaube den Zugriff in den Systemeinstellungen.';
+
+  @override
   String get graphologySubtitle => 'Deine Schrift flüstert leise';
 
   @override
