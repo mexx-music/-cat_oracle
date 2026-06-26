@@ -120,17 +120,13 @@
   "@tarotDailyRenewHint": {
     "description": "Footer hint in the daily card dialog"
   },
-  "tarotTeaserText": "Draw your cards later and Madame Gatto will read their symbols.",
+  "tarotTeaserText": "Draw a card or open a spread. Madame Gatto reads the symbols in simple language.",
   "@tarotTeaserText": {
     "description": "Teaser paragraph on the tarot main page"
   },
   "tarotOpenDailyCard": "Open Daily Card",
   "@tarotOpenDailyCard": {
     "description": "Button label to open the daily card dialog"
-  },
-  "tarotComingSoon": "The tarot oracle awakens soon",
-  "@tarotComingSoon": {
-    "description": "Coming-soon banner at the bottom of the tarot page"
   },
   "tarotDrawnCardTitle": "Drawn Card",
   "@tarotDrawnCardTitle": {

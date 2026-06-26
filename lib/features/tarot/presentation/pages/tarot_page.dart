@@ -286,15 +286,50 @@ class TarotPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                      '🃏 ${l10n.tarotTitle}',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(
-                            color: const Color(0xFFFFF2CC),
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.6,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 64,
+                          height: 64,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x55DAB86E),
+                                blurRadius: 14,
+                                spreadRadius: 1,
+                              ),
+                            ],
                           ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.asset(
+                              'assets/images/tarot/catjoker.png',
+                              width: 64,
+                              height: 64,
+                              fit: BoxFit.contain,
+                              errorBuilder: (_, __, ___) => const Icon(
+                                Icons.style_rounded,
+                                size: 48,
+                                color: Color(0xFFDAB86E),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          l10n.tarotTitle,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.headlineMedium
+                              ?.copyWith(
+                                color: const Color(0xFFFFF2CC),
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.6,
+                              ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -537,27 +572,6 @@ class TarotPage extends StatelessWidget {
                       subtitle: 'Madame Gattos größerer Rat',
                       icon: Icons.auto_awesome_rounded,
                       onTap: () => _showFiveCardSpreadDialog(context),
-                    ),
-                    const SizedBox(height: 18),
-                    Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        color: const Color(0x2D160F25),
-                        border: Border.all(
-                          color: const Color(0x88DABA72),
-                          width: 1,
-                        ),
-                      ),
-                      child: Text(
-                        l10n.tarotComingSoon,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(
-                              color: const Color(0xFFFFECB8),
-                              fontWeight: FontWeight.w700,
-                            ),
-                      ),
                     ),
                     const SizedBox(height: 10),
                   ],

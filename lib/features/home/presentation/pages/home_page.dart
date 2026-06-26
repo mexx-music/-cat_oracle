@@ -119,6 +119,7 @@ class HomePage extends StatelessWidget {
                       const SizedBox(height: 14),
                       _EntryCard(
                         symbol: '🃏',
+                        imageAsset: 'assets/images/tarot/catjoker.png',
                         title: l10n.homeTarotTitle,
                         subtitle: l10n.homeTarotSubtitle,
                         onTap: () {
@@ -152,12 +153,14 @@ class _EntryCard extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.onTap,
+    this.imageAsset,
   });
 
   final String symbol;
   final String title;
   final String subtitle;
   final VoidCallback onTap;
+  final String? imageAsset;
 
   @override
   Widget build(BuildContext context) {
@@ -199,7 +202,20 @@ class _EntryCard extends StatelessWidget {
                       border: Border.all(color: const Color(0x77E3C881)),
                     ),
                     child: Center(
-                      child: Text(symbol, style: const TextStyle(fontSize: 24)),
+                      child: imageAsset != null
+                          ? ClipOval(
+                              child: Image.asset(
+                                imageAsset!,
+                                width: 54,
+                                height: 54,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => Text(
+                                  symbol,
+                                  style: const TextStyle(fontSize: 24),
+                                ),
+                              ),
+                            )
+                          : Text(symbol, style: const TextStyle(fontSize: 24)),
                     ),
                   ),
                   const SizedBox(width: 16),

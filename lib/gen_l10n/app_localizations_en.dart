@@ -101,13 +101,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tarotTeaserText =>
-      'Draw your cards later and Madame Gatto will read their symbols.';
+      'Draw a card or open a spread. Madame Gatto reads the symbols in simple language.';
 
   @override
   String get tarotOpenDailyCard => 'Open Daily Card';
-
-  @override
-  String get tarotComingSoon => 'The tarot oracle awakens soon';
 
   @override
   String get tarotDrawnCardTitle => 'Drawn Card';
