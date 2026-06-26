@@ -108,4 +108,139 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get tarotDrawnCardTitle => 'Gezogene Karte';
+
+  @override
+  String get palmistryTitle => 'Handlesen';
+
+  @override
+  String get palmistrySubtitle => 'Deine Hand erzählt ihre Linien';
+
+  @override
+  String get palmistryTeaserText =>
+      'Madame Gatto liest Lebenslinie, Herzlinie, Kopflinie und Schicksalslinie – symbolisch und ohne Urteil.';
+
+  @override
+  String get palmistryUploadButton => 'Handabdruck hochladen';
+
+  @override
+  String get palmistryUploadSubtitle => 'Foto deiner Handfläche auswählen';
+
+  @override
+  String get palmistryStartAnalysis => 'Analyse starten';
+
+  @override
+  String get palmistryPreviewTitle => 'Handabdruck';
+
+  @override
+  String get palmistryPreviewSubtitle =>
+      'Madame Gatto nimmt deinen Handabdruck entgegen';
+
+  @override
+  String get palmistryImageLoaded => 'Handabdruck erfolgreich geladen';
+
+  @override
+  String get palmistryAnalysisTitle => 'Handlinien-Analyse';
+
+  @override
+  String get palmistryAnalysisSubtitle =>
+      'Madame Gatto liest die Linien deiner Hand';
+
+  @override
+  String get palmistryOverallReading => '✨ Gesamtdeutung';
+
+  @override
+  String get palmistrySymbolicNote =>
+      'Symbolische Analyse – nur zur Unterhaltung';
+
+  @override
+  String get palmistryDisclaimer =>
+      'Diese Deutung ist symbolisch, stellt keine Diagnose dar und trifft keine Zukunftsvorhersagen.';
+
+  @override
+  String get palmistryTraitLabel => 'Linie';
+
+  @override
+  String get palmistryClose => 'Schließen';
+
+  @override
+  String get palmistryCancel => 'Abbrechen';
+
+  @override
+  String get palmistryPickSource => 'Handabdruck auswählen';
+
+  @override
+  String get palmistryPickSourceHint =>
+      'Wähle eine Quelle für dein Handabdruck-Foto';
+
+  @override
+  String get palmistryCamera => 'Kamera';
+
+  @override
+  String get palmistryGallery => 'Galerie';
+
+  @override
+  String get graphologySubtitle => 'Deine Schrift flüstert leise';
+
+  @override
+  String get graphologySampleTitle => 'Schriftprobe';
+
+  @override
+  String get graphologySampleSubtitle =>
+      'Madame Gatto nimmt deine Schriftprobe entgegen';
+
+  @override
+  String get graphologyTraitLabel => 'Merkmal';
+
+  @override
+  String get graphologyTeaserText =>
+      'Madame Gatto liest Form, Rhythmus und Energie deiner Schrift – symbolisch und ohne Urteil.';
+
+  @override
+  String get graphologyUploadButton => 'Schriftprobe hochladen';
+
+  @override
+  String get graphologyUploadSubtitle => 'Foto einer Handschrift auswählen';
+
+  @override
+  String get graphologyStartAnalysis => 'Analyse starten';
+
+  @override
+  String get graphologyAnalysisTitle => 'Schriftanalyse';
+
+  @override
+  String get graphologyAnalysisSubtitle =>
+      'Madame Gatto liest die Spuren deiner Schrift';
+
+  @override
+  String get graphologyOverallReading => '✨ Gesamtdeutung';
+
+  @override
+  String get graphologySymbolicNote =>
+      'Symbolische Analyse – nur zur Unterhaltung';
+
+  @override
+  String get graphologyDisclaimer =>
+      'Diese Deutung ist symbolisch und ersetzt keine professionelle Analyse.';
+
+  @override
+  String get graphologyClose => 'Schließen';
+
+  @override
+  String get graphologyCancel => 'Abbrechen';
+
+  @override
+  String get graphologyImageLoaded => 'Schriftprobe erfolgreich geladen';
+
+  @override
+  String get graphologyPickSource => 'Schriftprobe auswählen';
+
+  @override
+  String get graphologyPickSourceHint =>
+      'Wähle eine Quelle für deine Schriftprobe';
+
+  @override
+  String get graphologyCamera => 'Kamera';
+
+  @override
+  String get graphologyGallery => 'Galerie';
 }

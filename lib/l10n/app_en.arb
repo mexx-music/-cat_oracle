@@ -131,5 +131,127 @@
   "tarotDrawnCardTitle": "Drawn Card",
   "@tarotDrawnCardTitle": {
     "description": "Title of the drawn card dialog"
+  },
+  "palmistryTitle": "Palm Reading",
+  "@palmistryTitle": { "description": "Title of the hand scan / palmistry page" },
+  "palmistrySubtitle": "Your hand tells its lines",
+  "@palmistrySubtitle": { "description": "Subtitle on the palmistry page" },
+  "palmistryTeaserText": "Madame Gatto reads the life line, heart line, head line and fate line – symbolically and without judgement.",
+  "@palmistryTeaserText": { "description": "Teaser paragraph on the palmistry page" },
+  "palmistryUploadButton": "Upload palm print",
+  "@palmistryUploadButton": { "description": "Button to upload a palm photo" },
+  "palmistryUploadSubtitle": "Choose a photo of your palm",
+  "@palmistryUploadSubtitle": { "description": "Subtitle under the upload button" },
+  "palmistryStartAnalysis": "Start analysis",
+  "@palmistryStartAnalysis": { "description": "Button to start the palmistry analysis" },
+  "palmistryPreviewTitle": "Palm print",
+  "@palmistryPreviewTitle": { "description": "Title of the palm image preview dialog" },
+  "palmistryPreviewSubtitle": "Madame Gatto receives your palm print",
+  "@palmistryPreviewSubtitle": { "description": "Subtitle of the palm image preview dialog" },
+  "palmistryImageLoaded": "Palm print loaded successfully",
+  "@palmistryImageLoaded": { "description": "Success message after palm image upload" },
+  "palmistryAnalysisTitle": "Palm Line Analysis",
+  "@palmistryAnalysisTitle": { "description": "Title of the analysis result dialog" },
+  "palmistryAnalysisSubtitle": "Madame Gatto reads the lines of your hand",
+  "@palmistryAnalysisSubtitle": { "description": "Subtitle of the analysis result dialog" },
+  "palmistryOverallReading": "✨ Overall Reading",
+  "@palmistryOverallReading": { "description": "Section heading for the overall palmistry interpretation" },
+  "palmistrySymbolicNote": "Symbolic analysis – for entertainment only",
+  "@palmistrySymbolicNote": { "description": "Disclaimer chip in the analysis dialog" },
+  "palmistryDisclaimer": "This reading is symbolic, does not constitute a diagnosis, and makes no predictions about the future.",
+  "@palmistryDisclaimer": { "description": "Full disclaimer at the bottom of the analysis dialog" },
+  "palmistryTraitLabel": "Line",
+  "@palmistryTraitLabel": { "description": "Label shown under each palm trait title" },
+  "palmistryClose": "Close",
+  "@palmistryClose": { "description": "Close button in palmistry dialogs" },
+  "palmistryCancel": "Cancel",
+  "@palmistryCancel": { "description": "Cancel button in palmistry source picker" },
+  "palmistryPickSource": "Select palm print",
+  "@palmistryPickSource": { "description": "Title of the image source picker dialog" },
+  "palmistryPickSourceHint": "Choose a source for your palm photo",
+  "@palmistryPickSourceHint": { "description": "Subtitle in the source picker dialog" },
+  "palmistryCamera": "Camera",
+  "@palmistryCamera": { "description": "Camera option in source picker" },
+  "palmistryGallery": "Gallery",
+  "@palmistryGallery": { "description": "Gallery option in source picker" },
+  "graphologySubtitle": "Your writing whispers softly",
+  "@graphologySubtitle": {
+    "description": "Subtitle on the graphology main page"
+  },
+  "graphologySampleTitle": "Handwriting Sample",
+  "@graphologySampleTitle": {
+    "description": "Title of the image preview dialog"
+  },
+  "graphologySampleSubtitle": "Madame Gatto receives your handwriting sample",
+  "@graphologySampleSubtitle": {
+    "description": "Subtitle of the image preview dialog"
+  },
+  "graphologyTraitLabel": "Trait",
+  "@graphologyTraitLabel": {
+    "description": "Label shown under each graphology trait title"
+  },
+  "graphologyTeaserText": "Madame Gatto reads the form, rhythm and energy of your writing – symbolically and without judgement.",
+  "@graphologyTeaserText": {
+    "description": "Teaser paragraph on the graphology main page"
+  },
+  "graphologyUploadButton": "Upload handwriting sample",
+  "@graphologyUploadButton": {
+    "description": "Button to upload a handwriting photo"
+  },
+  "graphologyUploadSubtitle": "Choose a photo of handwriting",
+  "@graphologyUploadSubtitle": {
+    "description": "Subtitle under the upload button"
+  },
+  "graphologyStartAnalysis": "Start analysis",
+  "@graphologyStartAnalysis": {
+    "description": "Button to start the graphology analysis after uploading"
+  },
+  "graphologyAnalysisTitle": "Handwriting Analysis",
+  "@graphologyAnalysisTitle": {
+    "description": "Title of the analysis result dialog"
+  },
+  "graphologyAnalysisSubtitle": "Madame Gatto reads the traces of your writing",
+  "@graphologyAnalysisSubtitle": {
+    "description": "Subtitle of the analysis result dialog"
+  },
+  "graphologyOverallReading": "✨ Overall Reading",
+  "@graphologyOverallReading": {
+    "description": "Section heading for the overall graphology interpretation"
+  },
+  "graphologySymbolicNote": "Symbolic analysis – for entertainment only",
+  "@graphologySymbolicNote": {
+    "description": "Disclaimer chip shown in the analysis dialog"
+  },
+  "graphologyDisclaimer": "This reading is symbolic and does not replace professional analysis.",
+  "@graphologyDisclaimer": {
+    "description": "Full disclaimer text at the bottom of the analysis dialog"
+  },
+  "graphologyClose": "Close",
+  "@graphologyClose": {
+    "description": "Close button in graphology dialogs"
+  },
+  "graphologyCancel": "Cancel",
+  "@graphologyCancel": {
+    "description": "Cancel button in graphology source picker"
+  },
+  "graphologyImageLoaded": "Handwriting sample loaded successfully",
+  "@graphologyImageLoaded": {
+    "description": "Success message after image upload"
+  },
+  "graphologyPickSource": "Select handwriting sample",
+  "@graphologyPickSource": {
+    "description": "Title of the image source picker dialog"
+  },
+  "graphologyPickSourceHint": "Choose a source for your handwriting sample",
+  "@graphologyPickSourceHint": {
+    "description": "Subtitle in the source picker dialog"
+  },
+  "graphologyCamera": "Camera",
+  "@graphologyCamera": {
+    "description": "Camera option in source picker"
+  },
+  "graphologyGallery": "Gallery",
+  "@graphologyGallery": {
+    "description": "Gallery option in source picker"
   }
 }

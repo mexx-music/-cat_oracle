@@ -295,6 +295,252 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Drawn Card'**
   String get tarotDrawnCardTitle;
+
+  /// Title of the hand scan / palmistry page
+  ///
+  /// In en, this message translates to:
+  /// **'Palm Reading'**
+  String get palmistryTitle;
+
+  /// Subtitle on the palmistry page
+  ///
+  /// In en, this message translates to:
+  /// **'Your hand tells its lines'**
+  String get palmistrySubtitle;
+
+  /// Teaser paragraph on the palmistry page
+  ///
+  /// In en, this message translates to:
+  /// **'Madame Gatto reads the life line, heart line, head line and fate line – symbolically and without judgement.'**
+  String get palmistryTeaserText;
+
+  /// Button to upload a palm photo
+  ///
+  /// In en, this message translates to:
+  /// **'Upload palm print'**
+  String get palmistryUploadButton;
+
+  /// Subtitle under the upload button
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a photo of your palm'**
+  String get palmistryUploadSubtitle;
+
+  /// Button to start the palmistry analysis
+  ///
+  /// In en, this message translates to:
+  /// **'Start analysis'**
+  String get palmistryStartAnalysis;
+
+  /// Title of the palm image preview dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Palm print'**
+  String get palmistryPreviewTitle;
+
+  /// Subtitle of the palm image preview dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Madame Gatto receives your palm print'**
+  String get palmistryPreviewSubtitle;
+
+  /// Success message after palm image upload
+  ///
+  /// In en, this message translates to:
+  /// **'Palm print loaded successfully'**
+  String get palmistryImageLoaded;
+
+  /// Title of the analysis result dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Palm Line Analysis'**
+  String get palmistryAnalysisTitle;
+
+  /// Subtitle of the analysis result dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Madame Gatto reads the lines of your hand'**
+  String get palmistryAnalysisSubtitle;
+
+  /// Section heading for the overall palmistry interpretation
+  ///
+  /// In en, this message translates to:
+  /// **'✨ Overall Reading'**
+  String get palmistryOverallReading;
+
+  /// Disclaimer chip in the analysis dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Symbolic analysis – for entertainment only'**
+  String get palmistrySymbolicNote;
+
+  /// Full disclaimer at the bottom of the analysis dialog
+  ///
+  /// In en, this message translates to:
+  /// **'This reading is symbolic, does not constitute a diagnosis, and makes no predictions about the future.'**
+  String get palmistryDisclaimer;
+
+  /// Label shown under each palm trait title
+  ///
+  /// In en, this message translates to:
+  /// **'Line'**
+  String get palmistryTraitLabel;
+
+  /// Close button in palmistry dialogs
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get palmistryClose;
+
+  /// Cancel button in palmistry source picker
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get palmistryCancel;
+
+  /// Title of the image source picker dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Select palm print'**
+  String get palmistryPickSource;
+
+  /// Subtitle in the source picker dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a source for your palm photo'**
+  String get palmistryPickSourceHint;
+
+  /// Camera option in source picker
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get palmistryCamera;
+
+  /// Gallery option in source picker
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get palmistryGallery;
+
+  /// Subtitle on the graphology main page
+  ///
+  /// In en, this message translates to:
+  /// **'Your writing whispers softly'**
+  String get graphologySubtitle;
+
+  /// Title of the image preview dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Handwriting Sample'**
+  String get graphologySampleTitle;
+
+  /// Subtitle of the image preview dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Madame Gatto receives your handwriting sample'**
+  String get graphologySampleSubtitle;
+
+  /// Label shown under each graphology trait title
+  ///
+  /// In en, this message translates to:
+  /// **'Trait'**
+  String get graphologyTraitLabel;
+
+  /// Teaser paragraph on the graphology main page
+  ///
+  /// In en, this message translates to:
+  /// **'Madame Gatto reads the form, rhythm and energy of your writing – symbolically and without judgement.'**
+  String get graphologyTeaserText;
+
+  /// Button to upload a handwriting photo
+  ///
+  /// In en, this message translates to:
+  /// **'Upload handwriting sample'**
+  String get graphologyUploadButton;
+
+  /// Subtitle under the upload button
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a photo of handwriting'**
+  String get graphologyUploadSubtitle;
+
+  /// Button to start the graphology analysis after uploading
+  ///
+  /// In en, this message translates to:
+  /// **'Start analysis'**
+  String get graphologyStartAnalysis;
+
+  /// Title of the analysis result dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Handwriting Analysis'**
+  String get graphologyAnalysisTitle;
+
+  /// Subtitle of the analysis result dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Madame Gatto reads the traces of your writing'**
+  String get graphologyAnalysisSubtitle;
+
+  /// Section heading for the overall graphology interpretation
+  ///
+  /// In en, this message translates to:
+  /// **'✨ Overall Reading'**
+  String get graphologyOverallReading;
+
+  /// Disclaimer chip shown in the analysis dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Symbolic analysis – for entertainment only'**
+  String get graphologySymbolicNote;
+
+  /// Full disclaimer text at the bottom of the analysis dialog
+  ///
+  /// In en, this message translates to:
+  /// **'This reading is symbolic and does not replace professional analysis.'**
+  String get graphologyDisclaimer;
+
+  /// Close button in graphology dialogs
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get graphologyClose;
+
+  /// Cancel button in graphology source picker
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get graphologyCancel;
+
+  /// Success message after image upload
+  ///
+  /// In en, this message translates to:
+  /// **'Handwriting sample loaded successfully'**
+  String get graphologyImageLoaded;
+
+  /// Title of the image source picker dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Select handwriting sample'**
+  String get graphologyPickSource;
+
+  /// Subtitle in the source picker dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a source for your handwriting sample'**
+  String get graphologyPickSourceHint;
+
+  /// Camera option in source picker
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get graphologyCamera;
+
+  /// Gallery option in source picker
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get graphologyGallery;
 }
 
 class _AppLocalizationsDelegate
