@@ -52,6 +52,69 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeGraphologySubtitle => 'Writing reveals character';
 
   @override
+  String get homeGrandReadingTitle => 'Grand Reading';
+
+  @override
+  String get homeGrandReadingEmpty => 'Collect signs first';
+
+  @override
+  String get homeGrandReadingPartial => 'Start partial reading';
+
+  @override
+  String get homeGrandReadingReady => 'Start grand reading';
+
+  @override
+  String get grandReadingTitle => 'Madame Gatto\'s Grand Reading';
+
+  @override
+  String get grandReadingSubtitlePartial => 'Partial reading';
+
+  @override
+  String get grandReadingSubtitleComplete => 'All signs gathered';
+
+  @override
+  String grandReadingProgress(int count) {
+    return '$count of 4 signs gathered';
+  }
+
+  @override
+  String get grandReadingMoodLabel => 'Overall mood';
+
+  @override
+  String get grandReadingStrengthsLabel => 'Your strength';
+
+  @override
+  String get grandReadingChallengeLabel => 'Your challenge';
+
+  @override
+  String get grandReadingCatAdviceLabel => 'Madame Gatto\'s advice';
+
+  @override
+  String get grandReadingLuckySymbolLabel => 'Lucky symbol';
+
+  @override
+  String get grandReadingPawRatingLabel => 'Paw rating';
+
+  @override
+  String get grandReadingSummaryLabel => 'Overall reading';
+
+  @override
+  String get grandReadingDisclaimer =>
+      'Symbolic entertainment – no predictions, no diagnosis.';
+
+  @override
+  String get grandReadingEmptyHint =>
+      'Visit Tarot, Astrology, Palm reading or Graphology to collect signs.';
+
+  @override
+  String get grandReadingComplete => 'Grand reading complete';
+
+  @override
+  String grandReadingModulesUsed(int count) {
+    return '$count of 4 modules';
+  }
+
+  @override
   String get tarotTitle => 'Tarot';
 
   @override
@@ -254,4 +317,82 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get graphologyGallery => 'Gallery';
+
+  @override
+  String get onboardingPage1Title => 'Welcome to Madame Gatto';
+
+  @override
+  String get onboardingPage1Body =>
+      'Madame Gatto Futuro guides you through Tarot, Astrology, Palm Reading and Graphology – mystical, playful and always with a wink.';
+
+  @override
+  String get onboardingPage2Title => 'Your four signs';
+
+  @override
+  String get onboardingPage2Body =>
+      'Show your palm, let the cards speak, gaze at the stars or reveal your handwriting. Each sign tells something about you.';
+
+  @override
+  String get onboardingPage3Title => 'Unlock the Grand Reading';
+
+  @override
+  String get onboardingPage3Body =>
+      'Once you have visited all four modules, Madame Gatto can create a Grand Reading – a combined interpretation of all your signs.';
+
+  @override
+  String get onboardingPage4Title => 'A note beforehand';
+
+  @override
+  String get onboardingPage4Body =>
+      'Cat Oracle is symbolic entertainment. No predictions, no diagnosis, no substitute for professional advice. Madame Gatto purrs – but does not foretell.';
+
+  @override
+  String get onboardingNext => 'Next';
+
+  @override
+  String get onboardingBegin => 'Begin';
+
+  @override
+  String get onboardingSkip => 'Skip';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get settingsLanguageLabel => 'Language';
+
+  @override
+  String get settingsActionsLabel => 'Actions';
+
+  @override
+  String get settingsAppInfoLabel => 'App Info';
+
+  @override
+  String get settingsAppVersion => 'Version 1.0';
+
+  @override
+  String get settingsDisclaimerLabel => 'Notice';
+
+  @override
+  String get settingsDisclaimerText =>
+      'Cat Oracle is entertainment only. The readings are symbolic and based on random algorithms. They do not constitute a diagnosis, life advice or prediction of the future.';
+
+  @override
+  String get settingsResetOnboarding => 'Show onboarding again';
+
+  @override
+  String get settingsResetSession => 'Reset session';
+
+  @override
+  String get settingsResetSessionConfirm =>
+      'All collected signs (Tarot, Astrology, Palm Reading, Graphology) will be deleted. Continue?';
+
+  @override
+  String get settingsResetSessionDone => 'Session has been reset.';
+
+  @override
+  String get settingsCancelButton => 'Cancel';
+
+  @override
+  String get settingsResetButton => 'Reset';
 }

@@ -182,6 +182,120 @@ abstract class AppLocalizations {
   /// **'Writing reveals character'**
   String get homeGraphologySubtitle;
 
+  /// Home: grand reading entry card title
+  ///
+  /// In en, this message translates to:
+  /// **'Grand Reading'**
+  String get homeGrandReadingTitle;
+
+  /// Home: grand reading subtitle when no modules done
+  ///
+  /// In en, this message translates to:
+  /// **'Collect signs first'**
+  String get homeGrandReadingEmpty;
+
+  /// Home: grand reading subtitle when 1-3 modules done
+  ///
+  /// In en, this message translates to:
+  /// **'Start partial reading'**
+  String get homeGrandReadingPartial;
+
+  /// Home: grand reading subtitle when all 4 modules done
+  ///
+  /// In en, this message translates to:
+  /// **'Start grand reading'**
+  String get homeGrandReadingReady;
+
+  /// Title of the grand reading page
+  ///
+  /// In en, this message translates to:
+  /// **'Madame Gatto\'s Grand Reading'**
+  String get grandReadingTitle;
+
+  /// Subtitle for partial grand reading
+  ///
+  /// In en, this message translates to:
+  /// **'Partial reading'**
+  String get grandReadingSubtitlePartial;
+
+  /// Subtitle for complete grand reading
+  ///
+  /// In en, this message translates to:
+  /// **'All signs gathered'**
+  String get grandReadingSubtitleComplete;
+
+  /// Progress indicator for grand reading
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of 4 signs gathered'**
+  String grandReadingProgress(int count);
+
+  /// Label for mood section
+  ///
+  /// In en, this message translates to:
+  /// **'Overall mood'**
+  String get grandReadingMoodLabel;
+
+  /// Label for strengths section
+  ///
+  /// In en, this message translates to:
+  /// **'Your strength'**
+  String get grandReadingStrengthsLabel;
+
+  /// Label for challenge section
+  ///
+  /// In en, this message translates to:
+  /// **'Your challenge'**
+  String get grandReadingChallengeLabel;
+
+  /// Label for cat advice section
+  ///
+  /// In en, this message translates to:
+  /// **'Madame Gatto\'s advice'**
+  String get grandReadingCatAdviceLabel;
+
+  /// Label for lucky symbol section
+  ///
+  /// In en, this message translates to:
+  /// **'Lucky symbol'**
+  String get grandReadingLuckySymbolLabel;
+
+  /// Label for paw rating section
+  ///
+  /// In en, this message translates to:
+  /// **'Paw rating'**
+  String get grandReadingPawRatingLabel;
+
+  /// Label for summary section
+  ///
+  /// In en, this message translates to:
+  /// **'Overall reading'**
+  String get grandReadingSummaryLabel;
+
+  /// Disclaimer on grand reading page
+  ///
+  /// In en, this message translates to:
+  /// **'Symbolic entertainment – no predictions, no diagnosis.'**
+  String get grandReadingDisclaimer;
+
+  /// Hint shown when no modules are completed
+  ///
+  /// In en, this message translates to:
+  /// **'Visit Tarot, Astrology, Palm reading or Graphology to collect signs.'**
+  String get grandReadingEmptyHint;
+
+  /// Badge label when all 4 modules done
+  ///
+  /// In en, this message translates to:
+  /// **'Grand reading complete'**
+  String get grandReadingComplete;
+
+  /// Shows how many modules contributed
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of 4 modules'**
+  String grandReadingModulesUsed(int count);
+
   /// Tarot page headline
   ///
   /// In en, this message translates to:
@@ -559,6 +673,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Gallery'**
   String get graphologyGallery;
+
+  /// Onboarding slide 1 title
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Madame Gatto'**
+  String get onboardingPage1Title;
+
+  /// Onboarding slide 1 body
+  ///
+  /// In en, this message translates to:
+  /// **'Madame Gatto Futuro guides you through Tarot, Astrology, Palm Reading and Graphology – mystical, playful and always with a wink.'**
+  String get onboardingPage1Body;
+
+  /// Onboarding slide 2 title
+  ///
+  /// In en, this message translates to:
+  /// **'Your four signs'**
+  String get onboardingPage2Title;
+
+  /// Onboarding slide 2 body
+  ///
+  /// In en, this message translates to:
+  /// **'Show your palm, let the cards speak, gaze at the stars or reveal your handwriting. Each sign tells something about you.'**
+  String get onboardingPage2Body;
+
+  /// Onboarding slide 3 title
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock the Grand Reading'**
+  String get onboardingPage3Title;
+
+  /// Onboarding slide 3 body
+  ///
+  /// In en, this message translates to:
+  /// **'Once you have visited all four modules, Madame Gatto can create a Grand Reading – a combined interpretation of all your signs.'**
+  String get onboardingPage3Body;
+
+  /// Onboarding slide 4 title
+  ///
+  /// In en, this message translates to:
+  /// **'A note beforehand'**
+  String get onboardingPage4Title;
+
+  /// Onboarding slide 4 body
+  ///
+  /// In en, this message translates to:
+  /// **'Cat Oracle is symbolic entertainment. No predictions, no diagnosis, no substitute for professional advice. Madame Gatto purrs – but does not foretell.'**
+  String get onboardingPage4Body;
+
+  /// Onboarding next page button
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboardingNext;
+
+  /// Onboarding last page button
+  ///
+  /// In en, this message translates to:
+  /// **'Begin'**
+  String get onboardingBegin;
+
+  /// Onboarding skip button
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboardingSkip;
+
+  /// Settings page title
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// Settings section: language
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get settingsLanguageLabel;
+
+  /// Settings section: actions
+  ///
+  /// In en, this message translates to:
+  /// **'Actions'**
+  String get settingsActionsLabel;
+
+  /// Settings section: app info
+  ///
+  /// In en, this message translates to:
+  /// **'App Info'**
+  String get settingsAppInfoLabel;
+
+  /// App version string in settings
+  ///
+  /// In en, this message translates to:
+  /// **'Version 1.0'**
+  String get settingsAppVersion;
+
+  /// Settings section: disclaimer
+  ///
+  /// In en, this message translates to:
+  /// **'Notice'**
+  String get settingsDisclaimerLabel;
+
+  /// Full disclaimer in settings
+  ///
+  /// In en, this message translates to:
+  /// **'Cat Oracle is entertainment only. The readings are symbolic and based on random algorithms. They do not constitute a diagnosis, life advice or prediction of the future.'**
+  String get settingsDisclaimerText;
+
+  /// Settings button: reset onboarding
+  ///
+  /// In en, this message translates to:
+  /// **'Show onboarding again'**
+  String get settingsResetOnboarding;
+
+  /// Settings button: reset session
+  ///
+  /// In en, this message translates to:
+  /// **'Reset session'**
+  String get settingsResetSession;
+
+  /// Confirmation text for session reset
+  ///
+  /// In en, this message translates to:
+  /// **'All collected signs (Tarot, Astrology, Palm Reading, Graphology) will be deleted. Continue?'**
+  String get settingsResetSessionConfirm;
+
+  /// Snackbar after session reset
+  ///
+  /// In en, this message translates to:
+  /// **'Session has been reset.'**
+  String get settingsResetSessionDone;
+
+  /// Cancel button in settings dialogs
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get settingsCancelButton;
+
+  /// Confirm reset button
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get settingsResetButton;
 }
 
 class _AppLocalizationsDelegate

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../features/palmistry/logic/palmistry_reading_engine.dart';
 import '../../../../features/palmistry/models/palm_trait.dart';
+import '../../../../services/oracle_session_service.dart';
 import '../../../../shared/services/image_pick_service.dart';
 
 typedef _NoCam = CameraNotAvailableException;
@@ -409,6 +410,11 @@ void _showAnalysisDialog(BuildContext context, String seedString) {
   final profile = profileFromImagePath(seedString);
   final traits = traitsFromProfile(profile);
   final reading = readingFromProfile(profile);
+
+  OracleSessionService.instance.setPalmistryAnalysis(
+    profile: profile,
+    traits: traits,
+  );
 
   showDialog<void>(
     context: context,

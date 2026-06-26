@@ -5,7 +5,7 @@ import 'package:cat_oracle/app/app.dart';
 
 void main() {
   testWidgets('shows the Cat Oracle home page', (WidgetTester tester) async {
-    SharedPreferences.setMockInitialValues({});
+    SharedPreferences.setMockInitialValues({'onboarding_seen': true});
     await tester.pumpWidget(const CatOracleApp());
     await tester.pumpAndSettle();
 

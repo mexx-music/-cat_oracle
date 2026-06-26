@@ -6,6 +6,7 @@ import '../../data/demo_tarot_cards.dart';
 import '../../logic/daily_tarot_card_generator.dart';
 import '../../models/tarot_card.dart';
 import '../widgets/tarot_draw_overlay.dart';
+import '../../../../services/oracle_session_service.dart';
 
 // Alltagssprachliche Bedeutung jeder Karte für eine Situation im Leben.
 // Jeder Eintrag ist ein eigenständiger, einfacher Satz, der in jeder Position
@@ -230,6 +231,7 @@ class TarotPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final dailyCard = generateDailyTarotCard();
+    OracleSessionService.instance.setLastDrawnTarotCard(dailyCard);
     final screenHeight = MediaQuery.of(context).size.height;
     final safePadding = MediaQuery.of(context).padding.vertical;
     final contentTopSpacing = (screenHeight * 0.18)
@@ -696,6 +698,7 @@ Future<void> _showDailyTarotDialog(BuildContext context, TarotCard card) {
 
 Future<void> _showDrawnCardDialog(BuildContext context, TarotCard card) {
   final l10n = AppLocalizations.of(context)!;
+  OracleSessionService.instance.setLastDrawnTarotCard(card);
   return showDialog<void>(
     context: context,
     builder: (dialogContext) {
@@ -860,6 +863,7 @@ Future<void> _showThreeCardSpreadDialog(BuildContext context) async {
     positionLabels: [l10n.tarotPast, l10n.tarotPresent, l10n.tarotImpulse],
   );
   if (cards == null || cards.length < 3 || !context.mounted) return;
+  OracleSessionService.instance.setLastDrawnTarotCard(cards.first);
   final positions = [l10n.tarotPast, l10n.tarotPresent, l10n.tarotImpulse];
 
   return showDialog<void>(
@@ -1093,6 +1097,7 @@ Future<void> _showFiveCardSpreadDialog(BuildContext context) async {
     positionLabels: positions,
   );
   if (cards == null || cards.length < 5 || !context.mounted) return;
+  OracleSessionService.instance.setLastDrawnTarotCard(cards.first);
 
   return showDialog<void>(
     context: context,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/app_routes.dart';
-import '../../../../core/locale_controller.dart';
+import '../../../../services/oracle_session_service.dart';
 import 'package:cat_oracle/gen_l10n/app_localizations.dart';
 
 class HomePage extends StatelessWidget {
@@ -55,7 +55,16 @@ class HomePage extends StatelessWidget {
                     children: [
                       Align(
                         alignment: Alignment.topRight,
-                        child: _LanguageButton(),
+                        child: IconButton(
+                          onPressed: () => Navigator.of(
+                            context,
+                          ).pushNamed(AppRoutes.settings),
+                          icon: const Icon(Icons.settings_rounded),
+                          style: IconButton.styleFrom(
+                            backgroundColor: const Color(0x33FFFFFF),
+                            foregroundColor: const Color(0xFFF3E6BD),
+                          ),
+                        ),
                       ),
                       SizedBox(height: heroSpacing),
                       Text(
@@ -135,6 +144,11 @@ class HomePage extends StatelessWidget {
                           Navigator.of(context).pushNamed(AppRoutes.graphology);
                         },
                       ),
+                      const SizedBox(height: 14),
+                      ListenableBuilder(
+                        listenable: OracleSessionService.instance,
+                        builder: (_, __) => _GrandReadingCard(l10n: l10n),
+                      ),
                     ],
                   ),
                 ),
@@ -142,6 +156,134 @@ class HomePage extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _GrandReadingCard extends StatelessWidget {
+  const _GrandReadingCard({required this.l10n});
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    final session = OracleSessionService.instance;
+    final count = session.completedCount;
+    final String subtitle;
+    if (count == 0) {
+      subtitle = l10n.homeGrandReadingEmpty;
+    } else if (count < 4) {
+      subtitle = l10n.homeGrandReadingPartial;
+    } else {
+      subtitle = l10n.homeGrandReadingReady;
+    }
+
+    return SizedBox(
+      width: double.infinity,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: count == 0
+              ? null
+              : () => Navigator.of(context).pushNamed(AppRoutes.grandReading),
+          borderRadius: BorderRadius.circular(22),
+          child: Ink(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(22),
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0x3A2E1A4A), Color(0x2A1A0F30)],
+              ),
+              border: Border.all(
+                color: count == 0
+                    ? const Color(0x44DABA72)
+                    : const Color(0xCCDABA72),
+                width: count == 4 ? 1.4 : 1.0,
+              ),
+              boxShadow: count > 0
+                  ? const [
+                      BoxShadow(
+                        color: Color(0x44DAB86E),
+                        blurRadius: 18,
+                        offset: Offset(0, 8),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(18),
+              child: Row(
+                children: [
+                  Container(
+                    width: 54,
+                    height: 54,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: count > 0
+                          ? const Color(0x442E1A4A)
+                          : const Color(0x1A2E1A4A),
+                      border: Border.all(
+                        color: count > 0
+                            ? const Color(0xAAE3C881)
+                            : const Color(0x44E3C881),
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '🌟',
+                        style: TextStyle(
+                          fontSize: 24,
+                          color: count == 0
+                              ? const Color(0x66FFFFFF)
+                              : null,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.homeGrandReadingTitle,
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
+                                color: count > 0
+                                    ? const Color(0xFFFFECB8)
+                                    : const Color(0x88FFECB8),
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          subtitle,
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: count > 0
+                                    ? Colors.white.withValues(alpha: 0.78)
+                                    : Colors.white.withValues(alpha: 0.40),
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Icon(
+                    count == 0
+                        ? Icons.lock_outline_rounded
+                        : Icons.chevron_right_rounded,
+                    color: count > 0
+                        ? const Color(0xFFF1DDA2)
+                        : const Color(0x44F1DDA2),
+                    size: 28,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -258,44 +400,3 @@ class _EntryCard extends StatelessWidget {
   }
 }
 
-class _LanguageButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final controller = LocaleScope.of(context);
-    final current = controller.locale.languageCode;
-    return PopupMenuButton<Locale>(
-      icon: const Icon(Icons.language_rounded),
-      iconColor: const Color(0xFFF3E6BD),
-      style: ButtonStyle(
-        backgroundColor: WidgetStateProperty.all(const Color(0x33FFFFFF)),
-        shape: WidgetStateProperty.all(
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-        ),
-      ),
-      itemBuilder: (_) => [
-        PopupMenuItem(
-          value: const Locale('de'),
-          child: _localeItem('Deutsch', current == 'de'),
-        ),
-        PopupMenuItem(
-          value: const Locale('en'),
-          child: _localeItem('English', current == 'en'),
-        ),
-      ],
-      onSelected: controller.setLocale,
-    );
-  }
-
-  Widget _localeItem(String label, bool selected) => Row(
-    children: [
-      SizedBox(
-        width: 20,
-        child: selected
-            ? const Icon(Icons.check_rounded, size: 16)
-            : null,
-      ),
-      const SizedBox(width: 8),
-      Text(label),
-    ],
-  );
-}

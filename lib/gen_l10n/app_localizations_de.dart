@@ -52,6 +52,69 @@ class AppLocalizationsDe extends AppLocalizations {
   String get homeGraphologySubtitle => 'Schrift offenbart Charakter';
 
   @override
+  String get homeGrandReadingTitle => 'Grosse Lesung';
+
+  @override
+  String get homeGrandReadingEmpty => 'Sammle zuerst Zeichen';
+
+  @override
+  String get homeGrandReadingPartial => 'Teil-Lesung starten';
+
+  @override
+  String get homeGrandReadingReady => 'Grosse Lesung starten';
+
+  @override
+  String get grandReadingTitle => 'Madame Gattos Grosse Lesung';
+
+  @override
+  String get grandReadingSubtitlePartial => 'Teil-Lesung';
+
+  @override
+  String get grandReadingSubtitleComplete => 'Alle Zeichen gelesen';
+
+  @override
+  String grandReadingProgress(int count) {
+    return '$count von 4 Zeichen gesammelt';
+  }
+
+  @override
+  String get grandReadingMoodLabel => 'Gesamtstimmung';
+
+  @override
+  String get grandReadingStrengthsLabel => 'Deine Staerke';
+
+  @override
+  String get grandReadingChallengeLabel => 'Deine Herausforderung';
+
+  @override
+  String get grandReadingCatAdviceLabel => 'Madame Gattos Rat';
+
+  @override
+  String get grandReadingLuckySymbolLabel => 'Glueckssymbol';
+
+  @override
+  String get grandReadingPawRatingLabel => 'Pfoten-Wertung';
+
+  @override
+  String get grandReadingSummaryLabel => 'Gesamtdeutung';
+
+  @override
+  String get grandReadingDisclaimer =>
+      'Symbolische Unterhaltung – keine Zukunftsvorhersage, keine Diagnose.';
+
+  @override
+  String get grandReadingEmptyHint =>
+      'Besuche Tarot, Astrologie, Handlesen oder Grafologie, um Zeichen zu sammeln.';
+
+  @override
+  String get grandReadingComplete => 'Grosse Lesung vollstaendig';
+
+  @override
+  String grandReadingModulesUsed(int count) {
+    return '$count von 4 Modulen';
+  }
+
+  @override
   String get tarotTitle => 'Tarot';
 
   @override
@@ -255,4 +318,82 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get graphologyGallery => 'Galerie';
+
+  @override
+  String get onboardingPage1Title => 'Willkommen bei Madame Gatto';
+
+  @override
+  String get onboardingPage1Body =>
+      'Madame Gatto Futuro begleitet dich durch Tarot, Astrologie, Handlesen und Grafologie – mystisch, spielerisch und immer mit einem Augenzwinkern.';
+
+  @override
+  String get onboardingPage2Title => 'Deine vier Zeichen';
+
+  @override
+  String get onboardingPage2Body =>
+      'Leg deine Hand auf, lass die Karten sprechen, blick in die Sterne oder zeig deine Handschrift. Jedes Zeichen erzählt etwas über dich.';
+
+  @override
+  String get onboardingPage3Title => 'Grosse Lesung freischalten';
+
+  @override
+  String get onboardingPage3Body =>
+      'Hast du alle vier Module besucht, kann Madame Gatto eine Grosse Lesung erstellen – eine Zusammenfassung aller Zeichen.';
+
+  @override
+  String get onboardingPage4Title => 'Ein Wort vorab';
+
+  @override
+  String get onboardingPage4Body =>
+      'Cat Oracle ist symbolische Unterhaltung. Keine Zukunftsvorhersage, keine Diagnose, kein Ersatz fuer professionelle Beratung. Madame Gatto schnurrt – aber weissagt nicht.';
+
+  @override
+  String get onboardingNext => 'Weiter';
+
+  @override
+  String get onboardingBegin => 'Beginnen';
+
+  @override
+  String get onboardingSkip => 'Überspringen';
+
+  @override
+  String get settingsTitle => 'Einstellungen';
+
+  @override
+  String get settingsLanguageLabel => 'Sprache';
+
+  @override
+  String get settingsActionsLabel => 'Aktionen';
+
+  @override
+  String get settingsAppInfoLabel => 'App-Info';
+
+  @override
+  String get settingsAppVersion => 'Version 1.0';
+
+  @override
+  String get settingsDisclaimerLabel => 'Hinweis';
+
+  @override
+  String get settingsDisclaimerText =>
+      'Cat Oracle ist ein reines Unterhaltungsangebot. Die Deutungen sind symbolisch und basieren auf Zufallsalgorithmen. Sie stellen keine Diagnose, keine Lebensberatung und keine Zukunftsvorhersage dar.';
+
+  @override
+  String get settingsResetOnboarding => 'Onboarding erneut anzeigen';
+
+  @override
+  String get settingsResetSession => 'Session zurücksetzen';
+
+  @override
+  String get settingsResetSessionConfirm =>
+      'Alle gesammelten Zeichen (Tarot, Astrologie, Handlesen, Grafologie) werden gelöscht. Fortfahren?';
+
+  @override
+  String get settingsResetSessionDone => 'Session wurde zurückgesetzt.';
+
+  @override
+  String get settingsCancelButton => 'Abbrechen';
+
+  @override
+  String get settingsResetButton => 'Zurücksetzen';
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../logic/graphology_reading_engine.dart';
 import '../../models/graphology_trait.dart';
+import '../../../../services/oracle_session_service.dart';
 import '../../../../shared/services/image_pick_service.dart';
 
 // Aliased for readability in the error handler below.
@@ -412,6 +413,11 @@ void _showAnalysisDialog(BuildContext context, String seedString) {
   final profile = profileFromImagePath(seedString);
   final traits = traitsFromProfile(profile);
   final reading = readingFromProfile(profile);
+
+  OracleSessionService.instance.setGraphologyAnalysis(
+    profile: profile,
+    traits: traits,
+  );
 
   showDialog<void>(
     context: context,
