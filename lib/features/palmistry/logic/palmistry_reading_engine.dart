@@ -2,6 +2,7 @@ import 'dart:math';
 
 import '../models/palm_trait.dart';
 import '../models/palmistry_analysis_profile.dart';
+import '../../hand_scan/models/scanned_hand.dart';
 import '../../hand_scan/logic/palm_line_classifier.dart';
 import '../../hand_scan/logic/palm_line_extractor.dart';
 
@@ -175,7 +176,10 @@ const Map<HandShape, String> _handShapeDescriptions = {
 // ── Public API ─────────────────────────────────────────────────────────────
 
 /// Deterministic profile from image path — same path → same result.
-PalmistryAnalysisProfile profileFromImagePath(String imagePath) {
+PalmistryAnalysisProfile profileFromImagePath(
+  String imagePath, {
+  ScannedHand scannedHand = ScannedHand.unknown,
+}) {
   int seed = 0;
   for (final c in imagePath.codeUnits) {
     seed = seed * 31 + c;
@@ -188,6 +192,7 @@ PalmistryAnalysisProfile profileFromImagePath(String imagePath) {
     fateLine: FateLine.values[r.nextInt(FateLine.values.length)],
     mountVenus: MountVenus.values[r.nextInt(MountVenus.values.length)],
     handShape: HandShape.values[r.nextInt(HandShape.values.length)],
+    scannedHand: scannedHand,
   );
 }
 
@@ -284,10 +289,15 @@ String readingFromProfile(PalmistryAnalysisProfile profile) {
 PalmistryAnalysisProfile profileFromExtraction(
   PalmLineExtractionResult extraction, {
   String fallbackSeed = '',
+  ScannedHand scannedHand = ScannedHand.unknown,
 }) {
+  final effectiveHand = scannedHand == ScannedHand.unknown
+      ? extraction.scannedHand
+      : scannedHand;
   if (!extraction.hasRealData || extraction.confidence < 0.15) {
     return profileFromImagePath(
       fallbackSeed.isEmpty ? 'default_fallback' : fallbackSeed,
+      scannedHand: effectiveHand,
     );
   }
 
@@ -367,6 +377,7 @@ PalmistryAnalysisProfile profileFromExtraction(
     fateLine: fateLine,
     mountVenus: mountVenus,
     handShape: handShape,
+    scannedHand: effectiveHand,
   );
 }
 
@@ -377,7 +388,11 @@ PalmistryAnalysisProfile profileFromClassification(
   PalmLineClassificationResult c,
   PalmLineExtractionResult extraction, {
   String fallbackSeed = '',
+  ScannedHand scannedHand = ScannedHand.unknown,
 }) {
+  final effectiveHand = scannedHand == ScannedHand.unknown
+      ? extraction.scannedHand
+      : scannedHand;
   // ── Life line ──────────────────────────────────────────────────────────────
   final LifeLine lifeLine;
   if (c.lifeLineConfidence < 0.25) {
@@ -452,6 +467,7 @@ PalmistryAnalysisProfile profileFromClassification(
     fateLine: fateLine,
     mountVenus: mountVenus,
     handShape: handShape,
+    scannedHand: effectiveHand,
   );
 }
 

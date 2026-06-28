@@ -464,6 +464,42 @@ abstract class AppLocalizations {
   /// **'Palm print loaded successfully'**
   String get palmistryImageLoaded;
 
+  /// Question asking which real hand was scanned
+  ///
+  /// In en, this message translates to:
+  /// **'Which hand was scanned?'**
+  String get palmistryScannedHandQuestion;
+
+  /// Hint explaining semantic hand selection
+  ///
+  /// In en, this message translates to:
+  /// **'This describes the real hand. The image thumb side stays separate.'**
+  String get palmistryScannedHandHint;
+
+  /// Button/label for the left scanned hand
+  ///
+  /// In en, this message translates to:
+  /// **'Left hand'**
+  String get palmistryLeftHand;
+
+  /// Button/label for the right scanned hand
+  ///
+  /// In en, this message translates to:
+  /// **'Right hand'**
+  String get palmistryRightHand;
+
+  /// Fallback label when scanned hand is unknown
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown hand'**
+  String get palmistryUnknownHand;
+
+  /// Small note indicating the selected scanned hand
+  ///
+  /// In en, this message translates to:
+  /// **'Analyzed hand: {hand}'**
+  String palmistryAnalyzedHand(String hand);
+
   /// Title of the analysis result dialog
   ///
   /// In en, this message translates to:

@@ -1,3 +1,5 @@
+import '../../hand_scan/models/scanned_hand.dart';
+
 enum LifeLine { short, medium, long }
 
 enum HeartLine { soft, balanced, deep }
@@ -18,6 +20,7 @@ class PalmistryAnalysisProfile {
     required this.fateLine,
     required this.mountVenus,
     required this.handShape,
+    this.scannedHand = ScannedHand.unknown,
   });
 
   final LifeLine lifeLine;
@@ -26,4 +29,5 @@ class PalmistryAnalysisProfile {
   final FateLine fateLine;
   final MountVenus mountVenus;
   final HandShape handShape;
+  final ScannedHand scannedHand;
 }

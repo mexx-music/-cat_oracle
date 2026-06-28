@@ -2,8 +2,10 @@ import 'package:cat_oracle/features/astrology/models/astrology_profile.dart';
 import 'package:cat_oracle/features/astrology/models/astrology_session_result.dart';
 import 'package:cat_oracle/features/astrology/models/zodiac_sign.dart';
 import 'package:cat_oracle/features/oracle/models/combined_oracle_reading.dart';
+import 'package:cat_oracle/features/hand_scan/models/scanned_hand.dart';
 import 'package:cat_oracle/features/palmistry/models/palm_line_reading.dart';
 import 'package:cat_oracle/features/palmistry/models/palm_line_type.dart';
+import 'package:cat_oracle/features/palmistry/models/palmistry_analysis_profile.dart';
 import 'package:cat_oracle/features/palmistry/models/palmistry_profile.dart';
 import 'package:cat_oracle/services/oracle_session_service.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -90,5 +92,46 @@ void main() {
     expect(service.astrologySessionResult, isNull);
     expect(service.palmistryProfile, isNull);
     expect(service.combinedReading, isNull);
+    expect(service.palmistryScannedHand, equals(ScannedHand.unknown));
+  });
+
+  test('selecting right hand stores ScannedHand.right', () {
+    const profile = PalmistryAnalysisProfile(
+      lifeLine: LifeLine.medium,
+      heartLine: HeartLine.balanced,
+      headLine: HeadLine.mixed,
+      fateLine: FateLine.visible,
+      mountVenus: MountVenus.balanced,
+      handShape: HandShape.earth,
+      scannedHand: ScannedHand.right,
+    );
+
+    service.setPalmistryAnalysis(
+      profile: profile,
+      traits: const [],
+      scannedHand: ScannedHand.right,
+    );
+
+    expect(service.palmistryScannedHand, equals(ScannedHand.right));
+    expect(
+      service.palmistryAnalysisProfile!.scannedHand,
+      equals(ScannedHand.right),
+    );
+  });
+
+  test('selecting left hand stores ScannedHand.left', () {
+    const profile = PalmistryAnalysisProfile(
+      lifeLine: LifeLine.medium,
+      heartLine: HeartLine.balanced,
+      headLine: HeadLine.mixed,
+      fateLine: FateLine.visible,
+      mountVenus: MountVenus.balanced,
+      handShape: HandShape.earth,
+      scannedHand: ScannedHand.left,
+    );
+
+    service.setPalmistryAnalysis(profile: profile, traits: const []);
+
+    expect(service.palmistryScannedHand, equals(ScannedHand.left));
   });
 }

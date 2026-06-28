@@ -7,6 +7,7 @@ import '../../../../shared/services/image_pick_service.dart';
 import '../../logic/palm_line_classifier.dart';
 import '../../logic/palm_line_continuation.dart';
 import '../../logic/palm_line_extractor.dart';
+import '../../models/scanned_hand.dart';
 import '../widgets/palm_extraction_animation.dart';
 
 typedef _NoCam = CameraNotAvailableException;
@@ -361,15 +362,23 @@ void _showImagePreviewDialog(BuildContext context, ImagePickResult result) {
                           Navigator.of(dialogContext).pop();
                           if (!context.mounted) return;
 
+                          final selectedHand =
+                              await _pickScannedHand(context) ??
+                              ScannedHand.unknown;
+                          if (!context.mounted) return;
+
                           final extractionResult =
-                              await PalmLineExtractor.extract(result.bytes);
+                              (await PalmLineExtractor.extract(
+                                result.bytes,
+                              )).copyWith(scannedHand: selectedHand);
                           if (!context.mounted) return;
 
                           // Classify, then attempt life line continuation
                           // before computing the profile so the reading
                           // reflects the extended arc length.
-                          var classResult =
-                              PalmLineClassifier.classify(extractionResult);
+                          var classResult = PalmLineClassifier.classify(
+                            extractionResult,
+                          );
 
                           var continuationResult =
                               PalmLineContinuationResult.none;
@@ -378,9 +387,9 @@ void _showImagePreviewDialog(BuildContext context, ImagePickResult result) {
                               classResult.lifeLineConfidence >= 0.25) {
                             continuationResult =
                                 await PalmLineContinuation.extend(
-                              result.bytes,
-                              classResult.lifeLinePath!,
-                            );
+                                  result.bytes,
+                                  classResult.lifeLinePath!,
+                                );
                             if (continuationResult.wasExtended) {
                               classResult = classResult.copyWith(
                                 lifeLinePath: continuationResult.extendedPath,
@@ -398,13 +407,18 @@ void _showImagePreviewDialog(BuildContext context, ImagePickResult result) {
                                   classResult,
                                   extractionResult,
                                   fallbackSeed: result.seedString,
+                                  scannedHand: selectedHand,
                                 )
-                              : profileFromImagePath(result.seedString);
+                              : profileFromImagePath(
+                                  result.seedString,
+                                  scannedHand: selectedHand,
+                                );
                           final traits = traitsFromProfile(profile);
                           final reading = readingFromProfile(profile);
                           OracleSessionService.instance.setPalmistryAnalysis(
                             profile: profile,
                             traits: traits,
+                            scannedHand: selectedHand,
                           );
                           if (!context.mounted) return;
                           await PalmExtractionAnimation.show(
@@ -415,6 +429,7 @@ void _showImagePreviewDialog(BuildContext context, ImagePickResult result) {
                             reading: reading,
                             classificationResult: classResult,
                             continuationResult: continuationResult,
+                            scannedHand: selectedHand,
                           );
                         },
                         icon: const Icon(Icons.auto_awesome_rounded, size: 18),
@@ -448,6 +463,65 @@ void _showImagePreviewDialog(BuildContext context, ImagePickResult result) {
         ),
       );
     },
+  );
+}
+
+Future<ScannedHand?> _pickScannedHand(BuildContext context) {
+  final l10n = AppLocalizations.of(context)!;
+  return showDialog<ScannedHand>(
+    context: context,
+    barrierDismissible: true,
+    builder: (dialogContext) => Dialog(
+      backgroundColor: const Color(0xFF0E0818),
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: const Color(0x99DAB86E), width: 1.2),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x50100D1B),
+              blurRadius: 22,
+              offset: Offset(0, 10),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(22),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              l10n.palmistryScannedHandQuestion,
+              style: Theme.of(dialogContext).textTheme.titleMedium?.copyWith(
+                color: const Color(0xFFFFE9B0),
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              l10n.palmistryScannedHandHint,
+              style: Theme.of(
+                dialogContext,
+              ).textTheme.bodySmall?.copyWith(color: const Color(0xFFE6DDF8)),
+            ),
+            const SizedBox(height: 20),
+            _SourceButton(
+              icon: Icons.back_hand_rounded,
+              label: l10n.palmistryLeftHand,
+              onTap: () => Navigator.pop(dialogContext, ScannedHand.left),
+            ),
+            const SizedBox(height: 10),
+            _SourceButton(
+              icon: Icons.front_hand_rounded,
+              label: l10n.palmistryRightHand,
+              onTap: () => Navigator.pop(dialogContext, ScannedHand.right),
+            ),
+          ],
+        ),
+      ),
+    ),
   );
 }
 

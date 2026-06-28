@@ -7,6 +7,7 @@ import 'package:cat_oracle/features/palmistry/models/palm_trait.dart';
 import 'package:cat_oracle/features/palmistry/models/palmistry_analysis_profile.dart';
 import 'package:cat_oracle/features/palmistry/models/palmistry_profile.dart';
 import 'package:cat_oracle/features/tarot/models/tarot_card.dart';
+import 'package:cat_oracle/features/hand_scan/models/scanned_hand.dart';
 import 'package:flutter/foundation.dart';
 
 class OracleSessionService extends ChangeNotifier {
@@ -27,6 +28,7 @@ class OracleSessionService extends ChangeNotifier {
 
   PalmistryAnalysisProfile? palmistryAnalysisProfile;
   List<PalmTrait>? palmistryTraits;
+  ScannedHand palmistryScannedHand = ScannedHand.unknown;
 
   GraphologyProfile? graphologyProfile;
   List<GraphologyTrait>? graphologyTraits;
@@ -76,9 +78,11 @@ class OracleSessionService extends ChangeNotifier {
   void setPalmistryAnalysis({
     required PalmistryAnalysisProfile profile,
     required List<PalmTrait> traits,
+    ScannedHand? scannedHand,
   }) {
     palmistryAnalysisProfile = profile;
     palmistryTraits = traits;
+    palmistryScannedHand = scannedHand ?? profile.scannedHand;
     notifyListeners();
   }
 
@@ -116,6 +120,7 @@ class OracleSessionService extends ChangeNotifier {
     lastDrawnTarotCard = null;
     palmistryAnalysisProfile = null;
     palmistryTraits = null;
+    palmistryScannedHand = ScannedHand.unknown;
     graphologyProfile = null;
     graphologyTraits = null;
   }

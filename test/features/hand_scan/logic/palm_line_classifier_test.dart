@@ -1,5 +1,6 @@
 import 'package:cat_oracle/features/hand_scan/logic/palm_line_classifier.dart';
 import 'package:cat_oracle/features/hand_scan/logic/palm_line_extractor.dart';
+import 'package:cat_oracle/features/hand_scan/models/scanned_hand.dart';
 import 'package:cat_oracle/features/palmistry/logic/palmistry_reading_engine.dart';
 import 'package:cat_oracle/features/palmistry/models/palmistry_analysis_profile.dart';
 import 'package:flutter/material.dart' show Rect;
@@ -217,6 +218,15 @@ void main() {
       );
       final p = profileFromExtraction(lowConf, fallbackSeed: 'low_conf');
       expect(p, isA<PalmistryAnalysisProfile>());
+    });
+
+    test('analysis still runs with unknown hand fallback', () {
+      final p = profileFromImagePath(
+        'unknown_hand_seed',
+        scannedHand: ScannedHand.unknown,
+      );
+      expect(p, isA<PalmistryAnalysisProfile>());
+      expect(p.scannedHand, equals(ScannedHand.unknown));
     });
 
     test('same fallback seed produces a stable profile across calls', () {

@@ -9,10 +9,27 @@ import '../../../../features/palmistry/models/palm_trait.dart';
 import '../../logic/palm_line_classifier.dart';
 import '../../logic/palm_line_continuation.dart';
 import '../../logic/palm_line_extractor.dart';
+import '../../logic/palm_line_hypothesis_engine.dart';
 import '../../logic/palm_line_tracker.dart';
+import '../../models/scanned_hand.dart';
 import '../../models/palm_extraction_phase.dart';
 
 const _kDuration = 7200;
+
+enum PalmDebugLayer {
+  original,
+  palmMask,
+  clahe,
+  darkLine,
+  creaseProbability,
+  lifePrior,
+  heartPrior,
+  headPrior,
+  fatePrior,
+  skeleton,
+  tracing,
+  trackerInput,
+}
 
 // ── Widget ────────────────────────────────────────────────────────────────────
 
@@ -25,6 +42,7 @@ class PalmExtractionAnimation extends StatefulWidget {
     this.reading = '',
     this.classificationResult,
     this.continuationResult,
+    this.scannedHand = ScannedHand.unknown,
   });
 
   final Uint8List imageBytes;
@@ -37,6 +55,7 @@ class PalmExtractionAnimation extends StatefulWidget {
 
   /// Continuation tracking result for debug display.
   final PalmLineContinuationResult? continuationResult;
+  final ScannedHand scannedHand;
 
   static Future<bool> show(
     BuildContext context,
@@ -46,6 +65,7 @@ class PalmExtractionAnimation extends StatefulWidget {
     String reading = '',
     PalmLineClassificationResult? classificationResult,
     PalmLineContinuationResult? continuationResult,
+    ScannedHand scannedHand = ScannedHand.unknown,
   }) async {
     final result = await showDialog<bool>(
       context: context,
@@ -58,6 +78,7 @@ class PalmExtractionAnimation extends StatefulWidget {
         reading: reading,
         classificationResult: classificationResult,
         continuationResult: continuationResult,
+        scannedHand: scannedHand,
       ),
     );
     return result ?? false;
@@ -82,6 +103,7 @@ class _PalmExtractionAnimationState extends State<PalmExtractionAnimation>
   bool _showReadingPanel = false;
   int? _activeLineIndex;
   PalmLineClassificationResult? _debugClassification;
+  PalmDebugLayer _debugLayer = PalmDebugLayer.original;
 
   // Computed once in _onMainStatus; split so the painter can colour them
   // differently (original = white, extension = dashed cyan-white).
@@ -696,6 +718,9 @@ class _PalmExtractionAnimationState extends State<PalmExtractionAnimation>
   // ── Reading panel ──────────────────────────────────────────────────────────
 
   Widget _buildReadingPanelContent(AppLocalizations l10n) {
+    final selectedHand = widget.scannedHand != ScannedHand.unknown
+        ? widget.scannedHand
+        : widget.extractionResult?.scannedHand ?? ScannedHand.unknown;
     return Container(
       decoration: const BoxDecoration(
         color: Color(0xFF090520),
@@ -781,6 +806,17 @@ class _PalmExtractionAnimationState extends State<PalmExtractionAnimation>
                     ),
                   ),
                   const SizedBox(height: 12),
+                  Text(
+                    l10n.palmistryAnalyzedHand(
+                      _scannedHandLabel(l10n, selectedHand),
+                    ),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: const Color(0xFFE6DDF8),
+                      fontWeight: FontWeight.w700,
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
 
                   // Trait tiles (tappable → pulses corresponding line)
                   for (int i = 0; i < widget.traits.length; i++) ...[
@@ -866,6 +902,14 @@ class _PalmExtractionAnimationState extends State<PalmExtractionAnimation>
     );
   }
 
+  String _scannedHandLabel(AppLocalizations l10n, ScannedHand hand) {
+    return switch (hand) {
+      ScannedHand.left => l10n.palmistryLeftHand,
+      ScannedHand.right => l10n.palmistryRightHand,
+      ScannedHand.unknown => l10n.palmistryUnknownHand,
+    };
+  }
+
   // ── Layout helpers ─────────────────────────────────────────────────────────
 
   Widget _buildImageStack({
@@ -910,6 +954,7 @@ class _PalmExtractionAnimationState extends State<PalmExtractionAnimation>
                     isDone: _isDone,
                     extractionResult: widget.extractionResult,
                     activeLineIndex: _activeLineIndex,
+                    debugLayer: _debugLayer,
                     debugLifePath: _isDone ? _debugOrigPath : null,
                     debugExtensionPath: _isDone ? _debugExtPath : null,
                   ),
@@ -928,6 +973,18 @@ class _PalmExtractionAnimationState extends State<PalmExtractionAnimation>
                     classResult: _debugClassification!,
                     extractionResult: widget.extractionResult!,
                     continuationResult: widget.continuationResult,
+                  ),
+                if (kDebugMode && _isDone && widget.extractionResult != null)
+                  Positioned(
+                    left: 8,
+                    right: 8,
+                    bottom: 8,
+                    child: _CreaseDebugLayerSelector(
+                      value: _debugLayer,
+                      onChanged: (layer) => setState(() {
+                        _debugLayer = layer;
+                      }),
+                    ),
                   ),
               ],
             ),
@@ -1218,6 +1275,73 @@ class _ReadingTraitTile extends StatelessWidget {
   }
 }
 
+class _CreaseDebugLayerSelector extends StatelessWidget {
+  const _CreaseDebugLayerSelector({
+    required this.value,
+    required this.onChanged,
+  });
+
+  final PalmDebugLayer value;
+  final ValueChanged<PalmDebugLayer> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: const Color(0xD0060310),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: const Color(0x55FFFFFF), width: 0.7),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final layer in PalmDebugLayer.values)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 3),
+                child: ChoiceChip(
+                  label: Text(_debugLayerLabel(layer)),
+                  selected: value == layer,
+                  onSelected: (_) => onChanged(layer),
+                  visualDensity: VisualDensity.compact,
+                  labelStyle: TextStyle(
+                    color: value == layer
+                        ? const Color(0xFF060310)
+                        : const Color(0xFFE6DDF8),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  selectedColor: const Color(0xFFDAB86E),
+                  backgroundColor: const Color(0x221A0F30),
+                  side: const BorderSide(color: Color(0x44DAB86E)),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static String _debugLayerLabel(PalmDebugLayer layer) {
+    return switch (layer) {
+      PalmDebugLayer.original => 'Original',
+      PalmDebugLayer.palmMask => 'Mask',
+      PalmDebugLayer.clahe => 'CLAHE',
+      PalmDebugLayer.darkLine => 'Dark',
+      PalmDebugLayer.creaseProbability => 'Prob',
+      PalmDebugLayer.lifePrior => 'Life',
+      PalmDebugLayer.heartPrior => 'Heart',
+      PalmDebugLayer.headPrior => 'Head',
+      PalmDebugLayer.fatePrior => 'Fate',
+      PalmDebugLayer.skeleton => 'Skeleton',
+      PalmDebugLayer.tracing => 'Trace',
+      PalmDebugLayer.trackerInput => 'Tracker',
+    };
+  }
+}
+
 // ── Debug: life line measurement panel ───────────────────────────────────────
 
 class _LifeLineDebugPanel extends StatelessWidget {
@@ -1237,6 +1361,7 @@ class _LifeLineDebugPanel extends StatelessWidget {
     final arcLen = classResult.lifeLineLengthRatio;
     final conf = classResult.lifeLineConfidence;
     final cont = continuationResult;
+    final solution = classResult.hypothesisSolution;
 
     double ySpan = 0.0;
     Offset? startPt, endPt;
@@ -1287,6 +1412,25 @@ class _LifeLineDebugPanel extends StatelessWidget {
         Text(val, style: mono.copyWith(color: valColor)),
       ],
     );
+
+    String typeName(PalmLineHypothesisType type) => switch (type) {
+      PalmLineHypothesisType.life => 'LIFE',
+      PalmLineHypothesisType.heart => 'HEART',
+      PalmLineHypothesisType.head => 'HEAD',
+      PalmLineHypothesisType.fate => 'FATE',
+    };
+
+    final winningTraceLabels = <int, String>{};
+    if (solution != null) {
+      for (final h in [
+        solution.life,
+        solution.heart,
+        solution.head,
+        solution.fate,
+      ].whereType<PalmLineHypothesis>()) {
+        winningTraceLabels[h.traceIndex] = typeName(h.type);
+      }
+    }
 
     // Determine which end marker label to show
     final hasExt = cont != null && cont.wasExtended;
@@ -1381,6 +1525,53 @@ class _LifeLineDebugPanel extends StatelessWidget {
                 ),
               ] else if (cont.skipReason != null)
                 row('Skip reason ', cont.skipReason!),
+            ],
+            if (solution != null) ...[
+              const SizedBox(height: 3),
+              const Divider(
+                color: Color(0x33FFFFFF),
+                height: 6,
+                thickness: 0.4,
+              ),
+              row(
+                'Hyp total  ',
+                solution.totalAnatomicalScore.toStringAsFixed(3),
+              ),
+              row('Alt score  ', solution.alternativeScore.toStringAsFixed(3)),
+              row(
+                'Delta      ',
+                solution.scoreDifference.toStringAsFixed(3),
+                valColor: solution.isUncertain
+                    ? const Color(0xFFFFAA22)
+                    : const Color(0xFF44FF88),
+              ),
+              row(
+                'Assign     ',
+                solution.isUncertain ? 'UNCERTAIN' : 'STABLE',
+                valColor: solution.isUncertain
+                    ? const Color(0xFFFFAA22)
+                    : const Color(0xFF44FF88),
+              ),
+              const SizedBox(height: 2),
+              for (final scorecard in solution.scorecards.take(6))
+                Text(
+                  '${winningTraceLabels.containsKey(scorecard.traceIndex) ? '>' : ' '}'
+                  'T${scorecard.traceIndex} '
+                  'L ${(scorecard.lifeScore * 100).round().toString().padLeft(2)} '
+                  'H ${(scorecard.heartScore * 100).round().toString().padLeft(2)} '
+                  'Hd ${(scorecard.headScore * 100).round().toString().padLeft(2)} '
+                  'F ${(scorecard.fateScore * 100).round().toString().padLeft(2)}'
+                  '${winningTraceLabels[scorecard.traceIndex] == null ? '' : '  ${winningTraceLabels[scorecard.traceIndex]}'}',
+                  style: mono.copyWith(
+                    color: winningTraceLabels.containsKey(scorecard.traceIndex)
+                        ? const Color(0xFFFFE9B0)
+                        : const Color(0xAAE0E0E0),
+                    fontWeight:
+                        winningTraceLabels.containsKey(scorecard.traceIndex)
+                        ? FontWeight.w800
+                        : FontWeight.w500,
+                  ),
+                ),
             ],
             const SizedBox(height: 4),
             Container(
@@ -1986,6 +2177,7 @@ class PalmOverlayPainter extends CustomPainter {
     required this.isDone,
     this.extractionResult,
     this.activeLineIndex,
+    this.debugLayer = PalmDebugLayer.original,
     this.debugLifePath,
     this.debugExtensionPath,
   });
@@ -1997,6 +2189,7 @@ class PalmOverlayPainter extends CustomPainter {
   final bool isDone;
   final PalmLineExtractionResult? extractionResult;
   final int? activeLineIndex;
+  final PalmDebugLayer debugLayer;
 
   /// Original (pre-continuation) life line path — drawn solid white.
   final List<Offset>? debugLifePath;
@@ -2020,7 +2213,7 @@ class PalmOverlayPainter extends CustomPainter {
     if (!isDone) _drawScanline(canvas, size);
     if (progress >= 3 / 8) _drawHandContour(canvas, size);
     if (progress >= 4 / 8) _drawPalmLines(canvas, size);
-    if (kDebugMode && isDone) _drawTrackerDebug(canvas, size);
+    if (kDebugMode && isDone) _drawSelectedDebugLayer(canvas, size);
     if (progress >= 5 / 8) _drawParticles(canvas, size);
     if (kDebugMode && isDone) _drawPalmGeometryDebug(canvas, size);
     if (isDone) _drawCompletionRing(canvas, size);
@@ -2226,6 +2419,241 @@ class PalmOverlayPainter extends CustomPainter {
     for (final pts in rejected) {
       if (pts.length < 2) continue;
       canvas.drawPath(_catmullRomPath(pts, size), paint);
+    }
+  }
+
+  void _drawSelectedDebugLayer(Canvas canvas, Size size) {
+    final er = extractionResult;
+    if (er == null) return;
+    switch (debugLayer) {
+      case PalmDebugLayer.original:
+        return;
+      case PalmDebugLayer.palmMask:
+        _drawDebugSamples(
+          canvas,
+          size,
+          er.debugPalmMask,
+          const Color(0xFF8AE07A),
+          radius: 1.8,
+          baseAlpha: 0.34,
+        );
+      case PalmDebugLayer.clahe:
+        _drawDebugSamples(
+          canvas,
+          size,
+          er.debugClahe,
+          Colors.white,
+          radius: 2.0,
+          baseAlpha: 0.44,
+          grayscale: true,
+        );
+      case PalmDebugLayer.darkLine:
+        _drawDebugSamples(
+          canvas,
+          size,
+          er.debugDarkLineResponse,
+          const Color(0xFF00CFFF),
+          radius: 2.1,
+          baseAlpha: 0.72,
+        );
+      case PalmDebugLayer.creaseProbability:
+        _drawDebugSamples(
+          canvas,
+          size,
+          er.debugCreaseProbability,
+          const Color(0xFFFFE36E),
+          radius: 2.2,
+          baseAlpha: 0.80,
+        );
+      case PalmDebugLayer.lifePrior:
+        _drawDebugSamples(
+          canvas,
+          size,
+          er.debugLifePrior,
+          _lifeLine,
+          radius: 2.6,
+          baseAlpha: 0.62,
+        );
+      case PalmDebugLayer.heartPrior:
+        _drawDebugSamples(
+          canvas,
+          size,
+          er.debugHeartPrior,
+          _heartLine,
+          radius: 2.6,
+          baseAlpha: 0.62,
+        );
+      case PalmDebugLayer.headPrior:
+        _drawDebugSamples(
+          canvas,
+          size,
+          er.debugHeadPrior,
+          _headLine,
+          radius: 2.6,
+          baseAlpha: 0.62,
+        );
+      case PalmDebugLayer.fatePrior:
+        _drawDebugSamples(
+          canvas,
+          size,
+          er.debugFatePrior,
+          _fateLine,
+          radius: 2.6,
+          baseAlpha: 0.62,
+        );
+      case PalmDebugLayer.skeleton:
+        _drawDebugSamples(
+          canvas,
+          size,
+          er.debugSkeleton,
+          const Color(0xFFFF3B5C),
+          radius: 2.0,
+          baseAlpha: 0.95,
+        );
+      case PalmDebugLayer.tracing:
+        _drawTraceDebug(canvas, size, er);
+      case PalmDebugLayer.trackerInput:
+        _drawTrackerDebug(canvas, size);
+    }
+  }
+
+  void _drawTraceDebug(Canvas canvas, Size size, PalmLineExtractionResult er) {
+    _drawDebugSamples(
+      canvas,
+      size,
+      er.debugSkeleton,
+      Colors.white,
+      radius: 1.2,
+      baseAlpha: 0.25,
+    );
+    final traceColors = [
+      _lifeLine,
+      _heartLine,
+      _headLine,
+      _fateLine,
+      _green,
+      _cyan,
+    ];
+    for (int i = 0; i < er.tracedCreases.length; i++) {
+      final trace = er.tracedCreases[i];
+      if (trace.points.length < 2) continue;
+      final color = traceColors[i % traceColors.length];
+      final path = _catmullRomPath(trace.points, size);
+      canvas.drawPath(
+        path,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..color = color.withValues(alpha: 0.34)
+          ..strokeWidth = 8
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
+      );
+      canvas.drawPath(
+        path,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..color = color.withValues(alpha: 0.94)
+          ..strokeWidth = 2.2
+          ..strokeCap = StrokeCap.round
+          ..strokeJoin = StrokeJoin.round,
+      );
+      final labelAt = trace.points[trace.points.length ~/ 2];
+      _drawTrackerLabel(
+        canvas,
+        size,
+        labelAt,
+        '${(trace.averageProbability * 100).round()}%',
+        color,
+      );
+    }
+    _drawDebugSamples(
+      canvas,
+      size,
+      er.debugTraceSeeds,
+      const Color(0xFF8AE07A),
+      radius: 3.2,
+      baseAlpha: 0.95,
+    );
+    _drawTraceVectors(
+      canvas,
+      size,
+      er.debugTraceDirections,
+      _cyan.withValues(alpha: 0.68),
+      strokeWidth: 1.1,
+    );
+    _drawTraceVectors(
+      canvas,
+      size,
+      er.debugGapRecoveries,
+      _gold.withValues(alpha: 0.88),
+      strokeWidth: 1.8,
+      dashed: true,
+    );
+  }
+
+  void _drawTraceVectors(
+    Canvas canvas,
+    Size size,
+    List<PalmDebugVector> vectors,
+    Color color, {
+    required double strokeWidth,
+    bool dashed = false,
+  }) {
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..color = color
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round;
+    for (final vector in vectors.take(80)) {
+      final from = Offset(
+        vector.from.dx * size.width,
+        vector.from.dy * size.height,
+      );
+      final to = Offset(vector.to.dx * size.width, vector.to.dy * size.height);
+      final path = Path()
+        ..moveTo(from.dx, from.dy)
+        ..lineTo(to.dx, to.dy);
+      if (dashed) {
+        _drawDashed(canvas, path, paint, dash: 5, gap: 4);
+      } else {
+        canvas.drawPath(path, paint);
+      }
+      final dir = to - from;
+      if (dir.distance > 2.0 && !dashed) {
+        final unit = dir / dir.distance;
+        final n = Offset(-unit.dy, unit.dx);
+        final a = to - unit * 4 + n * 2.5;
+        final b = to - unit * 4 - n * 2.5;
+        canvas
+          ..drawLine(to, a, paint)
+          ..drawLine(to, b, paint);
+      }
+    }
+  }
+
+  void _drawDebugSamples(
+    Canvas canvas,
+    Size size,
+    List<PalmDebugSample> samples,
+    Color color, {
+    required double radius,
+    required double baseAlpha,
+    bool grayscale = false,
+  }) {
+    if (samples.isEmpty) return;
+    final paint = Paint();
+    for (final sample in samples) {
+      final v = sample.value.clamp(0.0, 1.0);
+      if (grayscale) {
+        final c = (v * 255).round().clamp(0, 255);
+        paint.color = Color.fromRGBO(c, c, c, baseAlpha);
+      } else {
+        paint.color = color.withValues(alpha: (baseAlpha * v).clamp(0.0, 1.0));
+      }
+      canvas.drawCircle(
+        Offset(sample.point.dx * size.width, sample.point.dy * size.height),
+        radius,
+        paint,
+      );
     }
   }
 
@@ -2458,6 +2886,13 @@ class PalmOverlayPainter extends CustomPainter {
     final center = pt(g.palmCenter);
     final wristY = g.wristY * size.height;
     final fingerBaseY = g.fingerBaseY * size.height;
+    final thumbBase = pt(g.thumbBase);
+    final thumbWeb = pt(g.thumbIndexWeb);
+    final thenarCenter = pt(g.thenarCenter);
+    final wristLeft = pt(g.wristLeft);
+    final wristRight = pt(g.wristRight);
+    final wristCenter = pt(g.wristCenter);
+    final fingerArc = g.fingerBaseArc.map(pt).toList();
 
     canvas.drawRect(
       thenar,
@@ -2479,6 +2914,28 @@ class PalmOverlayPainter extends CustomPainter {
     final wristPaint = Paint()
       ..color = _gold.withValues(alpha: 0.82)
       ..strokeWidth = 1.5;
+    if (fingerArc.length >= 2) {
+      final arcPath = Path()..moveTo(fingerArc.first.dx, fingerArc.first.dy);
+      for (var i = 1; i < fingerArc.length; i++) {
+        arcPath.lineTo(fingerArc[i].dx, fingerArc[i].dy);
+      }
+      canvas.drawPath(
+        arcPath,
+        Paint()
+          ..color = _cyan.withValues(alpha: 0.95)
+          ..strokeWidth = 2.0
+          ..style = PaintingStyle.stroke
+          ..strokeCap = StrokeCap.round
+          ..strokeJoin = StrokeJoin.round,
+      );
+      for (final p in fingerArc) {
+        canvas.drawCircle(
+          p,
+          3.5,
+          Paint()..color = _cyan.withValues(alpha: 0.9),
+        );
+      }
+    }
     canvas
       ..drawLine(
         Offset(bounds.left, fingerBaseY),
@@ -2486,9 +2943,16 @@ class PalmOverlayPainter extends CustomPainter {
         fingerPaint,
       )
       ..drawLine(
-        Offset(bounds.left, wristY),
-        Offset(bounds.right, wristY),
+        wristLeft == Offset.zero ? Offset(bounds.left, wristY) : wristLeft,
+        wristRight == Offset.zero ? Offset(bounds.right, wristY) : wristRight,
         wristPaint,
+      )
+      ..drawCircle(
+        wristCenter == Offset.zero
+            ? Offset((bounds.left + bounds.right) * 0.5, wristY)
+            : wristCenter,
+        4,
+        Paint()..color = _gold.withValues(alpha: 0.95),
       )
       ..drawCircle(center, 6, Paint()..color = _green.withValues(alpha: 0.95))
       ..drawCircle(
@@ -2510,19 +2974,71 @@ class PalmOverlayPainter extends CustomPainter {
         ..color = _violet.withValues(alpha: 0.85)
         ..strokeWidth = 1.2,
     );
+    final minorDx = cos(g.mainAxisAngle) * axisLen * 0.62;
+    final minorDy = -sin(g.mainAxisAngle) * axisLen * 0.62;
+    canvas.drawLine(
+      Offset(center.dx - minorDx, center.dy - minorDy),
+      Offset(center.dx + minorDx, center.dy + minorDy),
+      Paint()
+        ..color = _cyan.withValues(alpha: 0.72)
+        ..strokeWidth = 1.0,
+    );
+
+    void marker(Offset p, Color color, String label) {
+      if (p == Offset.zero) return;
+      canvas.drawCircle(p, 5.0, Paint()..color = color.withValues(alpha: 0.95));
+      canvas.drawCircle(
+        p,
+        8.0,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.1
+          ..color = color.withValues(alpha: 0.58),
+      );
+      _drawTrackerLabel(
+        canvas,
+        size,
+        Offset(p.dx / size.width, p.dy / size.height),
+        label,
+        color,
+      );
+    }
+
+    marker(thumbBase, _lifeLine, 'thumb base');
+    marker(thumbWeb, _gold, 'web');
+    marker(thenarCenter, _violet, 'thenar');
 
     final sideLabel = switch (g.thumbSide) {
-      PalmThumbSide.left => 'thumb: left',
-      PalmThumbSide.right => 'thumb: right',
-      PalmThumbSide.unknown => 'thumb: unknown',
+      PalmThumbSide.left => 'image thumb: left',
+      PalmThumbSide.right => 'image thumb: right',
+      PalmThumbSide.unknown => 'image thumb: unknown',
+    };
+    final selectedHand = extractionResult?.scannedHand ?? ScannedHand.unknown;
+    final selectedHandLabel = switch (selectedHand) {
+      ScannedHand.left => 'user hand: left',
+      ScannedHand.right => 'user hand: right',
+      ScannedHand.unknown => 'user hand: unknown',
+    };
+    final handLabel = switch (g.handedness) {
+      PalmHandedness.left => 'left hand',
+      PalmHandedness.right => 'right hand',
+      PalmHandedness.unknown => 'hand ?',
     };
     final textPainter = TextPainter(
       text: TextSpan(
-        text: 'Palm geometry ${(g.confidence * 100).round()}%  $sideLabel',
+        text:
+            'Palm geometry ${(g.confidence * 100).round()}%  $sideLabel '
+            '${(g.thumbSideConfidence * 100).round()}%  $handLabel\n'
+            '$selectedHandLabel\n'
+            'center ${(g.palmCenterConfidence * 100).round()}%  '
+            'arc ${(g.fingerArcConfidence * 100).round()}%  '
+            'wrist ${(g.wristConfidence * 100).round()}%  '
+            'canon ${(g.canonicalTransformQuality * 100).round()}%',
         style: const TextStyle(
           color: Color(0xFFE6DDF8),
           fontSize: 10,
           fontWeight: FontWeight.w700,
+          height: 1.25,
         ),
       ),
       textDirection: TextDirection.ltr,
@@ -2939,6 +3455,89 @@ class _PipelineSheet extends StatelessWidget {
               valueColor: er.darkLinePixelCount > 0
                   ? const Color(0xFF00CFFF)
                   : const Color(0x55E6DDF8),
+            ),
+            _PipelineRow(
+              label: 'Crease pixels',
+              value: '${er.creasePixelCount}',
+              valueColor: er.creasePixelCount > 0
+                  ? const Color(0xFFFFE36E)
+                  : const Color(0x55E6DDF8),
+            ),
+            _PipelineRow(
+              label: 'Skeleton length',
+              value: '${er.skeletonLength}',
+            ),
+            _PipelineRow(
+              label: 'Avg probability',
+              value: '${(er.averageCreaseProbability * 100).round()} %',
+            ),
+            _PipelineRow(
+              label: 'Largest crease',
+              value: '${er.largestCreasePixelCount}',
+            ),
+            _PipelineRow(
+              label: 'Processing time',
+              value: '${er.processingTimeMs} ms',
+            ),
+            _PipelineRow(
+              label: 'Traces',
+              value: '${er.traceCount}',
+              valueColor: er.traceCount > 0
+                  ? const Color(0xFF8AE07A)
+                  : const Color(0x55E6DDF8),
+            ),
+            _PipelineRow(
+              label: 'Avg trace length',
+              value: er.averageTraceLength.toStringAsFixed(3),
+            ),
+            _PipelineRow(
+              label: 'Longest trace',
+              value: er.longestTraceLength.toStringAsFixed(3),
+            ),
+            _PipelineRow(
+              label: 'Recovered gaps',
+              value: '${er.recoveredGapCount}',
+            ),
+            _PipelineRow(
+              label: 'Trace continuity',
+              value: '${(er.averageTraceContinuity * 100).round()} %',
+            ),
+            _PipelineRow(
+              label: 'Trace probability',
+              value: '${(er.averageTraceProbability * 100).round()} %',
+            ),
+            _PipelineRow(
+              label: 'Avg anatomy score',
+              value: '${(er.averageAnatomicalScore * 100).round()} %',
+            ),
+            _PipelineRow(
+              label: 'Life prior',
+              value: '${(er.lifePriorScore * 100).round()} %',
+            ),
+            _PipelineRow(
+              label: 'Heart prior',
+              value: '${(er.heartPriorScore * 100).round()} %',
+            ),
+            _PipelineRow(
+              label: 'Head prior',
+              value: '${(er.headPriorScore * 100).round()} %',
+            ),
+            _PipelineRow(
+              label: 'Fate prior',
+              value: '${(er.fatePriorScore * 100).round()} %',
+            ),
+            _PipelineRow(
+              label: 'Conf before anatomy',
+              value:
+                  '${(er.trackerConfidenceBeforeAnatomical * 100).round()} %',
+            ),
+            _PipelineRow(
+              label: 'Conf after anatomy',
+              value: '${(er.trackerConfidenceAfterAnatomical * 100).round()} %',
+            ),
+            _PipelineRow(
+              label: 'Tracing time',
+              value: '${er.tracingTimeMs} ms',
             ),
             _PipelineRow(
               label: l10n.palmExtractionPipelineSobelPixels,

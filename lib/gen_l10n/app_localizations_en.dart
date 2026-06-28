@@ -202,6 +202,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get palmistryImageLoaded => 'Palm print loaded successfully';
 
   @override
+  String get palmistryScannedHandQuestion => 'Which hand was scanned?';
+
+  @override
+  String get palmistryScannedHandHint =>
+      'This describes the real hand. The image thumb side stays separate.';
+
+  @override
+  String get palmistryLeftHand => 'Left hand';
+
+  @override
+  String get palmistryRightHand => 'Right hand';
+
+  @override
+  String get palmistryUnknownHand => 'Unknown hand';
+
+  @override
+  String palmistryAnalyzedHand(String hand) {
+    return 'Analyzed hand: $hand';
+  }
+
+  @override
   String get palmistryAnalysisTitle => 'Palm Line Analysis';
 
   @override

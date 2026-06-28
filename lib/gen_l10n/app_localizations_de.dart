@@ -202,6 +202,27 @@ class AppLocalizationsDe extends AppLocalizations {
   String get palmistryImageLoaded => 'Handabdruck erfolgreich geladen';
 
   @override
+  String get palmistryScannedHandQuestion => 'Welche Hand wurde gescannt?';
+
+  @override
+  String get palmistryScannedHandHint =>
+      'Diese Auswahl beschreibt die echte Hand. Die Bild-Daumenseite bleibt davon getrennt.';
+
+  @override
+  String get palmistryLeftHand => 'Linke Hand';
+
+  @override
+  String get palmistryRightHand => 'Rechte Hand';
+
+  @override
+  String get palmistryUnknownHand => 'Unbekannte Hand';
+
+  @override
+  String palmistryAnalyzedHand(String hand) {
+    return 'Analysierte Hand: $hand';
+  }
+
+  @override
   String get palmistryAnalysisTitle => 'Handlinien-Analyse';
 
   @override

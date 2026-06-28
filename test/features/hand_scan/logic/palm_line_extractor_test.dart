@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:cat_oracle/features/hand_scan/logic/palm_line_extractor.dart';
+import 'package:cat_oracle/features/hand_scan/models/scanned_hand.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // ── helpers ───────────────────────────────────────────────────────────────────
@@ -105,6 +106,38 @@ void main() {
       expect(r.acceptedInteriorRatio, equals(0.0));
       expect(r.rejectedBoundaryRatio, equals(0.0));
       expect(r.palmGeometry, isNull);
+      expect(r.creasePixelCount, equals(0));
+      expect(r.skeletonLength, equals(0));
+      expect(r.averageCreaseProbability, equals(0.0));
+      expect(r.largestCreasePixelCount, equals(0));
+      expect(r.processingTimeMs, equals(0));
+      expect(r.debugPalmMask, isEmpty);
+      expect(r.debugClahe, isEmpty);
+      expect(r.debugDarkLineResponse, isEmpty);
+      expect(r.debugCreaseProbability, isEmpty);
+      expect(r.debugSkeleton, isEmpty);
+      expect(r.tracedCreases, isEmpty);
+      expect(r.traceCount, equals(0));
+      expect(r.averageTraceLength, equals(0.0));
+      expect(r.longestTraceLength, equals(0.0));
+      expect(r.recoveredGapCount, equals(0));
+      expect(r.averageTraceContinuity, equals(0.0));
+      expect(r.averageTraceProbability, equals(0.0));
+      expect(r.tracingTimeMs, equals(0));
+      expect(r.debugTraceSeeds, isEmpty);
+      expect(r.debugTraceDirections, isEmpty);
+      expect(r.debugGapRecoveries, isEmpty);
+      expect(r.averageAnatomicalScore, equals(0.0));
+      expect(r.lifePriorScore, equals(0.0));
+      expect(r.heartPriorScore, equals(0.0));
+      expect(r.headPriorScore, equals(0.0));
+      expect(r.fatePriorScore, equals(0.0));
+      expect(r.trackerConfidenceBeforeAnatomical, equals(0.0));
+      expect(r.trackerConfidenceAfterAnatomical, equals(0.0));
+      expect(r.debugLifePrior, isEmpty);
+      expect(r.debugHeartPrior, isEmpty);
+      expect(r.debugHeadPrior, isEmpty);
+      expect(r.debugFatePrior, isEmpty);
     });
   });
 
@@ -172,6 +205,38 @@ void main() {
       expect(result.containsKey('acceptedInteriorRatio'), isTrue);
       expect(result.containsKey('rejectedBoundaryRatio'), isTrue);
       expect(result.containsKey('palmGeometry'), isTrue);
+      expect(result.containsKey('creasePixelCount'), isTrue);
+      expect(result.containsKey('skeletonLength'), isTrue);
+      expect(result.containsKey('averageCreaseProbability'), isTrue);
+      expect(result.containsKey('largestCreasePixelCount'), isTrue);
+      expect(result.containsKey('processingTimeMs'), isTrue);
+      expect(result.containsKey('debugPalmMask'), isTrue);
+      expect(result.containsKey('debugClahe'), isTrue);
+      expect(result.containsKey('debugDarkLineResponse'), isTrue);
+      expect(result.containsKey('debugCreaseProbability'), isTrue);
+      expect(result.containsKey('debugSkeleton'), isTrue);
+      expect(result.containsKey('tracedCreases'), isTrue);
+      expect(result.containsKey('traceCount'), isTrue);
+      expect(result.containsKey('averageTraceLength'), isTrue);
+      expect(result.containsKey('longestTraceLength'), isTrue);
+      expect(result.containsKey('recoveredGapCount'), isTrue);
+      expect(result.containsKey('averageTraceContinuity'), isTrue);
+      expect(result.containsKey('averageTraceProbability'), isTrue);
+      expect(result.containsKey('tracingTimeMs'), isTrue);
+      expect(result.containsKey('debugTraceSeeds'), isTrue);
+      expect(result.containsKey('debugTraceDirections'), isTrue);
+      expect(result.containsKey('debugGapRecoveries'), isTrue);
+      expect(result.containsKey('averageAnatomicalScore'), isTrue);
+      expect(result.containsKey('lifePriorScore'), isTrue);
+      expect(result.containsKey('heartPriorScore'), isTrue);
+      expect(result.containsKey('headPriorScore'), isTrue);
+      expect(result.containsKey('fatePriorScore'), isTrue);
+      expect(result.containsKey('trackerConfidenceBeforeAnatomical'), isTrue);
+      expect(result.containsKey('trackerConfidenceAfterAnatomical'), isTrue);
+      expect(result.containsKey('debugLifePrior'), isTrue);
+      expect(result.containsKey('debugHeartPrior'), isTrue);
+      expect(result.containsKey('debugHeadPrior'), isTrue);
+      expect(result.containsKey('debugFatePrior'), isTrue);
     });
 
     // ── ROI normalization tests ────────────────────────────────────────────────
@@ -405,6 +470,14 @@ void main() {
       expect(geometry.fingerBaseY, closeTo(0.205, 0.02));
       expect(geometry.wristY, closeTo(0.905, 0.02));
       expect(geometry.confidence, greaterThan(0.5));
+      expect(geometry.palmWidth, greaterThan(0.35));
+      expect(geometry.palmHeight, greaterThan(0.65));
+      expect(geometry.wristWidth, greaterThan(0.35));
+      expect(geometry.wristCenter.dx, closeTo(0.505, 0.04));
+      expect(geometry.fingerBaseArc.length, equals(4));
+      expect(geometry.fingerArcConfidence, greaterThan(0.5));
+      expect(geometry.wristConfidence, greaterThan(0.5));
+      expect(geometry.canonicalTransformQuality, greaterThan(0.25));
     });
 
     test('wider left lower region detects left thumb side', () {
@@ -415,7 +488,11 @@ void main() {
       final geometry = palmGeometryFromMaskForTest(mask, w, h);
       expect(geometry, isNotNull);
       expect(geometry!.thumbSide, equals(PalmThumbSide.left));
+      expect(geometry.handedness, equals(PalmHandedness.unknown));
+      expect(geometry.thumbSideConfidence, greaterThan(0.16));
       expect(geometry.thenarRegion.left, lessThan(geometry.palmCenter.dx));
+      expect(geometry.thumbBase.dx, lessThan(geometry.palmCenter.dx));
+      expect(geometry.thenarCenter.dx, lessThan(geometry.palmCenter.dx));
     });
 
     test('wider right lower region detects right thumb side', () {
@@ -426,7 +503,37 @@ void main() {
       final geometry = palmGeometryFromMaskForTest(mask, w, h);
       expect(geometry, isNotNull);
       expect(geometry!.thumbSide, equals(PalmThumbSide.right));
+      expect(geometry.handedness, equals(PalmHandedness.unknown));
+      expect(geometry.thumbSideConfidence, greaterThan(0.16));
       expect(geometry.thenarRegion.right, greaterThan(geometry.palmCenter.dx));
+      expect(geometry.thumbBase.dx, greaterThan(geometry.palmCenter.dx));
+      expect(geometry.thenarCenter.dx, greaterThan(geometry.palmCenter.dx));
+    });
+
+    test('thumb-index web lands above thumb base on asymmetric mask', () {
+      const w = 100, h = 100;
+      final mask = emptyMask(w, h);
+      fillRect(mask, w, 35, 20, 65, 90);
+      fillRect(mask, w, 18, 48, 35, 84);
+      fillRect(mask, w, 30, 28, 35, 42);
+      final geometry = palmGeometryFromMaskForTest(mask, w, h);
+      expect(geometry, isNotNull);
+      expect(geometry!.thumbSide, equals(PalmThumbSide.left));
+      expect(geometry.thumbIndexWeb.dy, lessThan(geometry.thumbBase.dy));
+      expect(geometry.thumbIndexWeb.dx, lessThan(geometry.palmCenter.dx));
+    });
+
+    test('wrist line exposes left edge, right edge and width', () {
+      const w = 120, h = 120;
+      final mask = emptyMask(w, h);
+      fillRect(mask, w, 38, 20, 82, 94);
+      fillRect(mask, w, 45, 95, 75, 110);
+      final geometry = palmGeometryFromMaskForTest(mask, w, h);
+      expect(geometry, isNotNull);
+      expect(geometry!.wristLeft.dx, lessThan(geometry.wristCenter.dx));
+      expect(geometry.wristRight.dx, greaterThan(geometry.wristCenter.dx));
+      expect(geometry.wristWidth, greaterThan(0.20));
+      expect(geometry.wristConfidence, greaterThan(0.35));
     });
 
     test('canonical y maps finger base near 0 and wrist near 1', () {
@@ -449,6 +556,40 @@ void main() {
     test('invalid empty mask returns null geometry', () {
       final geometry = palmGeometryFromMaskForTest(emptyMask(40, 40), 40, 40);
       expect(geometry, isNull);
+    });
+
+    test('image thumb side right does not automatically mean left hand', () {
+      const w = 100, h = 100;
+      final mask = emptyMask(w, h);
+      fillRect(mask, w, 35, 20, 65, 90);
+      fillRect(mask, w, 65, 45, 82, 85);
+      final geometry = palmGeometryFromMaskForTest(mask, w, h);
+      final extraction = PalmLineExtractionResult(
+        edgePoints: const [],
+        candidatePaths: const [],
+        confidence: 0.5,
+        imageWidth: w,
+        imageHeight: h,
+        edgePointCount: 1,
+        palmGeometry: geometry,
+      );
+
+      expect(extraction.imageThumbSide, equals(PalmThumbSide.right));
+      expect(extraction.semanticHandedness, equals(ScannedHand.unknown));
+    });
+
+    test('analysis result can carry unknown hand fallback', () {
+      const extraction = PalmLineExtractionResult(
+        edgePoints: [],
+        candidatePaths: [],
+        confidence: 0.5,
+        imageWidth: 100,
+        imageHeight: 100,
+        edgePointCount: 1,
+      );
+
+      expect(extraction.scannedHand, equals(ScannedHand.unknown));
+      expect(extraction.copyWith().scannedHand, equals(ScannedHand.unknown));
     });
   });
 
@@ -573,6 +714,112 @@ void main() {
       expect(result['edgePointCount'], greaterThan(0));
       expect(result['darkLinePixelCount'], greaterThan(0));
       expect(result['candidatePaths'], isNotEmpty);
+    });
+
+    test('crease probability map produces skeleton tracker input', () {
+      const w = 96, h = 96;
+      final px = _solid(w, h, r: 192, g: 174, b: 156);
+      for (int x = 18; x < 78; x++) {
+        for (int dy = -1; dy <= 1; dy++) {
+          final b = ((48 + dy) * w + x) * 4;
+          final shade = dy == 0 ? 150 : 170;
+          px[b] = shade;
+          px[b + 1] = shade - 12;
+          px[b + 2] = shade - 24;
+        }
+      }
+
+      final result = processPixelsForTest(px, w, h);
+
+      expect(result['creasePixelCount'], greaterThan(0));
+      expect(result['skeletonLength'], greaterThan(0));
+      expect(
+        (result['averageCreaseProbability'] as num).toDouble(),
+        greaterThan(0),
+      );
+      expect(result['largestCreasePixelCount'], greaterThan(0));
+      expect(result['debugCreaseProbability'], isNotEmpty);
+      expect(result['debugSkeleton'], isNotEmpty);
+      expect(result['candidatePaths'], isNotEmpty);
+      expect(result['tracedCreases'], isNotEmpty);
+      expect(result['traceCount'], greaterThan(0));
+      expect(result['averageTraceLength'], greaterThan(0));
+      expect(result['longestTraceLength'], greaterThan(0));
+      expect(result['averageTraceContinuity'], greaterThan(0));
+      expect(result['averageTraceProbability'], greaterThan(0));
+      expect(result['averageAnatomicalScore'], greaterThan(0));
+      expect(result['trackerConfidenceBeforeAnatomical'], greaterThan(0));
+      expect(result['trackerConfidenceAfterAnatomical'], greaterThan(0));
+      expect(result['debugLifePrior'], isNotEmpty);
+      expect(result['debugHeartPrior'], isNotEmpty);
+      expect(result['debugHeadPrior'], isNotEmpty);
+      expect(result['debugFatePrior'], isNotEmpty);
+      final traces = result['tracedCreases'] as List<dynamic>;
+      final firstTrace = traces.first as Map<dynamic, dynamic>;
+      expect(firstTrace.containsKey('anatomicalScore'), isTrue);
+      expect(firstTrace.containsKey('weightedProbability'), isTrue);
+      expect((firstTrace['anatomicalScore'] as num).toDouble(), greaterThan(0));
+      expect(
+        (firstTrace['weightedProbability'] as num).toDouble(),
+        greaterThan(0),
+      );
+      expect(result['debugTraceSeeds'], isNotEmpty);
+    });
+
+    test(
+      'anatomical priors score an upper horizontal crease as heart-like',
+      () {
+        const w = 112, h = 112;
+        final px = _solid(w, h, r: 194, g: 176, b: 158);
+        for (int x = 16; x < 96; x++) {
+          for (int dy = -1; dy <= 1; dy++) {
+            final b = ((32 + dy) * w + x) * 4;
+            final shade = dy == 0 ? 145 : 169;
+            px[b] = shade;
+            px[b + 1] = shade - 12;
+            px[b + 2] = shade - 24;
+          }
+        }
+
+        final result = processPixelsForTest(px, w, h);
+
+        expect(result['tracedCreases'], isNotEmpty);
+        expect(
+          (result['heartPriorScore'] as num).toDouble(),
+          greaterThan((result['fatePriorScore'] as num).toDouble()),
+        );
+        expect(
+          (result['trackerConfidenceAfterAnatomical'] as num).toDouble(),
+          greaterThan(0),
+        );
+      },
+    );
+
+    test('crease tracer reconnects a small interrupted palm crease', () {
+      const w = 112, h = 112;
+      final px = _solid(w, h, r: 194, g: 176, b: 158);
+      for (int x = 18; x < 94; x++) {
+        if (x >= 53 && x <= 58) continue;
+        for (int dy = -1; dy <= 1; dy++) {
+          final b = ((56 + dy) * w + x) * 4;
+          final shade = dy == 0 ? 145 : 169;
+          px[b] = shade;
+          px[b + 1] = shade - 12;
+          px[b + 2] = shade - 24;
+        }
+      }
+
+      final result = processPixelsForTest(px, w, h);
+      final traces = result['tracedCreases'] as List<dynamic>;
+      final paths = result['candidatePaths'] as List<dynamic>;
+
+      expect(traces, isNotEmpty);
+      expect(paths, isNotEmpty);
+      expect(result['recoveredGapCount'], greaterThan(0));
+      expect(
+        (result['longestTraceLength'] as num).toDouble(),
+        greaterThan(0.45),
+      );
     });
 
     test('dark-line map is the primary extraction evidence', () {
