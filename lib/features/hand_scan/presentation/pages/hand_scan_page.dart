@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:cat_oracle/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
@@ -471,7 +473,10 @@ class _ImagePreviewDialogState extends State<_ImagePreviewDialog> {
                   _ScanQualityPanel(quality: q),
                   const SizedBox(height: 10),
                   // ── Hand segmentation panel ─────────────────────────────
-                  _HandSegmentationPanel(segmentation: _segmentation),
+                  _HandSegmentationPanel(
+                    originalBytes: widget.result.bytes,
+                    segmentation: _segmentation,
+                  ),
                   const SizedBox(height: 16),
                   // ── Action buttons depending on grade ───────────────────
                   _ActionButtons(
@@ -752,8 +757,12 @@ class _QualityRow extends StatelessWidget {
 // ── Hand segmentation panel ─────────────────────────────────────────────────
 
 class _HandSegmentationPanel extends StatelessWidget {
-  const _HandSegmentationPanel({required this.segmentation});
+  const _HandSegmentationPanel({
+    required this.originalBytes,
+    required this.segmentation,
+  });
 
+  final List<int> originalBytes;
   final HandSegmentResult? segmentation;
 
   @override
@@ -805,67 +814,45 @@ class _HandSegmentationPanel extends StatelessWidget {
             ),
           ] else ...[
             const SizedBox(height: 10),
-            // Cutout preview + metrics side by side
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            _SegmentationPreviewFlow(originalBytes: originalBytes, seg: seg),
+            const SizedBox(height: 12),
+            _QualityRow(
+              label: l10n.handSegmentDimCoverage,
+              score: seg.maskCoverage,
+            ),
+            _QualityRow(
+              label: l10n.handSegmentDimEdge,
+              score: seg.edgeConfidence,
+            ),
+            _QualityRow(
+              label: l10n.handSegmentDimFingers,
+              score: seg.fingerVisibility,
+            ),
+            _QualityRow(
+              label: l10n.handSegmentDimThumb,
+              score: seg.thumbVisibility,
+            ),
+            _QualityRow(
+              label: l10n.handSegmentDimWrist,
+              score: seg.wristVisibility,
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
               children: [
-                // Cutout thumbnail
-                if (seg.cutoutBytes.isNotEmpty)
-                  Column(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: SizedBox(
-                          width: 72,
-                          height: 90,
-                          child: Image.memory(
-                            seg.cutoutBytes,
-                            fit: BoxFit.contain,
-                            errorBuilder: (_, __, ___) => const Icon(
-                              Icons.back_hand_rounded,
-                              color: Color(0x66E6DDF8),
-                              size: 32,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        l10n.handSegmentCutoutLabel,
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: const Color(0x88E6DDF8),
-                        ),
-                      ),
-                    ],
-                  ),
-                if (seg.cutoutBytes.isNotEmpty) const SizedBox(width: 12),
-                // Metrics
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _QualityRow(
-                        label: l10n.handSegmentDimCoverage,
-                        score: seg.maskCoverage,
-                      ),
-                      _QualityRow(
-                        label: l10n.handSegmentDimEdge,
-                        score: seg.edgeConfidence,
-                      ),
-                      _QualityRow(
-                        label: l10n.handSegmentDimFingers,
-                        score: seg.fingerVisibility,
-                      ),
-                      _QualityRow(
-                        label: l10n.handSegmentDimThumb,
-                        score: seg.thumbVisibility,
-                      ),
-                      _QualityRow(
-                        label: l10n.handSegmentDimWrist,
-                        score: seg.wristVisibility,
-                      ),
-                    ],
-                  ),
+                _DebugMetricChip(label: 'Mask Area', value: '${seg.maskArea}'),
+                _DebugMetricChip(
+                  label: 'Boundary Length',
+                  value: '${seg.boundaryLength}',
+                ),
+                _DebugMetricChip(
+                  label: 'Leakage Ratio',
+                  value: seg.backgroundLeakageRatio.toStringAsFixed(3),
+                ),
+                _DebugMetricChip(
+                  label: 'Contour Smoothness',
+                  value: seg.contourSmoothness.toStringAsFixed(2),
                 ),
               ],
             ),
@@ -903,6 +890,159 @@ class _HandSegmentationPanel extends StatelessWidget {
             ],
           ],
         ],
+      ),
+    );
+  }
+}
+
+class _SegmentationPreviewFlow extends StatelessWidget {
+  const _SegmentationPreviewFlow({
+    required this.originalBytes,
+    required this.seg,
+  });
+
+  final List<int> originalBytes;
+  final HandSegmentResult seg;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        _SegmentationPreviewStage(label: 'Original', bytes: originalBytes),
+        const _PreviewArrow(),
+        _SegmentationPreviewStage(
+          label: 'Current Mask',
+          bytes: seg.currentMaskPreviewBytes,
+        ),
+        const _PreviewArrow(),
+        _SegmentationPreviewStage(
+          label: 'Refined Mask',
+          bytes: seg.refinedMaskPreviewBytes,
+        ),
+        const _PreviewArrow(),
+        _SegmentationPreviewStage(
+          label: 'Final Cutout',
+          bytes: seg.cutoutBytes,
+          fallbackLabel: 'Detected hand',
+        ),
+      ],
+    );
+  }
+}
+
+class _PreviewArrow extends StatelessWidget {
+  const _PreviewArrow();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 5),
+      child: Icon(
+        Icons.arrow_downward_rounded,
+        color: Color(0x99DAB86E),
+        size: 16,
+      ),
+    );
+  }
+}
+
+class _SegmentationPreviewStage extends StatelessWidget {
+  const _SegmentationPreviewStage({
+    required this.label,
+    required this.bytes,
+    this.fallbackLabel,
+  });
+
+  final String label;
+  final List<int> bytes;
+  final String? fallbackLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final imageBytes = bytes is Uint8List
+        ? bytes as Uint8List
+        : Uint8List.fromList(bytes);
+    return Row(
+      children: [
+        SizedBox(
+          width: 94,
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: const Color(0xCCE6DDF8),
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              height: 96,
+              color: const Color(0x33110D1D),
+              alignment: Alignment.center,
+              child: imageBytes.isNotEmpty
+                  ? Image.memory(
+                      imageBytes,
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, __, ___) =>
+                          _PreviewFallback(label: fallbackLabel),
+                    )
+                  : _PreviewFallback(label: fallbackLabel),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PreviewFallback extends StatelessWidget {
+  const _PreviewFallback({this.label});
+
+  final String? label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(Icons.back_hand_rounded, color: Color(0x66E6DDF8), size: 30),
+        if (label != null) ...[
+          const SizedBox(height: 4),
+          Text(
+            label!,
+            style: Theme.of(
+              context,
+            ).textTheme.labelSmall?.copyWith(color: const Color(0x88E6DDF8)),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _DebugMetricChip extends StatelessWidget {
+  const _DebugMetricChip({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: const Color(0x22110D1D),
+        border: Border.all(color: const Color(0x33DAB86E), width: 0.8),
+      ),
+      child: Text(
+        '$label: $value',
+        style: Theme.of(
+          context,
+        ).textTheme.labelSmall?.copyWith(color: const Color(0xCCE6DDF8)),
       ),
     );
   }

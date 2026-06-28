@@ -43,6 +43,13 @@ class PalmTracedCrease {
     required this.branchCount,
     this.anatomicalScore = 0.0,
     this.weightedProbability = 0.0,
+    this.averageRidgeResponse = 0.0,
+    this.maximumRidgeResponse = 0.0,
+    this.ridgeConsistency = 0.0,
+    this.ridgeWidthEstimate = 0.0,
+    this.averageDarkness = 0.0,
+    this.majorLineScore = 0.0,
+    this.rejectionReason = '',
     this.insidePalmRatio = 1.0,
   });
 
@@ -55,6 +62,13 @@ class PalmTracedCrease {
   final int branchCount;
   final double anatomicalScore;
   final double weightedProbability;
+  final double averageRidgeResponse;
+  final double maximumRidgeResponse;
+  final double ridgeConsistency;
+  final double ridgeWidthEstimate;
+  final double averageDarkness;
+  final double majorLineScore;
+  final String rejectionReason;
   // Fraction of trace pixels inside boundarySafeMask [0,1].
   // Candidates with insidePalmRatio < 0.98 are rejected before classification.
   final double insidePalmRatio;
@@ -223,6 +237,9 @@ class PalmLineExtractionResult {
     this.debugPalmMask = const [],
     this.debugClahe = const [],
     this.debugDarkLineResponse = const [],
+    this.multiScaleRidgeMap = const [],
+    this.debugMultiScaleRidgeMap = const [],
+    this.debugRidgeStrengthHeatmap = const [],
     this.debugCreaseProbability = const [],
     this.debugSkeleton = const [],
     this.tracedCreases = const [],
@@ -236,6 +253,9 @@ class PalmLineExtractionResult {
     this.debugTraceSeeds = const [],
     this.debugTraceDirections = const [],
     this.debugGapRecoveries = const [],
+    this.debugMajorLineScores = const [],
+    this.debugTopLifeLineCandidates = const [],
+    this.debugTraceRejectionReasons = const [],
     this.averageAnatomicalScore = 0.0,
     this.lifePriorScore = 0.0,
     this.heartPriorScore = 0.0,
@@ -327,6 +347,9 @@ class PalmLineExtractionResult {
   final List<PalmDebugSample> debugPalmMask;
   final List<PalmDebugSample> debugClahe;
   final List<PalmDebugSample> debugDarkLineResponse;
+  final List<PalmDebugSample> multiScaleRidgeMap;
+  final List<PalmDebugSample> debugMultiScaleRidgeMap;
+  final List<PalmDebugSample> debugRidgeStrengthHeatmap;
   final List<PalmDebugSample> debugCreaseProbability;
   final List<PalmDebugSample> debugSkeleton;
 
@@ -344,6 +367,9 @@ class PalmLineExtractionResult {
   final List<PalmDebugSample> debugTraceSeeds;
   final List<PalmDebugVector> debugTraceDirections;
   final List<PalmDebugVector> debugGapRecoveries;
+  final List<PalmDebugSample> debugMajorLineScores;
+  final List<PalmDebugSample> debugTopLifeLineCandidates;
+  final List<String> debugTraceRejectionReasons;
 
   /// Anatomical prior scores sampled from life/heart/head/fate heatmaps.
   final double averageAnatomicalScore;
@@ -362,14 +388,19 @@ class PalmLineExtractionResult {
 
   /// Pixels that had residual probability > 0 outside boundarySafeMask (safety net; should be 0).
   final int outsideMaskProbabilityPixels;
+
   /// Skeleton pixels outside boundarySafeMask that were explicitly zeroed.
   final int outsideMaskSkeletonPixels;
+
   /// Number of traces rejected because insidePalmRatio < 0.98.
   final int rejectedOutsideMaskTraces;
+
   /// Minimum inside-palm ratio across all accepted candidate paths (should be >= 0.98).
   final double minInsidePalmRatioOfAcceptedCandidates;
+
   /// Candidate paths rejected because < 98 % of their pixels were inside the palm mask.
   final List<List<Offset>> rejectedOutsideMaskPaths;
+
   /// Boundary outline of boundarySafeMask for debug visualisation.
   final List<PalmDebugSample> debugPalmOutline;
 
@@ -412,6 +443,9 @@ class PalmLineExtractionResult {
       debugPalmMask: debugPalmMask,
       debugClahe: debugClahe,
       debugDarkLineResponse: debugDarkLineResponse,
+      multiScaleRidgeMap: multiScaleRidgeMap,
+      debugMultiScaleRidgeMap: debugMultiScaleRidgeMap,
+      debugRidgeStrengthHeatmap: debugRidgeStrengthHeatmap,
       debugCreaseProbability: debugCreaseProbability,
       debugSkeleton: debugSkeleton,
       tracedCreases: tracedCreases,
@@ -425,6 +459,9 @@ class PalmLineExtractionResult {
       debugTraceSeeds: debugTraceSeeds,
       debugTraceDirections: debugTraceDirections,
       debugGapRecoveries: debugGapRecoveries,
+      debugMajorLineScores: debugMajorLineScores,
+      debugTopLifeLineCandidates: debugTopLifeLineCandidates,
+      debugTraceRejectionReasons: debugTraceRejectionReasons,
       averageAnatomicalScore: averageAnatomicalScore,
       lifePriorScore: lifePriorScore,
       heartPriorScore: heartPriorScore,
@@ -441,7 +478,8 @@ class PalmLineExtractionResult {
       outsideMaskProbabilityPixels: outsideMaskProbabilityPixels,
       outsideMaskSkeletonPixels: outsideMaskSkeletonPixels,
       rejectedOutsideMaskTraces: rejectedOutsideMaskTraces,
-      minInsidePalmRatioOfAcceptedCandidates: minInsidePalmRatioOfAcceptedCandidates,
+      minInsidePalmRatioOfAcceptedCandidates:
+          minInsidePalmRatioOfAcceptedCandidates,
       rejectedOutsideMaskPaths: rejectedOutsideMaskPaths,
       debugPalmOutline: debugPalmOutline,
       handSegmentation: handSegmentation ?? this.handSegmentation,
@@ -470,6 +508,9 @@ class PalmLineExtractionResult {
     debugPalmMask: [],
     debugClahe: [],
     debugDarkLineResponse: [],
+    multiScaleRidgeMap: [],
+    debugMultiScaleRidgeMap: [],
+    debugRidgeStrengthHeatmap: [],
     debugCreaseProbability: [],
     debugSkeleton: [],
     tracedCreases: [],
@@ -483,6 +524,9 @@ class PalmLineExtractionResult {
     debugTraceSeeds: [],
     debugTraceDirections: [],
     debugGapRecoveries: [],
+    debugMajorLineScores: [],
+    debugTopLifeLineCandidates: [],
+    debugTraceRejectionReasons: [],
     averageAnatomicalScore: 0.0,
     lifePriorScore: 0.0,
     heartPriorScore: 0.0,
@@ -592,6 +636,16 @@ class PalmLineExtractor {
         anatomicalScore: (m['anatomicalScore'] as num?)?.toDouble() ?? 0.0,
         weightedProbability:
             (m['weightedProbability'] as num?)?.toDouble() ?? 0.0,
+        averageRidgeResponse:
+            (m['averageRidgeResponse'] as num?)?.toDouble() ?? 0.0,
+        maximumRidgeResponse:
+            (m['maximumRidgeResponse'] as num?)?.toDouble() ?? 0.0,
+        ridgeConsistency: (m['ridgeConsistency'] as num?)?.toDouble() ?? 0.0,
+        ridgeWidthEstimate:
+            (m['ridgeWidthEstimate'] as num?)?.toDouble() ?? 0.0,
+        averageDarkness: (m['averageDarkness'] as num?)?.toDouble() ?? 0.0,
+        majorLineScore: (m['majorLineScore'] as num?)?.toDouble() ?? 0.0,
+        rejectionReason: m['rejectionReason'] as String? ?? '',
         insidePalmRatio: (m['insidePalmRatio'] as num?)?.toDouble() ?? 1.0,
       );
     }
@@ -639,6 +693,18 @@ class PalmLineExtractor {
           (raw['debugDarkLineResponse'] as List<dynamic>? ?? const [])
               .map(toSample)
               .toList(),
+      multiScaleRidgeMap:
+          (raw['multiScaleRidgeMap'] as List<dynamic>? ?? const [])
+              .map(toSample)
+              .toList(),
+      debugMultiScaleRidgeMap:
+          (raw['debugMultiScaleRidgeMap'] as List<dynamic>? ?? const [])
+              .map(toSample)
+              .toList(),
+      debugRidgeStrengthHeatmap:
+          (raw['debugRidgeStrengthHeatmap'] as List<dynamic>? ?? const [])
+              .map(toSample)
+              .toList(),
       debugCreaseProbability:
           (raw['debugCreaseProbability'] as List<dynamic>? ?? const [])
               .map(toSample)
@@ -671,6 +737,18 @@ class PalmLineExtractor {
           (raw['debugGapRecoveries'] as List<dynamic>? ?? const [])
               .map(toVector)
               .toList(),
+      debugMajorLineScores:
+          (raw['debugMajorLineScores'] as List<dynamic>? ?? const [])
+              .map(toSample)
+              .toList(),
+      debugTopLifeLineCandidates:
+          (raw['debugTopLifeLineCandidates'] as List<dynamic>? ?? const [])
+              .map(toSample)
+              .toList(),
+      debugTraceRejectionReasons:
+          (raw['debugTraceRejectionReasons'] as List<dynamic>? ?? const [])
+              .map((v) => v.toString())
+              .toList(),
       averageAnatomicalScore:
           (raw['averageAnatomicalScore'] as num?)?.toDouble() ?? 0.0,
       lifePriorScore: (raw['lifePriorScore'] as num?)?.toDouble() ?? 0.0,
@@ -693,12 +771,19 @@ class PalmLineExtractor {
       debugFatePrior: (raw['debugFatePrior'] as List<dynamic>? ?? const [])
           .map(toSample)
           .toList(),
-      anatomyWeighted: _anatomyFromRaw(raw['anatomyWeighted'], toOffset, toSample, toTrace),
-      outsideMaskProbabilityPixels: raw['outsideMaskProbabilityPixels'] as int? ?? 0,
+      anatomyWeighted: _anatomyFromRaw(
+        raw['anatomyWeighted'],
+        toOffset,
+        toSample,
+        toTrace,
+      ),
+      outsideMaskProbabilityPixels:
+          raw['outsideMaskProbabilityPixels'] as int? ?? 0,
       outsideMaskSkeletonPixels: raw['outsideMaskSkeletonPixels'] as int? ?? 0,
       rejectedOutsideMaskTraces: raw['rejectedOutsideMaskTraces'] as int? ?? 0,
       minInsidePalmRatioOfAcceptedCandidates:
-          (raw['minInsidePalmRatioOfAcceptedCandidates'] as num?)?.toDouble() ?? 1.0,
+          (raw['minInsidePalmRatioOfAcceptedCandidates'] as num?)?.toDouble() ??
+          1.0,
       rejectedOutsideMaskPaths:
           (raw['rejectedOutsideMaskPaths'] as List<dynamic>? ?? const [])
               .map((path) => (path as List<dynamic>).map(toOffset).toList())
@@ -929,11 +1014,17 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
     List<List<double>> debugPalmMask = const [],
     List<List<double>> debugClahe = const [],
     List<List<double>> debugDarkLineResponse = const [],
+    List<List<double>> multiScaleRidgeMap = const [],
+    List<List<double>> debugMultiScaleRidgeMap = const [],
+    List<List<double>> debugRidgeStrengthHeatmap = const [],
     List<List<double>> debugCreaseProbability = const [],
     List<List<double>> debugSkeleton = const [],
     List<List<double>> debugTraceSeeds = const [],
     List<List<double>> debugTraceDirections = const [],
     List<List<double>> debugGapRecoveries = const [],
+    List<List<double>> debugMajorLineScores = const [],
+    List<List<double>> debugTopLifeLineCandidates = const [],
+    List<String> debugTraceRejectionReasons = const [],
     List<List<double>> debugLifePrior = const [],
     List<List<double>> debugHeartPrior = const [],
     List<List<double>> debugHeadPrior = const [],
@@ -988,11 +1079,17 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
     'debugPalmMask': debugPalmMask,
     'debugClahe': debugClahe,
     'debugDarkLineResponse': debugDarkLineResponse,
+    'multiScaleRidgeMap': multiScaleRidgeMap,
+    'debugMultiScaleRidgeMap': debugMultiScaleRidgeMap,
+    'debugRidgeStrengthHeatmap': debugRidgeStrengthHeatmap,
     'debugCreaseProbability': debugCreaseProbability,
     'debugSkeleton': debugSkeleton,
     'debugTraceSeeds': debugTraceSeeds,
     'debugTraceDirections': debugTraceDirections,
     'debugGapRecoveries': debugGapRecoveries,
+    'debugMajorLineScores': debugMajorLineScores,
+    'debugTopLifeLineCandidates': debugTopLifeLineCandidates,
+    'debugTraceRejectionReasons': debugTraceRejectionReasons,
     'debugLifePrior': debugLifePrior,
     'debugHeartPrior': debugHeartPrior,
     'debugHeadPrior': debugHeadPrior,
@@ -1001,7 +1098,8 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
     'outsideMaskProbabilityPixels': outsideMaskProbabilityPixels,
     'outsideMaskSkeletonPixels': outsideMaskSkeletonPixels,
     'rejectedOutsideMaskTraces': rejectedOutsideMaskTraces,
-    'minInsidePalmRatioOfAcceptedCandidates': minInsidePalmRatioOfAcceptedCandidates,
+    'minInsidePalmRatioOfAcceptedCandidates':
+        minInsidePalmRatioOfAcceptedCandidates,
     'rejectedOutsideMaskPaths': rejectedOutsideMaskPaths,
     'debugPalmOutline': debugPalmOutline,
   };
@@ -1150,7 +1248,11 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
     9,
   ]);
   final dog = _differenceOfGaussiansDark(claheWork, workW, workH);
-  final hessian = _hessianValleyResponse(claheWork, workW, workH);
+  final multiScaleRidgeMap = _multiScaleHessianRidgeResponse(
+    claheWork,
+    workW,
+    workH,
+  );
   final edgeMag = _sobelMagnitude(claheWork, workW, workH);
   final probability = Float32List(workW * workH);
 
@@ -1170,7 +1272,7 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
       final inPalm = boundarySafeMask[idx];
       final dark = topHat[idx] / 255.0;
       final dogScore = dog[idx] / 255.0;
-      final valley = hessian[idx] / 255.0;
+      final valley = multiScaleRidgeMap[idx] / 255.0;
       final localValley =
           _valleyStrength(claheWork, x, y, workW, workH) / 255.0;
       if (dark > 0.08) darkLinePixelCount++;
@@ -1297,6 +1399,27 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
         mapPt,
         maxSamples: 900,
       ),
+      multiScaleRidgeMap: _sampleByteMap(
+        multiScaleRidgeMap,
+        workW,
+        workH,
+        mapPt,
+        maxSamples: 900,
+      ),
+      debugMultiScaleRidgeMap: _sampleByteMap(
+        multiScaleRidgeMap,
+        workW,
+        workH,
+        mapPt,
+        maxSamples: 900,
+      ),
+      debugRidgeStrengthHeatmap: _sampleByteMap(
+        multiScaleRidgeMap,
+        workW,
+        workH,
+        mapPt,
+        maxSamples: 1200,
+      ),
       debugCreaseProbability: _sampleProbabilityMap(
         probability,
         workW,
@@ -1398,17 +1521,24 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
   for (int i = 0; i < workW * workH; i++) {
     final base = probability[i];
     if (base <= 0.0) continue;
-    lifeWeightedProb[i] = (base * (_anatomyAlpha + _anatomyBeta * anatomicalPriors.life[i]))
-        .clamp(0.0, 1.0);
-    heartWeightedProb[i] = (base * (_anatomyAlpha + _anatomyBeta * anatomicalPriors.heart[i]))
-        .clamp(0.0, 1.0);
-    headWeightedProb[i] = (base * (_anatomyAlpha + _anatomyBeta * anatomicalPriors.head[i]))
-        .clamp(0.0, 1.0);
-    fateWeightedProb[i] = (base * (_anatomyAlpha + _anatomyBeta * anatomicalPriors.fate[i]))
-        .clamp(0.0, 1.0);
+    lifeWeightedProb[i] =
+        (base * (_anatomyAlpha + _anatomyBeta * anatomicalPriors.life[i]))
+            .clamp(0.0, 1.0);
+    heartWeightedProb[i] =
+        (base * (_anatomyAlpha + _anatomyBeta * anatomicalPriors.heart[i]))
+            .clamp(0.0, 1.0);
+    headWeightedProb[i] =
+        (base * (_anatomyAlpha + _anatomyBeta * anatomicalPriors.head[i]))
+            .clamp(0.0, 1.0);
+    fateWeightedProb[i] =
+        (base * (_anatomyAlpha + _anatomyBeta * anatomicalPriors.fate[i]))
+            .clamp(0.0, 1.0);
   }
   final lifeThr = _adaptiveCreaseThreshold(lifeWeightedProb, boundarySafeMask);
-  final heartThr = _adaptiveCreaseThreshold(heartWeightedProb, boundarySafeMask);
+  final heartThr = _adaptiveCreaseThreshold(
+    heartWeightedProb,
+    boundarySafeMask,
+  );
   final headThr = _adaptiveCreaseThreshold(headWeightedProb, boundarySafeMask);
   final fateThr = _adaptiveCreaseThreshold(fateWeightedProb, boundarySafeMask);
   var lifeCreasePixels = 0;
@@ -1439,43 +1569,82 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
     }
   }
   final lifeTraceResult = _traceCreases(
-    probability: lifeWeightedProb, skeleton: lifeSkeleton,
-    creaseMask: creaseBinary, palmMask: boundarySafeMask,
-    topHat: topHat, valley: hessian, w: workW, h: workH, threshold: lifeThr,
+    probability: lifeWeightedProb,
+    skeleton: lifeSkeleton,
+    creaseMask: creaseBinary,
+    palmMask: boundarySafeMask,
+    topHat: topHat,
+    valley: multiScaleRidgeMap,
+    w: workW,
+    h: workH,
+    threshold: lifeThr,
   );
   final heartTraceResult = _traceCreases(
-    probability: heartWeightedProb, skeleton: heartSkeleton,
-    creaseMask: creaseBinary, palmMask: boundarySafeMask,
-    topHat: topHat, valley: hessian, w: workW, h: workH, threshold: heartThr,
+    probability: heartWeightedProb,
+    skeleton: heartSkeleton,
+    creaseMask: creaseBinary,
+    palmMask: boundarySafeMask,
+    topHat: topHat,
+    valley: multiScaleRidgeMap,
+    w: workW,
+    h: workH,
+    threshold: heartThr,
   );
   final headTraceResult = _traceCreases(
-    probability: headWeightedProb, skeleton: headSkeleton,
-    creaseMask: creaseBinary, palmMask: boundarySafeMask,
-    topHat: topHat, valley: hessian, w: workW, h: workH, threshold: headThr,
+    probability: headWeightedProb,
+    skeleton: headSkeleton,
+    creaseMask: creaseBinary,
+    palmMask: boundarySafeMask,
+    topHat: topHat,
+    valley: multiScaleRidgeMap,
+    w: workW,
+    h: workH,
+    threshold: headThr,
   );
   final fateTraceResult = _traceCreases(
-    probability: fateWeightedProb, skeleton: fateSkeleton,
-    creaseMask: creaseBinary, palmMask: boundarySafeMask,
-    topHat: topHat, valley: hessian, w: workW, h: workH, threshold: fateThr,
+    probability: fateWeightedProb,
+    skeleton: fateSkeleton,
+    creaseMask: creaseBinary,
+    palmMask: boundarySafeMask,
+    topHat: topHat,
+    valley: multiScaleRidgeMap,
+    w: workW,
+    h: workH,
+    threshold: fateThr,
   );
-  List<_ScoredTrace> scoreAndSort(_CreaseTraceResult tr) =>
+  List<_ScoredTrace> scoreAndSort(
+    _CreaseTraceResult tr, {
+    bool lifeMode = false,
+  }) =>
       tr.traces.map((trace) {
         final ps = _scoreTraceAnatomy(trace.indices, anatomicalPriors);
+        final major = _majorLineScore(
+          trace,
+          ps,
+          workW,
+          workH,
+          palmGeometryWork,
+          lifeMode: lifeMode,
+        );
         return _ScoredTrace(
           trace: trace,
           priorScore: ps,
           weightedProbability: _weightedTraceProbability(
-            trace.averageProbability, ps.average,
+            trace.averageProbability,
+            ps.average,
           ),
+          majorLineScore: major.score,
+          rejectionReason: major.rejectionReason,
         );
-      }).toList()
-        ..sort((a, b) {
-          final ar = a.weightedProbability * (0.5 + a.trace.totalLength);
-          final br = b.weightedProbability * (0.5 + b.trace.totalLength);
-          return br.compareTo(ar);
-        });
+      }).toList()..sort((a, b) {
+        final c = b.majorLineScore.compareTo(a.majorLineScore);
+        if (c != 0) return c;
+        return b.weightedProbability.compareTo(a.weightedProbability);
+      });
   // Filter anatomy traced creases: reject any with insidePalmRatio < 0.98.
-  final lifeScoredTraces = filterByPalmRatio(scoreAndSort(lifeTraceResult));
+  final lifeScoredTraces = filterByPalmRatio(
+    scoreAndSort(lifeTraceResult, lifeMode: true),
+  );
   final heartScoredTraces = filterByPalmRatio(scoreAndSort(heartTraceResult));
   final headScoredTraces = filterByPalmRatio(scoreAndSort(headTraceResult));
   final fateScoredTraces = filterByPalmRatio(scoreAndSort(fateTraceResult));
@@ -1488,34 +1657,63 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
     }
     return paths;
   }
+
   final anatomyRaw = <String, dynamic>{
-    'lifeCandidates': buildTypePaths(lifeScoredTraces)
-        .map((p) => p.map(mapPt).toList())
-        .toList(),
-    'heartCandidates': buildTypePaths(heartScoredTraces)
-        .map((p) => p.map(mapPt).toList())
-        .toList(),
-    'headCandidates': buildTypePaths(headScoredTraces)
-        .map((p) => p.map(mapPt).toList())
-        .toList(),
-    'fateCandidates': buildTypePaths(fateScoredTraces)
-        .map((p) => p.map(mapPt).toList())
-        .toList(),
+    'lifeCandidates': buildTypePaths(
+      lifeScoredTraces,
+    ).map((p) => p.map(mapPt).toList()).toList(),
+    'heartCandidates': buildTypePaths(
+      heartScoredTraces,
+    ).map((p) => p.map(mapPt).toList()).toList(),
+    'headCandidates': buildTypePaths(
+      headScoredTraces,
+    ).map((p) => p.map(mapPt).toList()).toList(),
+    'fateCandidates': buildTypePaths(
+      fateScoredTraces,
+    ).map((p) => p.map(mapPt).toList()).toList(),
     'lifeTracedCreases': lifeScoredTraces
-        .map((s) => _traceToRaw(s, workW, workH, mapPt,
-            insidePalmRatio: palmInsideRatio(s.trace.indices)))
+        .map(
+          (s) => _traceToRaw(
+            s,
+            workW,
+            workH,
+            mapPt,
+            insidePalmRatio: palmInsideRatio(s.trace.indices),
+          ),
+        )
         .toList(),
     'heartTracedCreases': heartScoredTraces
-        .map((s) => _traceToRaw(s, workW, workH, mapPt,
-            insidePalmRatio: palmInsideRatio(s.trace.indices)))
+        .map(
+          (s) => _traceToRaw(
+            s,
+            workW,
+            workH,
+            mapPt,
+            insidePalmRatio: palmInsideRatio(s.trace.indices),
+          ),
+        )
         .toList(),
     'headTracedCreases': headScoredTraces
-        .map((s) => _traceToRaw(s, workW, workH, mapPt,
-            insidePalmRatio: palmInsideRatio(s.trace.indices)))
+        .map(
+          (s) => _traceToRaw(
+            s,
+            workW,
+            workH,
+            mapPt,
+            insidePalmRatio: palmInsideRatio(s.trace.indices),
+          ),
+        )
         .toList(),
     'fateTracedCreases': fateScoredTraces
-        .map((s) => _traceToRaw(s, workW, workH, mapPt,
-            insidePalmRatio: palmInsideRatio(s.trace.indices)))
+        .map(
+          (s) => _traceToRaw(
+            s,
+            workW,
+            workH,
+            mapPt,
+            insidePalmRatio: palmInsideRatio(s.trace.indices),
+          ),
+        )
         .toList(),
     'baseCreasePixels': creasePixelCount,
     'lifeCreasePixels': lifeCreasePixels,
@@ -1523,28 +1721,44 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
     'headCreasePixels': headCreasePixels,
     'fateCreasePixels': fateCreasePixels,
     'lifeSkeletonLength': lifeScoredTraces.fold<int>(
-      0, (s, t) => s + t.trace.indices.length,
+      0,
+      (s, t) => s + t.trace.indices.length,
     ),
     'heartSkeletonLength': heartScoredTraces.fold<int>(
-      0, (s, t) => s + t.trace.indices.length,
+      0,
+      (s, t) => s + t.trace.indices.length,
     ),
     'headSkeletonLength': headScoredTraces.fold<int>(
-      0, (s, t) => s + t.trace.indices.length,
+      0,
+      (s, t) => s + t.trace.indices.length,
     ),
     'fateSkeletonLength': fateScoredTraces.fold<int>(
-      0, (s, t) => s + t.trace.indices.length,
+      0,
+      (s, t) => s + t.trace.indices.length,
     ),
     'debugLifeWeightedProb': _sampleProbabilityMap(
-      lifeWeightedProb, workW, workH, mapPt,
+      lifeWeightedProb,
+      workW,
+      workH,
+      mapPt,
     ),
     'debugHeartWeightedProb': _sampleProbabilityMap(
-      heartWeightedProb, workW, workH, mapPt,
+      heartWeightedProb,
+      workW,
+      workH,
+      mapPt,
     ),
     'debugHeadWeightedProb': _sampleProbabilityMap(
-      headWeightedProb, workW, workH, mapPt,
+      headWeightedProb,
+      workW,
+      workH,
+      mapPt,
     ),
     'debugFateWeightedProb': _sampleProbabilityMap(
-      fateWeightedProb, workW, workH, mapPt,
+      fateWeightedProb,
+      workW,
+      workH,
+      mapPt,
     ),
     'debugLifeSkeleton': _sampleMask(lifeSkeleton, workW, workH, mapPt),
     'debugHeartSkeleton': _sampleMask(heartSkeleton, workW, workH, mapPt),
@@ -1559,7 +1773,7 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
     creaseMask: creaseBinary,
     palmMask: boundarySafeMask,
     topHat: topHat,
-    valley: hessian,
+    valley: multiScaleRidgeMap,
     w: workW,
     h: workH,
     threshold: threshold,
@@ -1580,6 +1794,14 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
   final scoredTraces =
       traceResult.traces.map((trace) {
         final priorScore = _scoreTraceAnatomy(trace.indices, anatomicalPriors);
+        final major = _majorLineScore(
+          trace,
+          priorScore,
+          workW,
+          workH,
+          palmGeometryWork,
+          lifeMode: false,
+        );
         return _ScoredTrace(
           trace: trace,
           priorScore: priorScore,
@@ -1587,11 +1809,13 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
             trace.averageProbability,
             priorScore.average,
           ),
+          majorLineScore: major.score,
+          rejectionReason: major.rejectionReason,
         );
       }).toList()..sort((a, b) {
-        final ar = a.weightedProbability * (0.5 + a.trace.totalLength);
-        final br = b.weightedProbability * (0.5 + b.trace.totalLength);
-        return br.compareTo(ar);
+        final c = b.majorLineScore.compareTo(a.majorLineScore);
+        if (c != 0) return c;
+        return b.weightedProbability.compareTo(a.weightedProbability);
       });
 
   // Hard gate: reject base traced creases with < 98 % pixels inside palm mask.
@@ -1636,9 +1860,34 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
       .toList();
   final sampledEdge = sampledEdgeWork.map(mapPt).toList();
   final tracedCreases = filteredScoredTraces
-      .map((scored) => _traceToRaw(scored, workW, workH, mapPt,
-          insidePalmRatio: palmInsideRatio(scored.trace.indices)))
+      .map(
+        (scored) => _traceToRaw(
+          scored,
+          workW,
+          workH,
+          mapPt,
+          insidePalmRatio: palmInsideRatio(scored.trace.indices),
+        ),
+      )
       .toList();
+  final debugMajorLineScores = _scoreDebugSamples(
+    filteredScoredTraces,
+    workW,
+    workH,
+    mapPt,
+  );
+  final debugTopLifeLineCandidates = _scoreDebugSamples(
+    lifeScoredTraces.take(5).toList(),
+    workW,
+    workH,
+    mapPt,
+  );
+  final debugTraceRejectionReasons = <String>[
+    for (var i = 0; i < filteredScoredTraces.length; i++)
+      'trace_$i:${filteredScoredTraces[i].rejectionReason}',
+    for (var i = 0; i < lifeScoredTraces.take(5).length; i++)
+      'life_$i:${lifeScoredTraces[i].rejectionReason}',
+  ];
   final traceCount = filteredScoredTraces.length;
   var traceLengthSum = 0.0;
   var longestTraceLength = 0.0;
@@ -1765,6 +2014,27 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
       mapPt,
       maxSamples: 900,
     ),
+    'multiScaleRidgeMap': _sampleByteMap(
+      multiScaleRidgeMap,
+      workW,
+      workH,
+      mapPt,
+      maxSamples: 900,
+    ),
+    'debugMultiScaleRidgeMap': _sampleByteMap(
+      multiScaleRidgeMap,
+      workW,
+      workH,
+      mapPt,
+      maxSamples: 900,
+    ),
+    'debugRidgeStrengthHeatmap': _sampleByteMap(
+      multiScaleRidgeMap,
+      workW,
+      workH,
+      mapPt,
+      maxSamples: 1200,
+    ),
     'debugCreaseProbability': _sampleProbabilityMap(
       probability,
       workW,
@@ -1790,6 +2060,9 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
       workH,
       mapPt,
     ),
+    'debugMajorLineScores': debugMajorLineScores,
+    'debugTopLifeLineCandidates': debugTopLifeLineCandidates,
+    'debugTraceRejectionReasons': debugTraceRejectionReasons,
     'debugLifePrior': _sampleProbabilityMap(
       anatomicalPriors.life,
       workW,
@@ -1818,11 +2091,17 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
     'outsideMaskProbabilityPixels': outsideMaskProbabilityPixels,
     'outsideMaskSkeletonPixels': outsideMaskSkeletonPixels,
     'rejectedOutsideMaskTraces': rejectedOutsideMaskTraces,
-    'minInsidePalmRatioOfAcceptedCandidates': minInsidePalmRatioOfAcceptedCandidates,
+    'minInsidePalmRatioOfAcceptedCandidates':
+        minInsidePalmRatioOfAcceptedCandidates,
     'rejectedOutsideMaskPaths': rejectedOutsideMaskPathsWork
         .map((path) => path.map(mapPt).toList())
         .toList(),
-    'debugPalmOutline': _samplePalmOutline(boundarySafeMask, workW, workH, mapPt),
+    'debugPalmOutline': _samplePalmOutline(
+      boundarySafeMask,
+      workW,
+      workH,
+      mapPt,
+    ),
   };
 }
 
@@ -1951,31 +2230,45 @@ Uint8List _differenceOfGaussiansDark(Uint8List src, int w, int h) {
   return best;
 }
 
-Uint8List _hessianValleyResponse(Uint8List src, int w, int h) {
-  final dst = Uint8List(w * h);
-  final smooth = _boxBlur(src, w, h, 1);
-  for (int y = 2; y < h - 2; y++) {
-    final yw = y * w;
-    for (int x = 2; x < w - 2; x++) {
-      final idx = yw + x;
-      final c = smooth[idx] * 2.0;
-      final hxx = smooth[idx - 1] + smooth[idx + 1] - c;
-      final hyy = smooth[idx - w] + smooth[idx + w] - c;
-      final hxy =
-          (smooth[(y + 1) * w + x + 1] -
-              smooth[(y + 1) * w + x - 1] -
-              smooth[(y - 1) * w + x + 1] +
-              smooth[(y - 1) * w + x - 1]) *
-          0.25;
-      final trace = hxx + hyy;
-      final disc = sqrt((hxx - hyy) * (hxx - hyy) + 4.0 * hxy * hxy);
-      final lambdaMax = (trace + disc) * 0.5;
-      final lambdaMin = (trace - disc) * 0.5;
-      final lineLike = lambdaMax > 0
-          ? (lambdaMax - max(0.0, lambdaMin) * 0.45)
-          : 0.0;
-      dst[idx] = (lineLike * 5.0).round().clamp(0, 255);
+Uint8List _multiScaleHessianRidgeResponse(Uint8List src, int w, int h) {
+  final best = Float32List(w * h);
+  var bestValue = 0.0;
+  for (final sigma in const [1.0, 2.0, 3.0, 4.0]) {
+    final smooth = _boxBlur(src, w, h, sigma.round());
+    final sigma2 = sigma * sigma;
+    for (int y = 2; y < h - 2; y++) {
+      final yw = y * w;
+      for (int x = 2; x < w - 2; x++) {
+        final idx = yw + x;
+        final c = smooth[idx] * 2.0;
+        final hxx = smooth[idx - 1] + smooth[idx + 1] - c;
+        final hyy = smooth[idx - w] + smooth[idx + w] - c;
+        final hxy =
+            (smooth[(y + 1) * w + x + 1] -
+                smooth[(y + 1) * w + x - 1] -
+                smooth[(y - 1) * w + x + 1] +
+                smooth[(y - 1) * w + x - 1]) *
+            0.25;
+        final trace = hxx + hyy;
+        final disc = sqrt((hxx - hyy) * (hxx - hyy) + 4.0 * hxy * hxy);
+        final lambdaMax = (trace + disc) * 0.5;
+        final lambdaMin = (trace - disc) * 0.5;
+        final darkRidge = lambdaMax > 0
+            ? (lambdaMax - max(0.0, lambdaMin) * 0.45)
+            : 0.0;
+        final response = darkRidge * sigma2;
+        if (response > best[idx]) {
+          best[idx] = response;
+          if (response > bestValue) bestValue = response;
+        }
+      }
     }
+  }
+  final dst = Uint8List(w * h);
+  if (bestValue <= 0) return dst;
+  final scale = 255.0 / bestValue;
+  for (int i = 0; i < dst.length; i++) {
+    dst[i] = (best[i] * scale).round().clamp(0, 255);
   }
   return dst;
 }
@@ -2191,7 +2484,8 @@ List<List<double>> _samplePalmOutline(
     if (!mask[i]) continue;
     final x = i % w;
     final y = i ~/ w;
-    final isEdge = (x > 0 && !mask[i - 1]) ||
+    final isEdge =
+        (x > 0 && !mask[i - 1]) ||
         (x < w - 1 && !mask[i + 1]) ||
         (y > 0 && !mask[i - w]) ||
         (y < h - 1 && !mask[i + w]);
@@ -2301,11 +2595,266 @@ class _ScoredTrace {
     required this.trace,
     required this.priorScore,
     required this.weightedProbability,
+    required this.majorLineScore,
+    required this.rejectionReason,
   });
 
   final _CreaseTrace trace;
   final _TraceAnatomyScore priorScore;
   final double weightedProbability;
+  final double majorLineScore;
+  final String rejectionReason;
+}
+
+class _MajorLineRank {
+  const _MajorLineRank({required this.score, required this.rejectionReason});
+
+  final double score;
+  final String rejectionReason;
+}
+
+class _TraceEnds {
+  const _TraceEnds(this.start, this.end);
+
+  final Offset start;
+  final Offset end;
+}
+
+_MajorLineRank _majorLineScore(
+  _CreaseTrace trace,
+  _TraceAnatomyScore prior,
+  int w,
+  int h,
+  Map<String, dynamic>? geometry, {
+  required bool lifeMode,
+}) {
+  final length = _ramp(trace.totalLength, 0.055, 0.52);
+  final continuity = trace.continuityScore.clamp(0.0, 1.0);
+  final ridgeStrength =
+      (trace.averageRidgeResponse * 0.62 + trace.maximumRidgeResponse * 0.38)
+          .clamp(0.0, 1.0);
+  final anatomy = (lifeMode ? prior.life : prior.average).clamp(0.0, 1.0);
+  final darkness = trace.averageDarkness.clamp(0.0, 1.0);
+  final curvatureStability = (1.0 - trace.averageCurvature / 0.92).clamp(
+    0.0,
+    1.0,
+  );
+  final confidence = trace.averageProbability.clamp(0.0, 1.0);
+  final widthScore = (1.0 - (trace.ridgeWidthEstimate - 4.2).abs() / 7.0).clamp(
+    0.0,
+    1.0,
+  );
+  final lifePreference = lifeMode
+      ? _lifeLinePreference(trace.indices, trace, geometry, w, h)
+      : 0.0;
+
+  final base =
+      length * 0.24 +
+      continuity * 0.15 +
+      ridgeStrength * 0.14 +
+      anatomy * 0.13 +
+      darkness * 0.08 +
+      curvatureStability * 0.08 +
+      confidence * 0.10 +
+      widthScore * 0.04 +
+      lifePreference * (lifeMode ? 0.14 : 0.0);
+
+  final shortPenalty = trace.totalLength < 0.12
+      ? _ramp(0.12 - trace.totalLength, 0.0, 0.12) * 0.42
+      : 0.0;
+  final fragmentPenalty = min(
+    0.38,
+    trace.interruptionCount * 0.045 + (1.0 - continuity) * 0.22,
+  );
+  final borderPenalty = _borderProximityPenalty(trace.indices, w, h);
+  final anatomyPenalty = anatomy < 0.18 ? (0.18 - anatomy) / 0.18 * 0.30 : 0.0;
+  final thumbWrinklePenalty = _thumbMoundWrinklePenalty(
+    trace.indices,
+    geometry,
+    w,
+    h,
+  );
+  final branchPenalty = min(0.16, trace.branchCount * 0.018);
+
+  final penalty =
+      (shortPenalty +
+              fragmentPenalty +
+              borderPenalty +
+              anatomyPenalty +
+              thumbWrinklePenalty +
+              branchPenalty)
+          .clamp(0.0, 0.82);
+  final score = (base * (1.0 - penalty)).clamp(0.0, 1.0);
+  return _MajorLineRank(
+    score: score,
+    rejectionReason: _majorLineRejectionReason(
+      score,
+      shortPenalty: shortPenalty,
+      fragmentPenalty: fragmentPenalty,
+      borderPenalty: borderPenalty,
+      anatomyPenalty: anatomyPenalty,
+      thumbWrinklePenalty: thumbWrinklePenalty,
+      branchPenalty: branchPenalty,
+    ),
+  );
+}
+
+double _lifeLinePreference(
+  List<int> indices,
+  _CreaseTrace trace,
+  Map<String, dynamic>? geometry,
+  int w,
+  int h,
+) {
+  if (indices.length < 2) return 0.0;
+  final points = indices
+      .map((idx) => _thumbCanonicalForIndex(idx, geometry, w, h))
+      .toList();
+  final ends = _orientTraceEnds(
+    points,
+    const Offset(0.39, 0.08),
+    const Offset(0.42, 0.94),
+  );
+  final start = ends.start;
+  final end = ends.end;
+  final webStart = _gaussian((start - const Offset(0.39, 0.08)).distance, 0.22);
+  final wristEnd =
+      _softBandDouble(end.dy, 0.58, 1.04) * _softBandDouble(end.dx, 0.04, 0.70);
+  var wrap = 0.0;
+  for (final p in points) {
+    wrap += _gaussian((p.dx - _lifeExpectedXForY(p.dy)).abs(), 0.16);
+  }
+  wrap = (wrap / points.length).clamp(0.0, 1.0);
+  final ySpan = _indexSpanY(indices, w, h);
+  return (webStart * 0.22 +
+          wristEnd * 0.18 +
+          wrap * 0.24 +
+          _ramp(ySpan, 0.30, 0.82) * 0.14 +
+          trace.continuityScore * 0.12 +
+          trace.averageRidgeResponse * 0.10)
+      .clamp(0.0, 1.0);
+}
+
+Offset _thumbCanonicalForIndex(
+  int idx,
+  Map<String, dynamic>? geometry,
+  int w,
+  int h,
+) {
+  final imageX = ((idx % w) + 0.5) / w;
+  final imageY = ((idx ~/ w) + 0.5) / h;
+  if (geometry == null) return Offset(imageX, imageY);
+  final bounds = geometry['palmBounds'] as List;
+  final left = (bounds[0] as num).toDouble();
+  final right = (bounds[2] as num).toDouble();
+  final fingerBaseY = (geometry['fingerBaseY'] as num).toDouble();
+  final wristY = (geometry['wristY'] as num).toDouble();
+  final width = max(0.001, right - left);
+  final height = max(0.001, wristY - fingerBaseY);
+  final rawX = ((imageX - left) / width).clamp(0.0, 1.0);
+  final thumbSide = geometry['thumbSide'] as String? ?? 'unknown';
+  final palmX = thumbSide == 'right' ? 1.0 - rawX : rawX;
+  final palmY = ((imageY - fingerBaseY) / height).clamp(0.0, 1.0);
+  return Offset(palmX, palmY);
+}
+
+_TraceEnds _orientTraceEnds(List<Offset> points, Offset start, Offset end) {
+  final first = points.first;
+  final last = points.last;
+  final forward = (first - start).distance + (last - end).distance;
+  final backward = (last - start).distance + (first - end).distance;
+  return forward <= backward
+      ? _TraceEnds(first, last)
+      : _TraceEnds(last, first);
+}
+
+double _lifeExpectedXForY(double y) =>
+    0.43 - 0.28 * sin((y * pi).clamp(0.0, pi)) + 0.07 * y + 0.03 * y * y;
+
+double _borderProximityPenalty(List<int> indices, int w, int h) {
+  if (indices.isEmpty) return 0.0;
+  var near = 0;
+  final mx = max(3, (w * 0.045).round());
+  final my = max(3, (h * 0.045).round());
+  for (final idx in indices) {
+    final x = idx % w;
+    final y = idx ~/ w;
+    if (x <= mx || x >= w - 1 - mx || y <= my || y >= h - 1 - my) near++;
+  }
+  return (near / indices.length * 0.42).clamp(0.0, 0.42);
+}
+
+double _thumbMoundWrinklePenalty(
+  List<int> indices,
+  Map<String, dynamic>? geometry,
+  int w,
+  int h,
+) {
+  if (indices.length < 2) return 0.0;
+  final xSpan = _indexSpanX(indices, w);
+  final ySpan = _indexSpanY(indices, w, h);
+  final points = indices
+      .map((idx) => _thumbCanonicalForIndex(idx, geometry, w, h))
+      .toList();
+  final mean = _meanOffset(points);
+  final horizontal = xSpan > ySpan * 1.55;
+  final onThumbMound = mean.dx < 0.45 && mean.dy > 0.20 && mean.dy < 0.66;
+  if (!horizontal || !onThumbMound) return 0.0;
+  return (0.20 + _ramp(xSpan - ySpan, 0.04, 0.28) * 0.28).clamp(0.0, 0.48);
+}
+
+String _majorLineRejectionReason(
+  double score, {
+  required double shortPenalty,
+  required double fragmentPenalty,
+  required double borderPenalty,
+  required double anatomyPenalty,
+  required double thumbWrinklePenalty,
+  required double branchPenalty,
+}) {
+  if (score >= 0.25) return 'accepted';
+  final penalties = <String, double>{
+    'short': shortPenalty,
+    'fragmented': fragmentPenalty,
+    'near_palm_border': borderPenalty,
+    'outside_expected_region': anatomyPenalty,
+    'thumb_mound_wrinkle': thumbWrinklePenalty,
+    'branched_or_noisy': branchPenalty,
+  };
+  return penalties.entries.reduce((a, b) => a.value >= b.value ? a : b).key;
+}
+
+double _indexSpanX(List<int> indices, int w) {
+  var minX = w;
+  var maxX = 0;
+  for (final idx in indices) {
+    final x = idx % w;
+    minX = min(minX, x);
+    maxX = max(maxX, x);
+  }
+  return ((maxX - minX) / max(1, w)).clamp(0.0, 1.0);
+}
+
+double _indexSpanY(List<int> indices, int w, int h) {
+  var minY = h;
+  var maxY = 0;
+  for (final idx in indices) {
+    final y = idx ~/ w;
+    minY = min(minY, y);
+    maxY = max(maxY, y);
+  }
+  return ((maxY - minY) / max(1, h)).clamp(0.0, 1.0);
+}
+
+Offset _meanOffset(List<Offset> points) {
+  if (points.isEmpty) return Offset.zero;
+  var x = 0.0;
+  var y = 0.0;
+  for (final p in points) {
+    x += p.dx;
+    y += p.dy;
+  }
+  return Offset(x / points.length, y / points.length);
 }
 
 _AnatomicalPriorMaps _buildAnatomicalPriors(
@@ -2487,6 +3036,11 @@ double _softBandDouble(double value, double minValue, double maxValue) {
   return (1.0 - d / 0.18).clamp(0.0, 1.0);
 }
 
+double _ramp(double value, double low, double high) {
+  if (high <= low) return value >= high ? 1.0 : 0.0;
+  return ((value - low) / (high - low)).clamp(0.0, 1.0);
+}
+
 // ── Palm crease tracing ──────────────────────────────────────────────────────
 
 class _CreaseTraceResult {
@@ -2508,6 +3062,11 @@ class _CreaseTrace {
     required this.indices,
     required this.totalLength,
     required this.averageProbability,
+    required this.averageRidgeResponse,
+    required this.maximumRidgeResponse,
+    required this.ridgeConsistency,
+    required this.ridgeWidthEstimate,
+    required this.averageDarkness,
     required this.continuityScore,
     required this.averageCurvature,
     required this.interruptionCount,
@@ -2517,6 +3076,11 @@ class _CreaseTrace {
   final List<int> indices;
   final double totalLength;
   final double averageProbability;
+  final double averageRidgeResponse;
+  final double maximumRidgeResponse;
+  final double ridgeConsistency;
+  final double ridgeWidthEstimate;
+  final double averageDarkness;
   final double continuityScore;
   final double averageCurvature;
   final int interruptionCount;
@@ -2648,7 +3212,15 @@ _CreaseTraceResult _traceCreases({
     ];
     final compact = _dedupeTrace(combined);
     if (compact.length < 8) continue;
-    final trace = _buildTraceMetrics(compact, probability, skeleton, w, h);
+    final trace = _buildTraceMetrics(
+      compact,
+      probability,
+      skeleton,
+      valley,
+      topHat,
+      w,
+      h,
+    );
     if (trace.totalLength < 0.035 || trace.averageProbability < 0.14) {
       continue;
     }
@@ -2954,6 +3526,8 @@ _CreaseTrace _buildTraceMetrics(
   List<int> indices,
   Float32List probability,
   List<bool> skeleton,
+  Uint8List ridgeMap,
+  Uint8List topHat,
   int w,
   int h,
 ) {
@@ -2961,6 +3535,12 @@ _CreaseTrace _buildTraceMetrics(
   var observedPx = 0.0;
   var gapPx = 0.0;
   var probSum = 0.0;
+  var ridgeSum = 0.0;
+  var ridgeSqSum = 0.0;
+  var maxRidge = 0.0;
+  var darknessSum = 0.0;
+  var widthSum = 0.0;
+  var widthCount = 0;
   var curvatureSum = 0.0;
   var curvatureCount = 0;
   var interruptionCount = 0;
@@ -2969,7 +3549,24 @@ _CreaseTrace _buildTraceMetrics(
   for (int i = 0; i < indices.length; i++) {
     final idx = indices[i];
     probSum += probability[idx];
+    final ridge = ridgeMap[idx] / 255.0;
+    ridgeSum += ridge;
+    ridgeSqSum += ridge * ridge;
+    if (ridge > maxRidge) maxRidge = ridge;
+    darknessSum += topHat[idx] / 255.0;
     if (_skeletonDegree(idx, skeleton, w, h) > 2) branchCount++;
+    final direction = _localTraceDirection(indices, i, w);
+    if (direction.distance > 0.001) {
+      widthSum += _estimateRidgeWidthAt(
+        idx,
+        direction,
+        ridgeMap,
+        probability,
+        w,
+        h,
+      );
+      widthCount++;
+    }
     if (i == 0) continue;
     final prev = indices[i - 1];
     final dist = _pixelDistance(prev, idx, w);
@@ -2990,6 +3587,16 @@ _CreaseTrace _buildTraceMetrics(
 
   final totalLength = lengthPx / max(w, h);
   final averageProbability = probSum / max(1, indices.length);
+  final averageRidgeResponse = ridgeSum / max(1, indices.length);
+  final ridgeVariance =
+      ridgeSqSum / max(1, indices.length) -
+      averageRidgeResponse * averageRidgeResponse;
+  final ridgeStd = sqrt(max(0.0, ridgeVariance));
+  final ridgeConsistency = averageRidgeResponse <= 0.001
+      ? 0.0
+      : (1.0 - ridgeStd / (averageRidgeResponse + 0.001)).clamp(0.0, 1.0);
+  final ridgeWidthEstimate = widthCount == 0 ? 0.0 : widthSum / widthCount;
+  final averageDarkness = darknessSum / max(1, indices.length);
   final continuityScore = lengthPx <= 0
       ? 0.0
       : (observedPx / max(1.0, observedPx + gapPx)).clamp(0.0, 1.0);
@@ -3000,11 +3607,51 @@ _CreaseTrace _buildTraceMetrics(
     indices: indices,
     totalLength: totalLength,
     averageProbability: averageProbability,
+    averageRidgeResponse: averageRidgeResponse,
+    maximumRidgeResponse: maxRidge,
+    ridgeConsistency: ridgeConsistency,
+    ridgeWidthEstimate: ridgeWidthEstimate,
+    averageDarkness: averageDarkness,
     continuityScore: continuityScore,
     averageCurvature: averageCurvature,
     interruptionCount: interruptionCount,
     branchCount: branchCount,
   );
+}
+
+Offset _localTraceDirection(List<int> indices, int i, int w) {
+  if (indices.length < 2) return Offset.zero;
+  final a = indices[max(0, i - 1)];
+  final b = indices[min(indices.length - 1, i + 1)];
+  return _unitOffset(_offsetBetween(a, b, w));
+}
+
+double _estimateRidgeWidthAt(
+  int idx,
+  Offset direction,
+  Uint8List ridgeMap,
+  Float32List probability,
+  int w,
+  int h,
+) {
+  final x = idx % w;
+  final y = idx ~/ w;
+  final normal = _unitOffset(Offset(-direction.dy, direction.dx));
+  final center = max(ridgeMap[idx] / 255.0, probability[idx]);
+  if (center <= 0.02) return 0.0;
+  var width = 1.0;
+  for (final side in const [-1.0, 1.0]) {
+    for (int d = 1; d <= 6; d++) {
+      final sx = (x + normal.dx * d * side).round();
+      final sy = (y + normal.dy * d * side).round();
+      if (sx < 0 || sx >= w || sy < 0 || sy >= h) break;
+      final si = sy * w + sx;
+      final strength = max(ridgeMap[si] / 255.0, probability[si]);
+      if (strength < center * 0.42 && strength < 0.16) break;
+      width += 1.0;
+    }
+  }
+  return width;
 }
 
 List<int> _dedupeTrace(List<int> indices) {
@@ -3083,12 +3730,35 @@ Map<String, dynamic> _traceToRaw(
     'averageProbability': trace.averageProbability,
     'anatomicalScore': scored.priorScore.average,
     'weightedProbability': scored.weightedProbability,
+    'averageRidgeResponse': trace.averageRidgeResponse,
+    'maximumRidgeResponse': trace.maximumRidgeResponse,
+    'ridgeConsistency': trace.ridgeConsistency,
+    'ridgeWidthEstimate': trace.ridgeWidthEstimate,
+    'averageDarkness': trace.averageDarkness,
+    'majorLineScore': scored.majorLineScore,
+    'rejectionReason': scored.rejectionReason,
     'continuityScore': trace.continuityScore,
     'averageCurvature': trace.averageCurvature,
     'interruptionCount': trace.interruptionCount,
     'branchCount': trace.branchCount,
     'insidePalmRatio': insidePalmRatio,
   };
+}
+
+List<List<double>> _scoreDebugSamples(
+  List<_ScoredTrace> traces,
+  int w,
+  int h,
+  List<double> Function(List<double>) mapPt,
+) {
+  final samples = <List<double>>[];
+  for (final scored in traces) {
+    if (scored.trace.indices.isEmpty) continue;
+    final idx = scored.trace.indices[scored.trace.indices.length ~/ 2];
+    final p = mapPt([(idx % w) / w, (idx ~/ w) / h]);
+    samples.add([p[0], p[1], scored.majorLineScore.clamp(0.0, 1.0)]);
+  }
+  return samples;
 }
 
 List<List<double>> _mapTraceSeeds(
@@ -4145,6 +4815,10 @@ int darkLineStrengthForTest(Uint8List img, int x, int y, int w, int h) =>
     _darkLineStrength(img, x, y, w, h);
 
 @visibleForTesting
+Uint8List multiScaleRidgeMapForTest(Uint8List img, int w, int h) =>
+    _multiScaleHessianRidgeResponse(img, w, h);
+
+@visibleForTesting
 PalmGeometry? palmGeometryFromMaskForTest(List<bool> mask, int w, int h) =>
     _geometryFromRaw(_detectPalmGeometry(mask, w, h));
 
@@ -4155,12 +4829,18 @@ const double anatomyAlphaForTest = _anatomyAlpha;
 const double anatomyBetaForTest = _anatomyBeta;
 
 @visibleForTesting
-Float32List anatomyWeightedMapForTest(Float32List baseProbability, Float32List prior) {
+Float32List anatomyWeightedMapForTest(
+  Float32List baseProbability,
+  Float32List prior,
+) {
   final result = Float32List(baseProbability.length);
   for (int i = 0; i < baseProbability.length; i++) {
     final base = baseProbability[i];
     if (base <= 0.0) continue;
-    result[i] = (base * (_anatomyAlpha + _anatomyBeta * prior[i])).clamp(0.0, 1.0);
+    result[i] = (base * (_anatomyAlpha + _anatomyBeta * prior[i])).clamp(
+      0.0,
+      1.0,
+    );
   }
   return result;
 }

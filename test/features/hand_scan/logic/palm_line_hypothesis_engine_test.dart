@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cat_oracle/features/hand_scan/logic/palm_line_extractor.dart';
 import 'package:cat_oracle/features/hand_scan/logic/palm_line_hypothesis_engine.dart';
 import 'package:flutter/material.dart' show Offset, Rect;
@@ -24,6 +26,14 @@ PalmLineTraceEvidence _trace(
   double probability = 0.82,
   double continuity = 0.92,
   double prior = 0.70,
+  int gapCount = 0,
+  double ridge = 0.74,
+  double ridgeMax = 0.88,
+  double ridgeConsistency = 0.82,
+  double ridgeWidth = 4.0,
+  double darkness = 0.62,
+  double majorLineScore = 0.72,
+  String rejectionReason = 'accepted',
 }) {
   return PalmLineTraceEvidence(
     id: id,
@@ -31,6 +41,14 @@ PalmLineTraceEvidence _trace(
     averageProbability: probability,
     continuity: continuity,
     anatomicalPriorScore: prior,
+    gapCount: gapCount,
+    averageRidgeResponse: ridge,
+    maximumRidgeResponse: ridgeMax,
+    ridgeConsistency: ridgeConsistency,
+    ridgeWidthEstimate: ridgeWidth,
+    averageDarkness: darkness,
+    majorLineScore: majorLineScore,
+    rejectionReason: rejectionReason,
   );
 }
 
@@ -40,6 +58,18 @@ List<Offset> _lifePalm() => const [
   Offset(0.20, 0.45),
   Offset(0.30, 0.70),
   Offset(0.46, 0.92),
+];
+
+List<Offset> _shortThumbWrinklePalm(double y) => [
+  for (var i = 0; i <= 5; i++) Offset(0.14 + i * 0.045, y),
+];
+
+List<Offset> _lifeFragmentPalm(double y0, double y1) => [
+  for (var i = 0; i <= 4; i++)
+    Offset(
+      0.40 - 0.20 * sin(((y0 + (y1 - y0) * i / 4) * pi).clamp(0.0, pi)),
+      y0 + (y1 - y0) * i / 4,
+    ),
 ];
 
 List<Offset> _heartPalm([double y = 0.24]) => [
@@ -130,6 +160,161 @@ void main() {
 
       expect(solution.alternativeScore, greaterThan(0));
       expect(solution.scoreDifference, lessThan(solution.totalAnatomicalScore));
+    });
+
+    test('broad life line outranks short thumb wrinkles', () {
+      final geometry = _geometry();
+      final solution = LineHypothesisEngine.solve(
+        geometry: geometry,
+        traces: [
+          _trace(
+            geometry,
+            'broad_life',
+            _lifePalm(),
+            probability: 0.72,
+            ridgeWidth: 7.0,
+            majorLineScore: 0.88,
+          ),
+          _trace(
+            geometry,
+            'thumb_wrinkle',
+            _shortThumbWrinklePalm(0.38),
+            probability: 0.94,
+            continuity: 0.95,
+            prior: 0.22,
+            ridgeWidth: 2.0,
+            majorLineScore: 0.16,
+            rejectionReason: 'thumb_mound_wrinkle',
+          ),
+        ],
+      );
+
+      expect(solution.life?.traceId, equals('broad_life'));
+    });
+
+    test('faint anatomically correct life line beats dark local wrinkle', () {
+      final geometry = _geometry();
+      final solution = LineHypothesisEngine.solve(
+        geometry: geometry,
+        traces: [
+          _trace(
+            geometry,
+            'faint_life',
+            _lifePalm(),
+            probability: 0.38,
+            ridge: 0.42,
+            ridgeMax: 0.58,
+            darkness: 0.28,
+            majorLineScore: 0.74,
+          ),
+          _trace(
+            geometry,
+            'dark_short_wrinkle',
+            _shortThumbWrinklePalm(0.44),
+            probability: 0.96,
+            prior: 0.18,
+            majorLineScore: 0.14,
+            rejectionReason: 'short',
+          ),
+        ],
+      );
+
+      expect(solution.life?.traceId, equals('faint_life'));
+    });
+
+    test('fragmented life line stays preferred over short alternatives', () {
+      final geometry = _geometry();
+      final solution = LineHypothesisEngine.solve(
+        geometry: geometry,
+        traces: [
+          _trace(
+            geometry,
+            'fragmented_life',
+            _lifePalm(),
+            probability: 0.62,
+            continuity: 0.72,
+            gapCount: 2,
+            majorLineScore: 0.76,
+          ),
+          _trace(
+            geometry,
+            'short_life_like_fragment',
+            _lifeFragmentPalm(0.22, 0.38),
+            probability: 0.90,
+            continuity: 0.92,
+            prior: 0.58,
+            majorLineScore: 0.24,
+            rejectionReason: 'short',
+          ),
+        ],
+      );
+
+      expect(solution.life?.traceId, equals('fragmented_life'));
+    });
+
+    test('competing short thumb wrinkles are suppressed for life line', () {
+      final geometry = _geometry();
+      final traces = [
+        _trace(
+          geometry,
+          'true_life',
+          _lifePalm(),
+          probability: 0.70,
+          majorLineScore: 0.82,
+        ),
+        for (var i = 0; i < 4; i++)
+          _trace(
+            geometry,
+            'thumb_wrinkle_$i',
+            _shortThumbWrinklePalm(0.30 + i * 0.06),
+            probability: 0.92,
+            prior: 0.20,
+            ridgeWidth: 2.0,
+            majorLineScore: 0.12,
+            rejectionReason: 'thumb_mound_wrinkle',
+          ),
+      ];
+
+      final solution = LineHypothesisEngine.solve(
+        geometry: geometry,
+        traces: traces,
+      );
+
+      expect(solution.life?.traceId, equals('true_life'));
+      expect(
+        solution.topHypotheses[PalmLineHypothesisType.life]!.first.traceId,
+        equals('true_life'),
+      );
+    });
+
+    test('long continuous line beats many short segments', () {
+      final geometry = _geometry();
+      final solution = LineHypothesisEngine.solve(
+        geometry: geometry,
+        traces: [
+          _trace(
+            geometry,
+            'long_continuous_life',
+            _lifePalm(),
+            probability: 0.70,
+            continuity: 0.96,
+            majorLineScore: 0.86,
+          ),
+          for (var i = 0; i < 7; i++)
+            _trace(
+              geometry,
+              'short_segment_$i',
+              _lifeFragmentPalm(0.12 + i * 0.09, 0.17 + i * 0.09),
+              probability: 0.94,
+              continuity: 0.90,
+              prior: 0.60,
+              majorLineScore: 0.20,
+              rejectionReason: 'short',
+            ),
+        ],
+      );
+
+      expect(solution.life?.traceId, equals('long_continuous_life'));
     });
   });
 }

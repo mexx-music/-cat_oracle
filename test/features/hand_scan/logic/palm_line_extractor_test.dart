@@ -214,6 +214,9 @@ void main() {
       expect(result.containsKey('debugPalmMask'), isTrue);
       expect(result.containsKey('debugClahe'), isTrue);
       expect(result.containsKey('debugDarkLineResponse'), isTrue);
+      expect(result.containsKey('multiScaleRidgeMap'), isTrue);
+      expect(result.containsKey('debugMultiScaleRidgeMap'), isTrue);
+      expect(result.containsKey('debugRidgeStrengthHeatmap'), isTrue);
       expect(result.containsKey('debugCreaseProbability'), isTrue);
       expect(result.containsKey('debugSkeleton'), isTrue);
       expect(result.containsKey('tracedCreases'), isTrue);
@@ -227,6 +230,9 @@ void main() {
       expect(result.containsKey('debugTraceSeeds'), isTrue);
       expect(result.containsKey('debugTraceDirections'), isTrue);
       expect(result.containsKey('debugGapRecoveries'), isTrue);
+      expect(result.containsKey('debugMajorLineScores'), isTrue);
+      expect(result.containsKey('debugTopLifeLineCandidates'), isTrue);
+      expect(result.containsKey('debugTraceRejectionReasons'), isTrue);
       expect(result.containsKey('averageAnatomicalScore'), isTrue);
       expect(result.containsKey('lifePriorScore'), isTrue);
       expect(result.containsKey('heartPriorScore'), isTrue);
@@ -242,7 +248,10 @@ void main() {
       expect(result.containsKey('outsideMaskProbabilityPixels'), isTrue);
       expect(result.containsKey('outsideMaskSkeletonPixels'), isTrue);
       expect(result.containsKey('rejectedOutsideMaskTraces'), isTrue);
-      expect(result.containsKey('minInsidePalmRatioOfAcceptedCandidates'), isTrue);
+      expect(
+        result.containsKey('minInsidePalmRatioOfAcceptedCandidates'),
+        isTrue,
+      );
       expect(result.containsKey('rejectedOutsideMaskPaths'), isTrue);
       expect(result.containsKey('debugPalmOutline'), isTrue);
     });
@@ -451,6 +460,40 @@ void main() {
         img[12 * w + x] = 138;
       }
       expect(darkLineStrengthForTest(img, 12, 12, w, h), greaterThan(7));
+    });
+  });
+
+  // ── Multi-scale Hessian ridge map ──────────────────────────────────────────
+
+  group('multiScaleRidgeMapForTest', () {
+    test('broad dark crease produces a strong ridge response', () {
+      const w = 48, h = 48;
+      final img = Uint8List(w * h)..fillRange(0, w * h, 180);
+      for (int y = 21; y <= 27; y++) {
+        for (int x = 8; x < 40; x++) {
+          img[y * w + x] = 120;
+        }
+      }
+
+      final ridge = multiScaleRidgeMapForTest(img, w, h);
+
+      expect(ridge[24 * w + 24], greaterThan(0));
+      expect(ridge[24 * w + 24], greaterThan(ridge[8 * w + 8]));
+    });
+
+    test('faint broad crease remains visible at a larger scale', () {
+      const w = 56, h = 56;
+      final img = Uint8List(w * h)..fillRange(0, w * h, 180);
+      for (int y = 25; y <= 31; y++) {
+        for (int x = 9; x < 47; x++) {
+          img[y * w + x] = 166;
+        }
+      }
+
+      final ridge = multiScaleRidgeMapForTest(img, w, h);
+
+      expect(ridge[28 * w + 28], greaterThan(0));
+      expect(ridge[28 * w + 28], greaterThan(ridge[14 * w + 14]));
     });
   });
 
@@ -748,6 +791,8 @@ void main() {
       expect(result['largestCreasePixelCount'], greaterThan(0));
       expect(result['debugCreaseProbability'], isNotEmpty);
       expect(result['debugSkeleton'], isNotEmpty);
+      expect(result['debugMultiScaleRidgeMap'], isNotEmpty);
+      expect(result['debugRidgeStrengthHeatmap'], isNotEmpty);
       expect(result['candidatePaths'], isNotEmpty);
       expect(result['tracedCreases'], isNotEmpty);
       expect(result['traceCount'], greaterThan(0));
@@ -766,11 +811,25 @@ void main() {
       final firstTrace = traces.first as Map<dynamic, dynamic>;
       expect(firstTrace.containsKey('anatomicalScore'), isTrue);
       expect(firstTrace.containsKey('weightedProbability'), isTrue);
+      expect(firstTrace.containsKey('averageRidgeResponse'), isTrue);
+      expect(firstTrace.containsKey('maximumRidgeResponse'), isTrue);
+      expect(firstTrace.containsKey('ridgeConsistency'), isTrue);
+      expect(firstTrace.containsKey('ridgeWidthEstimate'), isTrue);
+      expect(firstTrace.containsKey('majorLineScore'), isTrue);
+      expect(firstTrace.containsKey('rejectionReason'), isTrue);
       expect((firstTrace['anatomicalScore'] as num).toDouble(), greaterThan(0));
       expect(
         (firstTrace['weightedProbability'] as num).toDouble(),
         greaterThan(0),
       );
+      expect(
+        (firstTrace['averageRidgeResponse'] as num).toDouble(),
+        greaterThanOrEqualTo(0),
+      );
+      expect((firstTrace['majorLineScore'] as num).toDouble(), greaterThan(0));
+      expect(result['debugMajorLineScores'], isNotEmpty);
+      expect(result.containsKey('debugTopLifeLineCandidates'), isTrue);
+      expect(result['debugTraceRejectionReasons'], isNotEmpty);
       expect(result['debugTraceSeeds'], isNotEmpty);
     });
 
@@ -968,7 +1027,11 @@ void main() {
         'debugHeadSkeleton',
         'debugFateSkeleton',
       ]) {
-        expect(aw.containsKey(key), isTrue, reason: 'missing anatomy key: $key');
+        expect(
+          aw.containsKey(key),
+          isTrue,
+          reason: 'missing anatomy key: $key',
+        );
       }
     });
 
@@ -991,8 +1054,12 @@ void main() {
       final pixels = _solid(w, h);
       _darkLine(pixels, w, 30, 8, 52);
       final result = processPixelsForTest(pixels, w, h);
-      expect(result['outsideMaskProbabilityPixels'], equals(0),
-          reason: 'hard masking gate must leave no residual outside-palm probability');
+      expect(
+        result['outsideMaskProbabilityPixels'],
+        equals(0),
+        reason:
+            'hard masking gate must leave no residual outside-palm probability',
+      );
     });
 
     test('outsideMaskSkeletonPixels is 0 for well-formed input', () {
@@ -1000,50 +1067,68 @@ void main() {
       final pixels = _solid(w, h);
       _darkLine(pixels, w, 30, 8, 52);
       final result = processPixelsForTest(pixels, w, h);
-      expect(result['outsideMaskSkeletonPixels'], equals(0),
-          reason: 'skeleton should have no pixels outside boundarySafeMask');
+      expect(
+        result['outsideMaskSkeletonPixels'],
+        equals(0),
+        reason: 'skeleton should have no pixels outside boundarySafeMask',
+      );
     });
 
-    test('minInsidePalmRatioOfAcceptedCandidates is >= 0.98 when candidates exist', () {
-      const w = 60, h = 60;
-      final pixels = _solid(w, h);
-      _darkLine(pixels, w, 30, 8, 52);
-      final result = processPixelsForTest(pixels, w, h);
-      final candidates = result['candidatePaths'] as List;
-      if (candidates.isNotEmpty) {
-        final ratio = (result['minInsidePalmRatioOfAcceptedCandidates'] as num).toDouble();
-        expect(ratio, greaterThanOrEqualTo(0.98),
-            reason: 'every accepted candidate must be >= 98 % inside palm mask');
-      }
-    });
+    test(
+      'minInsidePalmRatioOfAcceptedCandidates is >= 0.98 when candidates exist',
+      () {
+        const w = 60, h = 60;
+        final pixels = _solid(w, h);
+        _darkLine(pixels, w, 30, 8, 52);
+        final result = processPixelsForTest(pixels, w, h);
+        final candidates = result['candidatePaths'] as List;
+        if (candidates.isNotEmpty) {
+          final ratio =
+              (result['minInsidePalmRatioOfAcceptedCandidates'] as num)
+                  .toDouble();
+          expect(
+            ratio,
+            greaterThanOrEqualTo(0.98),
+            reason: 'every accepted candidate must be >= 98 % inside palm mask',
+          );
+        }
+      },
+    );
 
-    test('outside-palm trace (insidePalmRatio < 0.98) cannot win as life line', () {
-      const outsideCrease = PalmTracedCrease(
-        points: [Offset(0.1, 0.8), Offset(0.15, 0.5), Offset(0.1, 0.2)],
-        totalLength: 0.6,
-        averageProbability: 0.85,
-        continuityScore: 0.95,
-        averageCurvature: 1.0,
-        interruptionCount: 0,
-        branchCount: 0,
-        anatomicalScore: 0.9,
-        insidePalmRatio: 0.40, // clearly outside palm
-      );
-      const extraction = PalmLineExtractionResult(
-        edgePoints: [Offset(0.1, 0.5)],
-        candidatePaths: [
-          [Offset(0.1, 0.8), Offset(0.15, 0.5), Offset(0.1, 0.2)],
-        ],
-        confidence: 0.8,
-        imageWidth: 100,
-        imageHeight: 100,
-        edgePointCount: 10,
-        tracedCreases: [outsideCrease],
-      );
-      final result = PalmLineClassifier.classify(extraction);
-      expect(result.lifeLinePath, isNull,
-          reason: 'an outside-palm trace must never be assigned as the life line');
-    });
+    test(
+      'outside-palm trace (insidePalmRatio < 0.98) cannot win as life line',
+      () {
+        const outsideCrease = PalmTracedCrease(
+          points: [Offset(0.1, 0.8), Offset(0.15, 0.5), Offset(0.1, 0.2)],
+          totalLength: 0.6,
+          averageProbability: 0.85,
+          continuityScore: 0.95,
+          averageCurvature: 1.0,
+          interruptionCount: 0,
+          branchCount: 0,
+          anatomicalScore: 0.9,
+          insidePalmRatio: 0.40, // clearly outside palm
+        );
+        const extraction = PalmLineExtractionResult(
+          edgePoints: [Offset(0.1, 0.5)],
+          candidatePaths: [
+            [Offset(0.1, 0.8), Offset(0.15, 0.5), Offset(0.1, 0.2)],
+          ],
+          confidence: 0.8,
+          imageWidth: 100,
+          imageHeight: 100,
+          edgePointCount: 10,
+          tracedCreases: [outsideCrease],
+        );
+        final result = PalmLineClassifier.classify(extraction);
+        expect(
+          result.lifeLinePath,
+          isNull,
+          reason:
+              'an outside-palm trace must never be assigned as the life line',
+        );
+      },
+    );
 
     test('empty result has correct defaults for all palm-gating fields', () {
       const r = PalmLineExtractionResult.empty;

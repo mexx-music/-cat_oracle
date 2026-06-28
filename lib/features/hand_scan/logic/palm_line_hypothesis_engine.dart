@@ -14,6 +14,13 @@ class PalmLineTraceEvidence {
     this.continuity = 0.0,
     this.anatomicalPriorScore = 0.0,
     this.gapCount = 0,
+    this.averageRidgeResponse = 0.0,
+    this.maximumRidgeResponse = 0.0,
+    this.ridgeConsistency = 0.0,
+    this.ridgeWidthEstimate = 0.0,
+    this.averageDarkness = 0.0,
+    this.majorLineScore = 0.0,
+    this.rejectionReason = '',
   });
 
   final String id;
@@ -22,6 +29,13 @@ class PalmLineTraceEvidence {
   final double continuity;
   final double anatomicalPriorScore;
   final int gapCount;
+  final double averageRidgeResponse;
+  final double maximumRidgeResponse;
+  final double ridgeConsistency;
+  final double ridgeWidthEstimate;
+  final double averageDarkness;
+  final double majorLineScore;
+  final String rejectionReason;
 }
 
 class PalmLineTraceFeatures {
@@ -39,6 +53,14 @@ class PalmLineTraceFeatures {
     required this.distanceToWrist,
     required this.distanceToFingerBase,
     required this.crossingsWithOtherTraces,
+    required this.gapCount,
+    required this.averageRidgeResponse,
+    required this.maximumRidgeResponse,
+    required this.ridgeConsistency,
+    required this.ridgeWidthEstimate,
+    required this.averageDarkness,
+    required this.majorLineScore,
+    required this.rejectionReason,
   });
 
   final double arcLength;
@@ -54,6 +76,14 @@ class PalmLineTraceFeatures {
   final double distanceToWrist;
   final double distanceToFingerBase;
   final int crossingsWithOtherTraces;
+  final int gapCount;
+  final double averageRidgeResponse;
+  final double maximumRidgeResponse;
+  final double ridgeConsistency;
+  final double ridgeWidthEstimate;
+  final double averageDarkness;
+  final double majorLineScore;
+  final String rejectionReason;
 }
 
 class PalmLineTraceScorecard {
@@ -394,6 +424,14 @@ class LineHypothesisEngine {
       distanceToWrist: nearestWrist,
       distanceToFingerBase: nearestFingerBase,
       crossingsWithOtherTraces: crossingCount,
+      gapCount: trace.evidence.gapCount,
+      averageRidgeResponse: trace.evidence.averageRidgeResponse.clamp(0.0, 1.0),
+      maximumRidgeResponse: trace.evidence.maximumRidgeResponse.clamp(0.0, 1.0),
+      ridgeConsistency: trace.evidence.ridgeConsistency.clamp(0.0, 1.0),
+      ridgeWidthEstimate: trace.evidence.ridgeWidthEstimate,
+      averageDarkness: trace.evidence.averageDarkness.clamp(0.0, 1.0),
+      majorLineScore: trace.evidence.majorLineScore.clamp(0.0, 1.0),
+      rejectionReason: trace.evidence.rejectionReason,
     );
   }
 
@@ -421,16 +459,30 @@ class LineHypothesisEngine {
     final thumbSide = _fraction(trace.thumbCanonical, (p) => p.dx <= 0.68);
     final length = _ramp(f.arcLength, 0.10, 0.52);
     final curvature = _gaussian((f.curvature - 1.35).abs(), 0.55);
+    final ridgeStrength =
+        (f.averageRidgeResponse * 0.58 + f.maximumRidgeResponse * 0.42).clamp(
+          0.0,
+          1.0,
+        );
+    final majorSignal = f.majorLineScore > 0
+        ? f.majorLineScore
+        : (ridgeStrength * 0.35 +
+                  f.continuity * 0.25 +
+                  f.averageProbability * 0.25 +
+                  length * 0.15)
+              .clamp(0.0, 1.0);
     final base =
-        webStart * 0.16 +
-        wristEnd * 0.16 +
-        thenarWrap * 0.19 +
-        thumbSide * 0.10 +
-        length * 0.12 +
-        curvature * 0.08 +
-        f.continuity * 0.08 +
-        f.averageProbability * 0.05 +
-        max(prior, f.anatomicalPriorScore) * 0.06;
+        webStart * 0.14 +
+        wristEnd * 0.14 +
+        thenarWrap * 0.17 +
+        thumbSide * 0.08 +
+        length * 0.15 +
+        curvature * 0.06 +
+        f.continuity * 0.07 +
+        f.averageProbability * 0.04 +
+        max(prior, f.anatomicalPriorScore) * 0.05 +
+        majorSignal * 0.18 +
+        (majorSignal * f.continuity * length) * 0.08;
     final centerVerticalPenalty =
         vertical * _gaussian((mean.dx - 0.50).abs(), 0.11) * 0.46;
     final centerCrossPenalty =
@@ -446,6 +498,22 @@ class LineHypothesisEngine {
     final lowStartPenalty = _ramp(start.dy, 0.24, 0.48) * 0.28;
     final horizontalPenalty = xSpan > ySpan * 0.95 ? 0.34 : 0.0;
     final crossingPenalty = min(0.18, f.crossingsWithOtherTraces * 0.035);
+    final fragmentPenalty = min(0.22, f.gapCount * 0.035);
+    final shortPenalty = _ramp(0.15 - f.arcLength, 0.0, 0.15) * 0.36;
+    final thumbWrinklePenalty =
+        _horizontality(start, end) *
+        _fraction(
+          trace.thumbCanonical,
+          (p) => p.dx < 0.46 && p.dy > 0.20 && p.dy < 0.64,
+        ) *
+        0.38;
+    final rejectionPenalty =
+        f.rejectionReason.isNotEmpty && f.rejectionReason != 'accepted'
+        ? 0.26
+        : 0.0;
+    final lowMajorPenalty = f.majorLineScore > 0 && f.majorLineScore < 0.30
+        ? (0.30 - f.majorLineScore) / 0.30 * 0.24
+        : 0.0;
     return (base *
             (1.0 -
                 centerVerticalPenalty -
@@ -453,7 +521,12 @@ class LineHypothesisEngine {
                 middleFingerEndPenalty -
                 lowStartPenalty -
                 horizontalPenalty -
-                crossingPenalty))
+                crossingPenalty -
+                fragmentPenalty -
+                shortPenalty -
+                thumbWrinklePenalty -
+                rejectionPenalty -
+                lowMajorPenalty))
         .clamp(0.0, 1.0);
   }
 
@@ -471,6 +544,7 @@ class LineHypothesisEngine {
     final upperBand = _gaussian((mean.dy - 0.23).abs(), 0.14);
     final belowFingerBase = _softBand(mean.dy, 0.08, 0.42);
     final crossesPalm = _ramp(xSpan, 0.22, 0.68);
+    final majorSignal = f.majorLineScore.clamp(0.0, 1.0);
     final base =
         upperBand * 0.22 +
         horizontal * 0.19 +
@@ -478,7 +552,8 @@ class LineHypothesisEngine {
         crossesPalm * 0.16 +
         f.continuity * 0.10 +
         f.averageProbability * 0.07 +
-        max(prior, f.anatomicalPriorScore) * 0.14;
+        max(prior, f.anatomicalPriorScore) * 0.10 +
+        majorSignal * 0.04;
     final thumbPenalty =
         _fraction(trace.thumbCanonical, (p) => p.dx < 0.35 && p.dy > 0.36) *
         0.34;
@@ -511,6 +586,7 @@ class LineHypothesisEngine {
       const Offset(0.25, 0.38),
       0.25,
     );
+    final majorSignal = f.majorLineScore.clamp(0.0, 1.0);
     final base =
         middleBand * 0.22 +
         max(horizontal, diagonal) * 0.16 +
@@ -518,8 +594,9 @@ class LineHypothesisEngine {
         startsNearLife * 0.08 +
         f.continuity * 0.10 +
         f.averageProbability * 0.08 +
-        max(prior, f.anatomicalPriorScore) * 0.14 +
-        _ramp(f.arcLength, 0.12, 0.48) * 0.06;
+        max(prior, f.anatomicalPriorScore) * 0.10 +
+        _ramp(f.arcLength, 0.12, 0.48) * 0.06 +
+        majorSignal * 0.04;
     final tooHigh = _ramp(0.28 - mean.dy, 0.0, 0.16) * 0.34;
     final tooLow = _ramp(mean.dy, 0.68, 0.88) * 0.34;
     final verticalPenalty = ySpan > xSpan * 1.2 ? 0.36 : 0.0;
@@ -541,14 +618,16 @@ class LineHypothesisEngine {
     final prior = _meanPrior(trace.thumbCanonical, PalmLineHypothesisType.fate);
     final central = _gaussian((mean.dx - 0.50).abs(), 0.16);
     final verticalSpan = _ramp(ySpan, 0.18, 0.60);
+    final majorSignal = f.majorLineScore.clamp(0.0, 1.0);
     final base =
         central * 0.25 +
         vertical * 0.24 +
         verticalSpan * 0.16 +
         f.continuity * 0.08 +
         f.averageProbability * 0.06 +
-        max(prior, f.anatomicalPriorScore * 0.85) * 0.13 +
-        _softBand(mean.dy, 0.22, 0.88) * 0.08;
+        max(prior, f.anatomicalPriorScore * 0.85) * 0.09 +
+        _softBand(mean.dy, 0.22, 0.88) * 0.08 +
+        majorSignal * 0.04;
     final horizontalPenalty = xSpan > ySpan * 0.72 ? 0.44 : 0.0;
     final sidePenalty = (1.0 - central) * 0.24;
     final shortPenalty = _ramp(0.18 - ySpan, 0.0, 0.18) * 0.28;
