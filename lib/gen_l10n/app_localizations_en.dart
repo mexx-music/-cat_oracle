@@ -561,4 +561,111 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get palmExtractionReadingTitle => 'Reading';
+
+  @override
+  String get scanQualityTitle => 'Scan Quality';
+
+  @override
+  String get scanQualityAnalyzing => 'Analyzing image quality…';
+
+  @override
+  String get scanQualityGradeExcellent => 'Excellent';
+
+  @override
+  String get scanQualityGradeGood => 'Good';
+
+  @override
+  String get scanQualityGradeAcceptable => 'Acceptable';
+
+  @override
+  String get scanQualityGradePoor => 'Poor';
+
+  @override
+  String get scanQualityGradeRetake => 'Please retake';
+
+  @override
+  String get scanQualityDimBackground => 'Background';
+
+  @override
+  String get scanQualityDimLighting => 'Lighting';
+
+  @override
+  String get scanQualityDimSharpness => 'Sharpness';
+
+  @override
+  String get scanQualityDimHandPosition => 'Hand Position';
+
+  @override
+  String get scanQualityDimPalmCoverage => 'Palm Coverage';
+
+  @override
+  String get scanQualityWarningAcceptable => 'Results may be less accurate.';
+
+  @override
+  String get scanQualityRetakeButton => 'Retake photo';
+
+  @override
+  String get scanQualityAnalyzeAnywayButton => 'Analyze anyway';
+
+  @override
+  String get scanQualityMadameSays => 'Madame Gatto says:';
+
+  @override
+  String get scanQualityBgTip =>
+      'I can read your lines much better when your hand is photographed against a plain background.';
+
+  @override
+  String get scanQualityBgSuggestionsTitle => 'Suggested backgrounds:';
+
+  @override
+  String get scanQualityBgSuggestion1 => 'white sheet of paper';
+
+  @override
+  String get scanQualityBgSuggestion2 => 'gray table';
+
+  @override
+  String get scanQualityBgSuggestion3 => 'black cloth';
+
+  @override
+  String get scanQualityBgSuggestion4 => 'plain wall';
+
+  @override
+  String get handSegmentTitle => 'Hand Detection';
+
+  @override
+  String get handSegmentAnalyzing => 'Detecting hand outline…';
+
+  @override
+  String get handSegmentGradeExcellent => 'Excellent';
+
+  @override
+  String get handSegmentGradeGood => 'Good';
+
+  @override
+  String get handSegmentGradeAcceptable => 'Acceptable';
+
+  @override
+  String get handSegmentGradePoor => 'Hand not fully detected';
+
+  @override
+  String get handSegmentDimCoverage => 'Coverage';
+
+  @override
+  String get handSegmentDimEdge => 'Edge Quality';
+
+  @override
+  String get handSegmentDimFingers => 'Fingers';
+
+  @override
+  String get handSegmentDimThumb => 'Thumb';
+
+  @override
+  String get handSegmentDimWrist => 'Wrist';
+
+  @override
+  String get handSegmentCutoutLabel => 'Detected hand';
+
+  @override
+  String get handSegmentPoorTip =>
+      'Madame Gatto recommends photographing your hand against a plain background for the most accurate reading.';
 }

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:cat_oracle/features/hand_scan/logic/palm_line_classifier.dart';
 import 'package:cat_oracle/features/hand_scan/logic/palm_line_extractor.dart';
 import 'package:cat_oracle/features/hand_scan/models/scanned_hand.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -237,6 +238,13 @@ void main() {
       expect(result.containsKey('debugHeartPrior'), isTrue);
       expect(result.containsKey('debugHeadPrior'), isTrue);
       expect(result.containsKey('debugFatePrior'), isTrue);
+      expect(result.containsKey('anatomyWeighted'), isTrue);
+      expect(result.containsKey('outsideMaskProbabilityPixels'), isTrue);
+      expect(result.containsKey('outsideMaskSkeletonPixels'), isTrue);
+      expect(result.containsKey('rejectedOutsideMaskTraces'), isTrue);
+      expect(result.containsKey('minInsidePalmRatioOfAcceptedCandidates'), isTrue);
+      expect(result.containsKey('rejectedOutsideMaskPaths'), isTrue);
+      expect(result.containsKey('debugPalmOutline'), isTrue);
     });
 
     // ── ROI normalization tests ────────────────────────────────────────────────
@@ -882,6 +890,169 @@ void main() {
           expect((l[1] as num).toDouble(), inInclusiveRange(0.0, 1.0));
         }
       }
+    });
+  });
+
+  // ── anatomy-weighted probability maps ─────────────────────────────────────────
+
+  group('anatomy-weighted probability maps', () {
+    test('prior alone without base signal creates no line', () {
+      // base = 0 everywhere → weighted must be 0 regardless of prior value
+      final base = Float32List(4);
+      final prior = Float32List.fromList([1.0, 1.0, 1.0, 1.0]);
+      final weighted = anatomyWeightedMapForTest(base, prior);
+      expect(
+        weighted,
+        everyElement(equals(0.0)),
+        reason: 'prior alone must not create signal where base is zero',
+      );
+    });
+
+    test('weak line in prior zone is amplified', () {
+      // base=0.3, prior=1.0 → 0.3 * (0.45 + 0.75*1.0) = 0.3 * 1.20 = 0.36
+      final base = Float32List.fromList([0.3]);
+      final prior = Float32List.fromList([1.0]);
+      final weighted = anatomyWeightedMapForTest(base, prior);
+      expect(
+        weighted[0],
+        greaterThan(base[0]),
+        reason: 'high prior should amplify a weak base signal',
+      );
+      expect(weighted[0], closeTo(0.36, 0.001));
+    });
+
+    test('strong line outside prior zone is downweighted', () {
+      // base=0.8, prior=0.0 → 0.8 * (0.45 + 0.75*0.0) = 0.8 * 0.45 = 0.36
+      final base = Float32List.fromList([0.8]);
+      final prior = Float32List.fromList([0.0]);
+      final weighted = anatomyWeightedMapForTest(base, prior);
+      expect(
+        weighted[0],
+        lessThan(base[0]),
+        reason: 'zero prior should reduce signal outside the anatomical zone',
+      );
+      expect(weighted[0], closeTo(0.36, 0.001));
+    });
+
+    test('anatomy-weighted result contains all required sub-keys', () {
+      const w = 60, h = 60;
+      final pixels = _solid(w, h);
+      _darkLine(pixels, w, 30, 8, 52);
+      final result = processPixelsForTest(pixels, w, h);
+      expect(result.containsKey('anatomyWeighted'), isTrue);
+      final aw = result['anatomyWeighted'] as Map<String, dynamic>;
+      for (final key in const [
+        'lifeCandidates',
+        'heartCandidates',
+        'headCandidates',
+        'fateCandidates',
+        'lifeTracedCreases',
+        'heartTracedCreases',
+        'headTracedCreases',
+        'fateTracedCreases',
+        'baseCreasePixels',
+        'lifeCreasePixels',
+        'heartCreasePixels',
+        'headCreasePixels',
+        'fateCreasePixels',
+        'lifeSkeletonLength',
+        'heartSkeletonLength',
+        'headSkeletonLength',
+        'fateSkeletonLength',
+        'debugLifeWeightedProb',
+        'debugHeartWeightedProb',
+        'debugHeadWeightedProb',
+        'debugFateWeightedProb',
+        'debugLifeSkeleton',
+        'debugHeartSkeleton',
+        'debugHeadSkeleton',
+        'debugFateSkeleton',
+      ]) {
+        expect(aw.containsKey(key), isTrue, reason: 'missing anatomy key: $key');
+      }
+    });
+
+    test('fallback is stable: empty result has valid anatomy defaults', () {
+      const r = PalmLineExtractionResult.empty;
+      expect(r.anatomyWeighted, isNotNull);
+      expect(r.anatomyWeighted.lifeCandidates, isEmpty);
+      expect(r.anatomyWeighted.lifeTracedCreases, isEmpty);
+      expect(r.anatomyWeighted.baseCreasePixels, equals(0));
+      expect(r.anatomyWeighted.lifeSkeletonLength, equals(0));
+      expect(r.anatomyWeighted.debugLifeWeightedProb, isEmpty);
+    });
+  });
+
+  // ── palm mask gating ──────────────────────────────────────────────────────────
+
+  group('palm mask gating', () {
+    test('outsideMaskProbabilityPixels is always 0 after safety gate', () {
+      const w = 60, h = 60;
+      final pixels = _solid(w, h);
+      _darkLine(pixels, w, 30, 8, 52);
+      final result = processPixelsForTest(pixels, w, h);
+      expect(result['outsideMaskProbabilityPixels'], equals(0),
+          reason: 'hard masking gate must leave no residual outside-palm probability');
+    });
+
+    test('outsideMaskSkeletonPixels is 0 for well-formed input', () {
+      const w = 60, h = 60;
+      final pixels = _solid(w, h);
+      _darkLine(pixels, w, 30, 8, 52);
+      final result = processPixelsForTest(pixels, w, h);
+      expect(result['outsideMaskSkeletonPixels'], equals(0),
+          reason: 'skeleton should have no pixels outside boundarySafeMask');
+    });
+
+    test('minInsidePalmRatioOfAcceptedCandidates is >= 0.98 when candidates exist', () {
+      const w = 60, h = 60;
+      final pixels = _solid(w, h);
+      _darkLine(pixels, w, 30, 8, 52);
+      final result = processPixelsForTest(pixels, w, h);
+      final candidates = result['candidatePaths'] as List;
+      if (candidates.isNotEmpty) {
+        final ratio = (result['minInsidePalmRatioOfAcceptedCandidates'] as num).toDouble();
+        expect(ratio, greaterThanOrEqualTo(0.98),
+            reason: 'every accepted candidate must be >= 98 % inside palm mask');
+      }
+    });
+
+    test('outside-palm trace (insidePalmRatio < 0.98) cannot win as life line', () {
+      const outsideCrease = PalmTracedCrease(
+        points: [Offset(0.1, 0.8), Offset(0.15, 0.5), Offset(0.1, 0.2)],
+        totalLength: 0.6,
+        averageProbability: 0.85,
+        continuityScore: 0.95,
+        averageCurvature: 1.0,
+        interruptionCount: 0,
+        branchCount: 0,
+        anatomicalScore: 0.9,
+        insidePalmRatio: 0.40, // clearly outside palm
+      );
+      const extraction = PalmLineExtractionResult(
+        edgePoints: [Offset(0.1, 0.5)],
+        candidatePaths: [
+          [Offset(0.1, 0.8), Offset(0.15, 0.5), Offset(0.1, 0.2)],
+        ],
+        confidence: 0.8,
+        imageWidth: 100,
+        imageHeight: 100,
+        edgePointCount: 10,
+        tracedCreases: [outsideCrease],
+      );
+      final result = PalmLineClassifier.classify(extraction);
+      expect(result.lifeLinePath, isNull,
+          reason: 'an outside-palm trace must never be assigned as the life line');
+    });
+
+    test('empty result has correct defaults for all palm-gating fields', () {
+      const r = PalmLineExtractionResult.empty;
+      expect(r.outsideMaskProbabilityPixels, equals(0));
+      expect(r.outsideMaskSkeletonPixels, equals(0));
+      expect(r.rejectedOutsideMaskTraces, equals(0));
+      expect(r.minInsidePalmRatioOfAcceptedCandidates, equals(1.0));
+      expect(r.rejectedOutsideMaskPaths, isEmpty);
+      expect(r.debugPalmOutline, isEmpty);
     });
   });
 }

@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show Offset, Rect;
 
 import '../models/scanned_hand.dart';
+import 'hand_segmentor.dart';
 
 // ── Result model ──────────────────────────────────────────────────────────────
 
@@ -42,6 +43,7 @@ class PalmTracedCrease {
     required this.branchCount,
     this.anatomicalScore = 0.0,
     this.weightedProbability = 0.0,
+    this.insidePalmRatio = 1.0,
   });
 
   final List<Offset> points;
@@ -53,6 +55,67 @@ class PalmTracedCrease {
   final int branchCount;
   final double anatomicalScore;
   final double weightedProbability;
+  // Fraction of trace pixels inside boundarySafeMask [0,1].
+  // Candidates with insidePalmRatio < 0.98 are rejected before classification.
+  final double insidePalmRatio;
+}
+
+class PalmLineAnatomyResult {
+  const PalmLineAnatomyResult({
+    this.lifeCandidates = const [],
+    this.heartCandidates = const [],
+    this.headCandidates = const [],
+    this.fateCandidates = const [],
+    this.lifeTracedCreases = const [],
+    this.heartTracedCreases = const [],
+    this.headTracedCreases = const [],
+    this.fateTracedCreases = const [],
+    this.baseCreasePixels = 0,
+    this.lifeCreasePixels = 0,
+    this.heartCreasePixels = 0,
+    this.headCreasePixels = 0,
+    this.fateCreasePixels = 0,
+    this.lifeSkeletonLength = 0,
+    this.heartSkeletonLength = 0,
+    this.headSkeletonLength = 0,
+    this.fateSkeletonLength = 0,
+    this.debugLifeWeightedProb = const [],
+    this.debugHeartWeightedProb = const [],
+    this.debugHeadWeightedProb = const [],
+    this.debugFateWeightedProb = const [],
+    this.debugLifeSkeleton = const [],
+    this.debugHeartSkeleton = const [],
+    this.debugHeadSkeleton = const [],
+    this.debugFateSkeleton = const [],
+  });
+
+  static const empty = PalmLineAnatomyResult();
+
+  final List<List<Offset>> lifeCandidates;
+  final List<List<Offset>> heartCandidates;
+  final List<List<Offset>> headCandidates;
+  final List<List<Offset>> fateCandidates;
+  final List<PalmTracedCrease> lifeTracedCreases;
+  final List<PalmTracedCrease> heartTracedCreases;
+  final List<PalmTracedCrease> headTracedCreases;
+  final List<PalmTracedCrease> fateTracedCreases;
+  final int baseCreasePixels;
+  final int lifeCreasePixels;
+  final int heartCreasePixels;
+  final int headCreasePixels;
+  final int fateCreasePixels;
+  final int lifeSkeletonLength;
+  final int heartSkeletonLength;
+  final int headSkeletonLength;
+  final int fateSkeletonLength;
+  final List<PalmDebugSample> debugLifeWeightedProb;
+  final List<PalmDebugSample> debugHeartWeightedProb;
+  final List<PalmDebugSample> debugHeadWeightedProb;
+  final List<PalmDebugSample> debugFateWeightedProb;
+  final List<PalmDebugSample> debugLifeSkeleton;
+  final List<PalmDebugSample> debugHeartSkeleton;
+  final List<PalmDebugSample> debugHeadSkeleton;
+  final List<PalmDebugSample> debugFateSkeleton;
 }
 
 class PalmGeometry {
@@ -185,6 +248,14 @@ class PalmLineExtractionResult {
     this.debugHeadPrior = const [],
     this.debugFatePrior = const [],
     this.scannedHand = ScannedHand.unknown,
+    this.anatomyWeighted = const PalmLineAnatomyResult(),
+    this.outsideMaskProbabilityPixels = 0,
+    this.outsideMaskSkeletonPixels = 0,
+    this.rejectedOutsideMaskTraces = 0,
+    this.minInsidePalmRatioOfAcceptedCandidates = 1.0,
+    this.rejectedOutsideMaskPaths = const [],
+    this.debugPalmOutline = const [],
+    this.handSegmentation,
   });
 
   /// Sampled edge pixels, normalized to [0,1] in both axes (original image space).
@@ -287,12 +358,32 @@ class PalmLineExtractionResult {
   final List<PalmDebugSample> debugHeadPrior;
   final List<PalmDebugSample> debugFatePrior;
   final ScannedHand scannedHand;
+  final PalmLineAnatomyResult anatomyWeighted;
+
+  /// Pixels that had residual probability > 0 outside boundarySafeMask (safety net; should be 0).
+  final int outsideMaskProbabilityPixels;
+  /// Skeleton pixels outside boundarySafeMask that were explicitly zeroed.
+  final int outsideMaskSkeletonPixels;
+  /// Number of traces rejected because insidePalmRatio < 0.98.
+  final int rejectedOutsideMaskTraces;
+  /// Minimum inside-palm ratio across all accepted candidate paths (should be >= 0.98).
+  final double minInsidePalmRatioOfAcceptedCandidates;
+  /// Candidate paths rejected because < 98 % of their pixels were inside the palm mask.
+  final List<List<Offset>> rejectedOutsideMaskPaths;
+  /// Boundary outline of boundarySafeMask for debug visualisation.
+  final List<PalmDebugSample> debugPalmOutline;
+
+  /// Hand segmentation result from Phase 8 (null when segmentation was skipped).
+  final HandSegmentResult? handSegmentation;
 
   bool get hasRealData => edgePointCount > 0;
   bool get hasRoi => roiLeft != null;
   int get candidatePathCount => candidatePaths.length;
 
-  PalmLineExtractionResult copyWith({ScannedHand? scannedHand}) {
+  PalmLineExtractionResult copyWith({
+    ScannedHand? scannedHand,
+    HandSegmentResult? handSegmentation,
+  }) {
     return PalmLineExtractionResult(
       edgePoints: edgePoints,
       candidatePaths: candidatePaths,
@@ -346,6 +437,14 @@ class PalmLineExtractionResult {
       debugHeadPrior: debugHeadPrior,
       debugFatePrior: debugFatePrior,
       scannedHand: scannedHand ?? this.scannedHand,
+      anatomyWeighted: anatomyWeighted,
+      outsideMaskProbabilityPixels: outsideMaskProbabilityPixels,
+      outsideMaskSkeletonPixels: outsideMaskSkeletonPixels,
+      rejectedOutsideMaskTraces: rejectedOutsideMaskTraces,
+      minInsidePalmRatioOfAcceptedCandidates: minInsidePalmRatioOfAcceptedCandidates,
+      rejectedOutsideMaskPaths: rejectedOutsideMaskPaths,
+      debugPalmOutline: debugPalmOutline,
+      handSegmentation: handSegmentation ?? this.handSegmentation,
     );
   }
 
@@ -396,6 +495,13 @@ class PalmLineExtractionResult {
     debugHeadPrior: [],
     debugFatePrior: [],
     scannedHand: ScannedHand.unknown,
+    anatomyWeighted: PalmLineAnatomyResult.empty,
+    outsideMaskProbabilityPixels: 0,
+    outsideMaskSkeletonPixels: 0,
+    rejectedOutsideMaskTraces: 0,
+    minInsidePalmRatioOfAcceptedCandidates: 1.0,
+    rejectedOutsideMaskPaths: [],
+    debugPalmOutline: [],
   );
 }
 
@@ -404,7 +510,10 @@ class PalmLineExtractionResult {
 class PalmLineExtractor {
   PalmLineExtractor._();
 
-  static Future<PalmLineExtractionResult> extract(Uint8List imageBytes) async {
+  static Future<PalmLineExtractionResult> extract(
+    Uint8List imageBytes, {
+    HandSegmentResult? segmentation,
+  }) async {
     if (imageBytes.isEmpty) return PalmLineExtractionResult.empty;
     try {
       final codec = await ui.instantiateImageCodec(
@@ -422,15 +531,25 @@ class PalmLineExtractor {
 
       if (byteData == null) return PalmLineExtractionResult.empty;
 
+      // Phase 8: apply hand mask — replace background with black (gray 0 < 35,
+      // excluded from both the skin mask and ROI brightness range).
+      var pixels = byteData.buffer.asUint8List();
+      if (segmentation != null && segmentation.mask.isNotEmpty) {
+        pixels = _applyHandMask(
+          pixels,
+          imgW,
+          imgH,
+          segmentation.mask,
+          segmentation.maskWidth,
+          segmentation.maskHeight,
+        );
+      }
+
       final raw = await compute(
         _processPixels,
-        _PixelInput(
-          pixels: byteData.buffer.asUint8List(),
-          width: imgW,
-          height: imgH,
-        ),
+        _PixelInput(pixels: pixels, width: imgW, height: imgH),
       );
-      return _buildResult(raw);
+      return _buildResult(raw).copyWith(handSegmentation: segmentation);
     } catch (_) {
       return PalmLineExtractionResult.empty;
     }
@@ -473,6 +592,7 @@ class PalmLineExtractor {
         anatomicalScore: (m['anatomicalScore'] as num?)?.toDouble() ?? 0.0,
         weightedProbability:
             (m['weightedProbability'] as num?)?.toDouble() ?? 0.0,
+        insidePalmRatio: (m['insidePalmRatio'] as num?)?.toDouble() ?? 1.0,
       );
     }
 
@@ -573,6 +693,64 @@ class PalmLineExtractor {
       debugFatePrior: (raw['debugFatePrior'] as List<dynamic>? ?? const [])
           .map(toSample)
           .toList(),
+      anatomyWeighted: _anatomyFromRaw(raw['anatomyWeighted'], toOffset, toSample, toTrace),
+      outsideMaskProbabilityPixels: raw['outsideMaskProbabilityPixels'] as int? ?? 0,
+      outsideMaskSkeletonPixels: raw['outsideMaskSkeletonPixels'] as int? ?? 0,
+      rejectedOutsideMaskTraces: raw['rejectedOutsideMaskTraces'] as int? ?? 0,
+      minInsidePalmRatioOfAcceptedCandidates:
+          (raw['minInsidePalmRatioOfAcceptedCandidates'] as num?)?.toDouble() ?? 1.0,
+      rejectedOutsideMaskPaths:
+          (raw['rejectedOutsideMaskPaths'] as List<dynamic>? ?? const [])
+              .map((path) => (path as List<dynamic>).map(toOffset).toList())
+              .toList(),
+      debugPalmOutline: (raw['debugPalmOutline'] as List<dynamic>? ?? const [])
+          .map(toSample)
+          .toList(),
+    );
+  }
+
+  static PalmLineAnatomyResult _anatomyFromRaw(
+    dynamic rawAnatomy,
+    Offset Function(dynamic) toOffset,
+    PalmDebugSample Function(dynamic) toSample,
+    PalmTracedCrease Function(dynamic) toTrace,
+  ) {
+    if (rawAnatomy == null) return PalmLineAnatomyResult.empty;
+    final m = rawAnatomy as Map<String, dynamic>;
+    List<List<Offset>> parsePaths(String key) =>
+        (m[key] as List<dynamic>? ?? const [])
+            .map((path) => (path as List<dynamic>).map(toOffset).toList())
+            .toList();
+    List<PalmTracedCrease> parseCreases(String key) =>
+        (m[key] as List<dynamic>? ?? const []).map(toTrace).toList();
+    List<PalmDebugSample> parseSamples(String key) =>
+        (m[key] as List<dynamic>? ?? const []).map(toSample).toList();
+    return PalmLineAnatomyResult(
+      lifeCandidates: parsePaths('lifeCandidates'),
+      heartCandidates: parsePaths('heartCandidates'),
+      headCandidates: parsePaths('headCandidates'),
+      fateCandidates: parsePaths('fateCandidates'),
+      lifeTracedCreases: parseCreases('lifeTracedCreases'),
+      heartTracedCreases: parseCreases('heartTracedCreases'),
+      headTracedCreases: parseCreases('headTracedCreases'),
+      fateTracedCreases: parseCreases('fateTracedCreases'),
+      baseCreasePixels: m['baseCreasePixels'] as int? ?? 0,
+      lifeCreasePixels: m['lifeCreasePixels'] as int? ?? 0,
+      heartCreasePixels: m['heartCreasePixels'] as int? ?? 0,
+      headCreasePixels: m['headCreasePixels'] as int? ?? 0,
+      fateCreasePixels: m['fateCreasePixels'] as int? ?? 0,
+      lifeSkeletonLength: m['lifeSkeletonLength'] as int? ?? 0,
+      heartSkeletonLength: m['heartSkeletonLength'] as int? ?? 0,
+      headSkeletonLength: m['headSkeletonLength'] as int? ?? 0,
+      fateSkeletonLength: m['fateSkeletonLength'] as int? ?? 0,
+      debugLifeWeightedProb: parseSamples('debugLifeWeightedProb'),
+      debugHeartWeightedProb: parseSamples('debugHeartWeightedProb'),
+      debugHeadWeightedProb: parseSamples('debugHeadWeightedProb'),
+      debugFateWeightedProb: parseSamples('debugFateWeightedProb'),
+      debugLifeSkeleton: parseSamples('debugLifeSkeleton'),
+      debugHeartSkeleton: parseSamples('debugHeartSkeleton'),
+      debugHeadSkeleton: parseSamples('debugHeadSkeleton'),
+      debugFateSkeleton: parseSamples('debugFateSkeleton'),
     );
   }
 }
@@ -671,6 +849,42 @@ class _PixelInput {
   final int height;
 }
 
+// ── Phase 8: apply hand mask to work pixels ───────────────────────────────────
+
+/// Nearest-neighbor resize of [mask] (mw×mh) to (imgW×imgH), then set
+/// non-hand pixels to black (0,0,0) so the existing pipeline's skin-mask
+/// check (graySkinWork[i] >= 35) naturally excludes them.
+Uint8List _applyHandMask(
+  Uint8List pixels,
+  int imgW,
+  int imgH,
+  List<bool> mask,
+  int mw,
+  int mh,
+) {
+  if (mw == 0 || mh == 0) return pixels;
+  final result = Uint8List.fromList(pixels);
+  for (int y = 0; y < imgH; y++) {
+    final my = ((y * mh) ~/ imgH).clamp(0, mh - 1);
+    for (int x = 0; x < imgW; x++) {
+      final mx = ((x * mw) ~/ imgW).clamp(0, mw - 1);
+      if (!mask[my * mw + mx]) {
+        final base = (y * imgW + x) * 4;
+        result[base] = 0;
+        result[base + 1] = 0;
+        result[base + 2] = 0;
+        result[base + 3] = 255;
+      }
+    }
+  }
+  return result;
+}
+
+// ── Anatomy-weighted map constants ────────────────────────────────────────────
+
+const double _anatomyAlpha = 0.45;
+const double _anatomyBeta = 0.75;
+
 // ── Core processing (top-level for compute()) ─────────────────────────────────
 
 Map<String, dynamic> _processPixels(_PixelInput input) {
@@ -724,6 +938,13 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
     List<List<double>> debugHeartPrior = const [],
     List<List<double>> debugHeadPrior = const [],
     List<List<double>> debugFatePrior = const [],
+    Map<String, dynamic> anatomyWeighted = const {},
+    int outsideMaskProbabilityPixels = 0,
+    int outsideMaskSkeletonPixels = 0,
+    int rejectedOutsideMaskTraces = 0,
+    double minInsidePalmRatioOfAcceptedCandidates = 1.0,
+    List<List<List<double>>> rejectedOutsideMaskPaths = const [],
+    List<List<double>> debugPalmOutline = const [],
   }) => {
     'edgePoints': <List<double>>[],
     'candidatePaths': <List<List<double>>>[],
@@ -776,6 +997,13 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
     'debugHeartPrior': debugHeartPrior,
     'debugHeadPrior': debugHeadPrior,
     'debugFatePrior': debugFatePrior,
+    'anatomyWeighted': anatomyWeighted,
+    'outsideMaskProbabilityPixels': outsideMaskProbabilityPixels,
+    'outsideMaskSkeletonPixels': outsideMaskSkeletonPixels,
+    'rejectedOutsideMaskTraces': rejectedOutsideMaskTraces,
+    'minInsidePalmRatioOfAcceptedCandidates': minInsidePalmRatioOfAcceptedCandidates,
+    'rejectedOutsideMaskPaths': rejectedOutsideMaskPaths,
+    'debugPalmOutline': debugPalmOutline,
   };
 
   if (w < 8 || h < 8 || pixels.length < w * h * 4) return emptyResult();
@@ -966,6 +1194,16 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
     }
   }
 
+  // Hard gate: zero any residual probability outside the palm mask.
+  // This is a safety net; the loop above already sets outside pixels to 0.
+  var outsideMaskProbabilityPixels = 0;
+  for (int i = 0; i < probability.length; i++) {
+    if (!boundarySafeMask[i] && probability[i] > 0.0) {
+      outsideMaskProbabilityPixels++;
+      probability[i] = 0.0;
+    }
+  }
+
   final threshold = _adaptiveCreaseThreshold(probability, boundarySafeMask);
   final creaseBinary = List<bool>.filled(workW * workH, false);
   var creasePixelCount = 0;
@@ -1103,6 +1341,217 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
       ? 0
       : creaseComponents.first.length;
   final skeletonBinary = _zhangSuenThin(creaseBinary, workW, workH);
+
+  // Hard gate: explicitly zero skeleton pixels outside palm mask.
+  // Zhang-Suen should not create new pixels, but this guarantees it.
+  var outsideMaskSkeletonPixels = 0;
+  for (int i = 0; i < workW * workH; i++) {
+    if (skeletonBinary[i] && !boundarySafeMask[i]) {
+      skeletonBinary[i] = false;
+      outsideMaskSkeletonPixels++;
+    }
+  }
+
+  // State for outside-mask rejection (shared by anatomy + base tracing).
+  var rejectedOutsideMaskTraces = 0;
+  var minInsidePalmRatioOfAcceptedCandidates = 1.0;
+  final rejectedOutsideMaskPathsWork = <List<List<double>>>[];
+
+  // Helper: filter a scored-trace list, reject traces with insidePalmRatio < 0.98.
+  double palmInsideRatio(List<int> indices) {
+    if (indices.isEmpty) return 0.0;
+    var inside = 0;
+    for (final i in indices) {
+      if (boundarySafeMask[i]) inside++;
+    }
+    return inside / indices.length;
+  }
+
+  List<_ScoredTrace> filterByPalmRatio(
+    List<_ScoredTrace> traces, {
+    bool trackMin = false,
+  }) {
+    final accepted = <_ScoredTrace>[];
+    for (final s in traces) {
+      final ratio = palmInsideRatio(s.trace.indices);
+      if (ratio < 0.98) {
+        rejectedOutsideMaskTraces++;
+        final p = _pathFromTrace(s.trace.indices, workW, workH);
+        if (p.length >= 5) rejectedOutsideMaskPathsWork.add(p);
+      } else {
+        if (trackMin && ratio < minInsidePalmRatioOfAcceptedCandidates) {
+          minInsidePalmRatioOfAcceptedCandidates = ratio;
+        }
+        accepted.add(s);
+      }
+    }
+    return accepted;
+  }
+
+  // ── Anatomy-weighted probability maps ───────────────────────────────────────
+  // weightedProb = baseProbability * (alpha + beta * prior)
+  // Safety: base=0 → weighted=0; prior alone cannot create a line.
+  final lifeWeightedProb = Float32List(workW * workH);
+  final heartWeightedProb = Float32List(workW * workH);
+  final headWeightedProb = Float32List(workW * workH);
+  final fateWeightedProb = Float32List(workW * workH);
+  for (int i = 0; i < workW * workH; i++) {
+    final base = probability[i];
+    if (base <= 0.0) continue;
+    lifeWeightedProb[i] = (base * (_anatomyAlpha + _anatomyBeta * anatomicalPriors.life[i]))
+        .clamp(0.0, 1.0);
+    heartWeightedProb[i] = (base * (_anatomyAlpha + _anatomyBeta * anatomicalPriors.heart[i]))
+        .clamp(0.0, 1.0);
+    headWeightedProb[i] = (base * (_anatomyAlpha + _anatomyBeta * anatomicalPriors.head[i]))
+        .clamp(0.0, 1.0);
+    fateWeightedProb[i] = (base * (_anatomyAlpha + _anatomyBeta * anatomicalPriors.fate[i]))
+        .clamp(0.0, 1.0);
+  }
+  final lifeThr = _adaptiveCreaseThreshold(lifeWeightedProb, boundarySafeMask);
+  final heartThr = _adaptiveCreaseThreshold(heartWeightedProb, boundarySafeMask);
+  final headThr = _adaptiveCreaseThreshold(headWeightedProb, boundarySafeMask);
+  final fateThr = _adaptiveCreaseThreshold(fateWeightedProb, boundarySafeMask);
+  var lifeCreasePixels = 0;
+  var heartCreasePixels = 0;
+  var headCreasePixels = 0;
+  var fateCreasePixels = 0;
+  final lifeSkeleton = List<bool>.filled(workW * workH, false);
+  final heartSkeleton = List<bool>.filled(workW * workH, false);
+  final headSkeleton = List<bool>.filled(workW * workH, false);
+  final fateSkeleton = List<bool>.filled(workW * workH, false);
+  for (int i = 0; i < workW * workH; i++) {
+    if (!skeletonBinary[i]) continue;
+    if (lifeWeightedProb[i] >= lifeThr) {
+      lifeSkeleton[i] = true;
+      lifeCreasePixels++;
+    }
+    if (heartWeightedProb[i] >= heartThr) {
+      heartSkeleton[i] = true;
+      heartCreasePixels++;
+    }
+    if (headWeightedProb[i] >= headThr) {
+      headSkeleton[i] = true;
+      headCreasePixels++;
+    }
+    if (fateWeightedProb[i] >= fateThr) {
+      fateSkeleton[i] = true;
+      fateCreasePixels++;
+    }
+  }
+  final lifeTraceResult = _traceCreases(
+    probability: lifeWeightedProb, skeleton: lifeSkeleton,
+    creaseMask: creaseBinary, palmMask: boundarySafeMask,
+    topHat: topHat, valley: hessian, w: workW, h: workH, threshold: lifeThr,
+  );
+  final heartTraceResult = _traceCreases(
+    probability: heartWeightedProb, skeleton: heartSkeleton,
+    creaseMask: creaseBinary, palmMask: boundarySafeMask,
+    topHat: topHat, valley: hessian, w: workW, h: workH, threshold: heartThr,
+  );
+  final headTraceResult = _traceCreases(
+    probability: headWeightedProb, skeleton: headSkeleton,
+    creaseMask: creaseBinary, palmMask: boundarySafeMask,
+    topHat: topHat, valley: hessian, w: workW, h: workH, threshold: headThr,
+  );
+  final fateTraceResult = _traceCreases(
+    probability: fateWeightedProb, skeleton: fateSkeleton,
+    creaseMask: creaseBinary, palmMask: boundarySafeMask,
+    topHat: topHat, valley: hessian, w: workW, h: workH, threshold: fateThr,
+  );
+  List<_ScoredTrace> scoreAndSort(_CreaseTraceResult tr) =>
+      tr.traces.map((trace) {
+        final ps = _scoreTraceAnatomy(trace.indices, anatomicalPriors);
+        return _ScoredTrace(
+          trace: trace,
+          priorScore: ps,
+          weightedProbability: _weightedTraceProbability(
+            trace.averageProbability, ps.average,
+          ),
+        );
+      }).toList()
+        ..sort((a, b) {
+          final ar = a.weightedProbability * (0.5 + a.trace.totalLength);
+          final br = b.weightedProbability * (0.5 + b.trace.totalLength);
+          return br.compareTo(ar);
+        });
+  // Filter anatomy traced creases: reject any with insidePalmRatio < 0.98.
+  final lifeScoredTraces = filterByPalmRatio(scoreAndSort(lifeTraceResult));
+  final heartScoredTraces = filterByPalmRatio(scoreAndSort(heartTraceResult));
+  final headScoredTraces = filterByPalmRatio(scoreAndSort(headTraceResult));
+  final fateScoredTraces = filterByPalmRatio(scoreAndSort(fateTraceResult));
+
+  List<List<List<double>>> buildTypePaths(List<_ScoredTrace> scored) {
+    final paths = <List<List<double>>>[];
+    for (final s in scored) {
+      final path = _pathFromTrace(s.trace.indices, workW, workH);
+      if (path.length >= 5) paths.add(path);
+    }
+    return paths;
+  }
+  final anatomyRaw = <String, dynamic>{
+    'lifeCandidates': buildTypePaths(lifeScoredTraces)
+        .map((p) => p.map(mapPt).toList())
+        .toList(),
+    'heartCandidates': buildTypePaths(heartScoredTraces)
+        .map((p) => p.map(mapPt).toList())
+        .toList(),
+    'headCandidates': buildTypePaths(headScoredTraces)
+        .map((p) => p.map(mapPt).toList())
+        .toList(),
+    'fateCandidates': buildTypePaths(fateScoredTraces)
+        .map((p) => p.map(mapPt).toList())
+        .toList(),
+    'lifeTracedCreases': lifeScoredTraces
+        .map((s) => _traceToRaw(s, workW, workH, mapPt,
+            insidePalmRatio: palmInsideRatio(s.trace.indices)))
+        .toList(),
+    'heartTracedCreases': heartScoredTraces
+        .map((s) => _traceToRaw(s, workW, workH, mapPt,
+            insidePalmRatio: palmInsideRatio(s.trace.indices)))
+        .toList(),
+    'headTracedCreases': headScoredTraces
+        .map((s) => _traceToRaw(s, workW, workH, mapPt,
+            insidePalmRatio: palmInsideRatio(s.trace.indices)))
+        .toList(),
+    'fateTracedCreases': fateScoredTraces
+        .map((s) => _traceToRaw(s, workW, workH, mapPt,
+            insidePalmRatio: palmInsideRatio(s.trace.indices)))
+        .toList(),
+    'baseCreasePixels': creasePixelCount,
+    'lifeCreasePixels': lifeCreasePixels,
+    'heartCreasePixels': heartCreasePixels,
+    'headCreasePixels': headCreasePixels,
+    'fateCreasePixels': fateCreasePixels,
+    'lifeSkeletonLength': lifeScoredTraces.fold<int>(
+      0, (s, t) => s + t.trace.indices.length,
+    ),
+    'heartSkeletonLength': heartScoredTraces.fold<int>(
+      0, (s, t) => s + t.trace.indices.length,
+    ),
+    'headSkeletonLength': headScoredTraces.fold<int>(
+      0, (s, t) => s + t.trace.indices.length,
+    ),
+    'fateSkeletonLength': fateScoredTraces.fold<int>(
+      0, (s, t) => s + t.trace.indices.length,
+    ),
+    'debugLifeWeightedProb': _sampleProbabilityMap(
+      lifeWeightedProb, workW, workH, mapPt,
+    ),
+    'debugHeartWeightedProb': _sampleProbabilityMap(
+      heartWeightedProb, workW, workH, mapPt,
+    ),
+    'debugHeadWeightedProb': _sampleProbabilityMap(
+      headWeightedProb, workW, workH, mapPt,
+    ),
+    'debugFateWeightedProb': _sampleProbabilityMap(
+      fateWeightedProb, workW, workH, mapPt,
+    ),
+    'debugLifeSkeleton': _sampleMask(lifeSkeleton, workW, workH, mapPt),
+    'debugHeartSkeleton': _sampleMask(heartSkeleton, workW, workH, mapPt),
+    'debugHeadSkeleton': _sampleMask(headSkeleton, workW, workH, mapPt),
+    'debugFateSkeleton': _sampleMask(fateSkeleton, workW, workH, mapPt),
+  };
+
   final traceStopwatch = Stopwatch()..start();
   final traceResult = _traceCreases(
     probability: probability,
@@ -1145,13 +1594,16 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
         return br.compareTo(ar);
       });
 
+  // Hard gate: reject base traced creases with < 98 % pixels inside palm mask.
+  final filteredScoredTraces = filterByPalmRatio(scoredTraces, trackMin: true);
+
   // 7. Build ordered paths from traced creases. These are the final tracker input.
   final candidatePathsWork = <List<List<double>>>[];
   final rejectedPathsWork = <List<List<double>>>[];
   final allPixels = <int>[];
   var skeletonLength = 0;
 
-  for (final scored in scoredTraces) {
+  for (final scored in filteredScoredTraces) {
     final trace = scored.trace;
     allPixels.addAll(trace.indices);
     skeletonLength += trace.indices.length;
@@ -1183,10 +1635,11 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
       .map((path) => path.map(mapPt).toList())
       .toList();
   final sampledEdge = sampledEdgeWork.map(mapPt).toList();
-  final tracedCreases = scoredTraces
-      .map((scored) => _traceToRaw(scored, workW, workH, mapPt))
+  final tracedCreases = filteredScoredTraces
+      .map((scored) => _traceToRaw(scored, workW, workH, mapPt,
+          insidePalmRatio: palmInsideRatio(scored.trace.indices)))
       .toList();
-  final traceCount = scoredTraces.length;
+  final traceCount = filteredScoredTraces.length;
   var traceLengthSum = 0.0;
   var longestTraceLength = 0.0;
   var continuitySum = 0.0;
@@ -1198,7 +1651,7 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
   var headPriorTraceSum = 0.0;
   var fatePriorTraceSum = 0.0;
   var recoveredGapCount = 0;
-  for (final scored in scoredTraces) {
+  for (final scored in filteredScoredTraces) {
     final trace = scored.trace;
     final priorScore = scored.priorScore;
     traceLengthSum += trace.totalLength;
@@ -1297,7 +1750,7 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
     'fatePriorScore': fatePriorScore,
     'trackerConfidenceBeforeAnatomical': trackerConfidenceBeforeAnatomical,
     'trackerConfidenceAfterAnatomical': trackerConfidenceAfterAnatomical,
-    'debugPalmMask': _sampleMask(interiorMask, workW, workH, mapPt),
+    'debugPalmMask': _sampleMask(boundarySafeMask, workW, workH, mapPt),
     'debugClahe': _sampleByteMap(
       claheWork,
       workW,
@@ -1361,6 +1814,15 @@ Map<String, dynamic> _processPixels(_PixelInput input) {
       workH,
       mapPt,
     ),
+    'anatomyWeighted': anatomyRaw,
+    'outsideMaskProbabilityPixels': outsideMaskProbabilityPixels,
+    'outsideMaskSkeletonPixels': outsideMaskSkeletonPixels,
+    'rejectedOutsideMaskTraces': rejectedOutsideMaskTraces,
+    'minInsidePalmRatioOfAcceptedCandidates': minInsidePalmRatioOfAcceptedCandidates,
+    'rejectedOutsideMaskPaths': rejectedOutsideMaskPathsWork
+        .map((path) => path.map(mapPt).toList())
+        .toList(),
+    'debugPalmOutline': _samplePalmOutline(boundarySafeMask, workW, workH, mapPt),
   };
 }
 
@@ -1714,6 +2176,30 @@ int _transitionCount(List<bool> p) {
     if (!p[i] && p[i + 1]) transitions++;
   }
   return transitions;
+}
+
+// Returns the inner boundary pixels of [mask]: pixels inside mask that touch
+// at least one out-of-mask 4-neighbor. Used for the palm outline debug layer.
+List<List<double>> _samplePalmOutline(
+  List<bool> mask,
+  int w,
+  int h,
+  List<double> Function(List<double>) mapPt,
+) {
+  final samples = <List<double>>[];
+  for (int i = 0; i < mask.length; i++) {
+    if (!mask[i]) continue;
+    final x = i % w;
+    final y = i ~/ w;
+    final isEdge = (x > 0 && !mask[i - 1]) ||
+        (x < w - 1 && !mask[i + 1]) ||
+        (y > 0 && !mask[i - w]) ||
+        (y < h - 1 && !mask[i + w]);
+    if (!isEdge) continue;
+    final p = mapPt([x / w, y / h]);
+    samples.add([p[0], p[1], 1.0]);
+  }
+  return samples;
 }
 
 List<List<double>> _sampleMask(
@@ -2587,8 +3073,9 @@ Map<String, dynamic> _traceToRaw(
   _ScoredTrace scored,
   int w,
   int h,
-  List<double> Function(List<double>) mapPt,
-) {
+  List<double> Function(List<double>) mapPt, {
+  double insidePalmRatio = 1.0,
+}) {
   final trace = scored.trace;
   return {
     'points': _pathFromTrace(trace.indices, w, h).map(mapPt).toList(),
@@ -2600,6 +3087,7 @@ Map<String, dynamic> _traceToRaw(
     'averageCurvature': trace.averageCurvature,
     'interruptionCount': trace.interruptionCount,
     'branchCount': trace.branchCount,
+    'insidePalmRatio': insidePalmRatio,
   };
 }
 
@@ -3659,3 +4147,20 @@ int darkLineStrengthForTest(Uint8List img, int x, int y, int w, int h) =>
 @visibleForTesting
 PalmGeometry? palmGeometryFromMaskForTest(List<bool> mask, int w, int h) =>
     _geometryFromRaw(_detectPalmGeometry(mask, w, h));
+
+@visibleForTesting
+const double anatomyAlphaForTest = _anatomyAlpha;
+
+@visibleForTesting
+const double anatomyBetaForTest = _anatomyBeta;
+
+@visibleForTesting
+Float32List anatomyWeightedMapForTest(Float32List baseProbability, Float32List prior) {
+  final result = Float32List(baseProbability.length);
+  for (int i = 0; i < baseProbability.length; i++) {
+    final base = baseProbability[i];
+    if (base <= 0.0) continue;
+    result[i] = (base * (_anatomyAlpha + _anatomyBeta * prior[i])).clamp(0.0, 1.0);
+  }
+  return result;
+}

@@ -563,4 +563,112 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get palmExtractionReadingTitle => 'Deutung';
+
+  @override
+  String get scanQualityTitle => 'Scan-Qualität';
+
+  @override
+  String get scanQualityAnalyzing => 'Bildqualität wird analysiert…';
+
+  @override
+  String get scanQualityGradeExcellent => 'Ausgezeichnet';
+
+  @override
+  String get scanQualityGradeGood => 'Gut';
+
+  @override
+  String get scanQualityGradeAcceptable => 'Akzeptabel';
+
+  @override
+  String get scanQualityGradePoor => 'Schlecht';
+
+  @override
+  String get scanQualityGradeRetake => 'Bitte neu aufnehmen';
+
+  @override
+  String get scanQualityDimBackground => 'Hintergrund';
+
+  @override
+  String get scanQualityDimLighting => 'Beleuchtung';
+
+  @override
+  String get scanQualityDimSharpness => 'Schärfe';
+
+  @override
+  String get scanQualityDimHandPosition => 'Handposition';
+
+  @override
+  String get scanQualityDimPalmCoverage => 'Handflächenanteil';
+
+  @override
+  String get scanQualityWarningAcceptable =>
+      'Ergebnisse können weniger genau sein.';
+
+  @override
+  String get scanQualityRetakeButton => 'Foto wiederholen';
+
+  @override
+  String get scanQualityAnalyzeAnywayButton => 'Trotzdem analysieren';
+
+  @override
+  String get scanQualityMadameSays => 'Madame Gatto sagt:';
+
+  @override
+  String get scanQualityBgTip =>
+      'Ich kann deine Linien viel besser lesen, wenn deine Hand vor einem einfarbigen Hintergrund fotografiert wird.';
+
+  @override
+  String get scanQualityBgSuggestionsTitle => 'Empfohlene Hintergründe:';
+
+  @override
+  String get scanQualityBgSuggestion1 => 'weißes Blatt Papier';
+
+  @override
+  String get scanQualityBgSuggestion2 => 'grauer Tisch';
+
+  @override
+  String get scanQualityBgSuggestion3 => 'schwarzes Tuch';
+
+  @override
+  String get scanQualityBgSuggestion4 => 'schlichte Wand';
+
+  @override
+  String get handSegmentTitle => 'Handerkennung';
+
+  @override
+  String get handSegmentAnalyzing => 'Handkontur wird erkannt…';
+
+  @override
+  String get handSegmentGradeExcellent => 'Ausgezeichnet';
+
+  @override
+  String get handSegmentGradeGood => 'Gut';
+
+  @override
+  String get handSegmentGradeAcceptable => 'Akzeptabel';
+
+  @override
+  String get handSegmentGradePoor => 'Hand nicht vollständig erkannt';
+
+  @override
+  String get handSegmentDimCoverage => 'Bildanteil';
+
+  @override
+  String get handSegmentDimEdge => 'Kantenqualität';
+
+  @override
+  String get handSegmentDimFingers => 'Finger';
+
+  @override
+  String get handSegmentDimThumb => 'Daumen';
+
+  @override
+  String get handSegmentDimWrist => 'Handgelenk';
+
+  @override
+  String get handSegmentCutoutLabel => 'Erkannte Hand';
+
+  @override
+  String get handSegmentPoorTip =>
+      'Madame Gatto empfiehlt, die Hand vor einem einfarbigen Hintergrund zu fotografieren, um die genaueste Deutung zu erhalten.';
 }

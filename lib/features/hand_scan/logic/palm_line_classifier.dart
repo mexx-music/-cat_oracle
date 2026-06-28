@@ -144,25 +144,55 @@ class PalmLineClassifier {
       ];
     }
 
-    return [
-      for (var i = 0; i < extraction.candidatePaths.length; i++)
-        PalmLineTraceEvidence(
-          id: 'trace_$i',
-          points: extraction.candidatePaths[i],
-          averageProbability: i < extraction.tracedCreases.length
-              ? extraction.tracedCreases[i].averageProbability
-              : extraction.confidence,
-          continuity: i < extraction.tracedCreases.length
-              ? extraction.tracedCreases[i].continuityScore
-              : 0.0,
-          anatomicalPriorScore: i < extraction.tracedCreases.length
-              ? extraction.tracedCreases[i].anatomicalScore
-              : 0.0,
-          gapCount: i < extraction.tracedCreases.length
-              ? extraction.tracedCreases[i].interruptionCount
-              : 0,
-        ),
-    ];
+    // Prefer anatomy-weighted type-specific candidates when available.
+    final aw = extraction.anatomyWeighted;
+    final hasAnatomyData = aw.lifeTracedCreases.isNotEmpty ||
+        aw.heartTracedCreases.isNotEmpty ||
+        aw.headTracedCreases.isNotEmpty ||
+        aw.fateTracedCreases.isNotEmpty;
+    if (hasAnatomyData) {
+      // Only include traces confirmed to be inside the palm mask.
+      PalmLineTraceEvidence? fromCrease(PalmTracedCrease c, String id) {
+        if (c.insidePalmRatio < 0.98) return null;
+        return PalmLineTraceEvidence(
+          id: id,
+          points: c.points,
+          averageProbability: c.averageProbability,
+          continuity: c.continuityScore,
+          anatomicalPriorScore: c.anatomicalScore,
+          gapCount: c.interruptionCount,
+        );
+      }
+      final evidence = <PalmLineTraceEvidence>[
+        for (var i = 0; i < aw.lifeTracedCreases.length; i++)
+          ?fromCrease(aw.lifeTracedCreases[i], 'life_$i'),
+        for (var i = 0; i < aw.heartTracedCreases.length; i++)
+          ?fromCrease(aw.heartTracedCreases[i], 'heart_$i'),
+        for (var i = 0; i < aw.headTracedCreases.length; i++)
+          ?fromCrease(aw.headTracedCreases[i], 'head_$i'),
+        for (var i = 0; i < aw.fateTracedCreases.length; i++)
+          ?fromCrease(aw.fateTracedCreases[i], 'fate_$i'),
+      ];
+      if (evidence.isNotEmpty) return evidence;
+    }
+
+    final result = <PalmLineTraceEvidence>[];
+    for (var i = 0; i < extraction.candidatePaths.length; i++) {
+      final crease = i < extraction.tracedCreases.length
+          ? extraction.tracedCreases[i]
+          : null;
+      // Final safety guard: reject outside-palm traces before they reach scoring.
+      if (crease != null && crease.insidePalmRatio < 0.98) continue;
+      result.add(PalmLineTraceEvidence(
+        id: 'trace_$i',
+        points: extraction.candidatePaths[i],
+        averageProbability: crease?.averageProbability ?? extraction.confidence,
+        continuity: crease?.continuityScore ?? 0.0,
+        anatomicalPriorScore: crease?.anatomicalScore ?? 0.0,
+        gapCount: crease?.interruptionCount ?? 0,
+      ));
+    }
+    return result;
   }
 
   static PalmLineClassificationResult _fromHypothesisSolution(

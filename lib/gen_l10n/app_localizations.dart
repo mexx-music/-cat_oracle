@@ -1123,6 +1123,216 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reading'**
   String get palmExtractionReadingTitle;
+
+  /// Header of the scan quality gate panel
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Quality'**
+  String get scanQualityTitle;
+
+  /// Loading state shown while quality assessment runs
+  ///
+  /// In en, this message translates to:
+  /// **'Analyzing image quality…'**
+  String get scanQualityAnalyzing;
+
+  /// Scan quality grade: Excellent
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent'**
+  String get scanQualityGradeExcellent;
+
+  /// Scan quality grade: Good
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get scanQualityGradeGood;
+
+  /// Scan quality grade: Acceptable
+  ///
+  /// In en, this message translates to:
+  /// **'Acceptable'**
+  String get scanQualityGradeAcceptable;
+
+  /// Scan quality grade: Poor
+  ///
+  /// In en, this message translates to:
+  /// **'Poor'**
+  String get scanQualityGradePoor;
+
+  /// Scan quality grade: please retake the photo
+  ///
+  /// In en, this message translates to:
+  /// **'Please retake'**
+  String get scanQualityGradeRetake;
+
+  /// Quality dimension label: background
+  ///
+  /// In en, this message translates to:
+  /// **'Background'**
+  String get scanQualityDimBackground;
+
+  /// Quality dimension label: lighting
+  ///
+  /// In en, this message translates to:
+  /// **'Lighting'**
+  String get scanQualityDimLighting;
+
+  /// Quality dimension label: sharpness / blur
+  ///
+  /// In en, this message translates to:
+  /// **'Sharpness'**
+  String get scanQualityDimSharpness;
+
+  /// Quality dimension label: hand position and isolation
+  ///
+  /// In en, this message translates to:
+  /// **'Hand Position'**
+  String get scanQualityDimHandPosition;
+
+  /// Quality dimension label: how much of the frame is filled by the palm
+  ///
+  /// In en, this message translates to:
+  /// **'Palm Coverage'**
+  String get scanQualityDimPalmCoverage;
+
+  /// Warning shown when quality is acceptable but not ideal
+  ///
+  /// In en, this message translates to:
+  /// **'Results may be less accurate.'**
+  String get scanQualityWarningAcceptable;
+
+  /// Primary button when quality is poor: retake the photo
+  ///
+  /// In en, this message translates to:
+  /// **'Retake photo'**
+  String get scanQualityRetakeButton;
+
+  /// Secondary button when quality is poor: proceed despite low quality
+  ///
+  /// In en, this message translates to:
+  /// **'Analyze anyway'**
+  String get scanQualityAnalyzeAnywayButton;
+
+  /// Attribution label for the Madame Gatto background tip
+  ///
+  /// In en, this message translates to:
+  /// **'Madame Gatto says:'**
+  String get scanQualityMadameSays;
+
+  /// Madame Gatto tip about using a plain background
+  ///
+  /// In en, this message translates to:
+  /// **'I can read your lines much better when your hand is photographed against a plain background.'**
+  String get scanQualityBgTip;
+
+  /// Header for the list of suggested backgrounds
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested backgrounds:'**
+  String get scanQualityBgSuggestionsTitle;
+
+  /// Background suggestion 1
+  ///
+  /// In en, this message translates to:
+  /// **'white sheet of paper'**
+  String get scanQualityBgSuggestion1;
+
+  /// Background suggestion 2
+  ///
+  /// In en, this message translates to:
+  /// **'gray table'**
+  String get scanQualityBgSuggestion2;
+
+  /// Background suggestion 3
+  ///
+  /// In en, this message translates to:
+  /// **'black cloth'**
+  String get scanQualityBgSuggestion3;
+
+  /// Background suggestion 4
+  ///
+  /// In en, this message translates to:
+  /// **'plain wall'**
+  String get scanQualityBgSuggestion4;
+
+  /// Header of the hand segmentation preview panel
+  ///
+  /// In en, this message translates to:
+  /// **'Hand Detection'**
+  String get handSegmentTitle;
+
+  /// Loading state while segmentation runs
+  ///
+  /// In en, this message translates to:
+  /// **'Detecting hand outline…'**
+  String get handSegmentAnalyzing;
+
+  /// Segmentation grade: Excellent
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent'**
+  String get handSegmentGradeExcellent;
+
+  /// Segmentation grade: Good
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get handSegmentGradeGood;
+
+  /// Segmentation grade: Acceptable
+  ///
+  /// In en, this message translates to:
+  /// **'Acceptable'**
+  String get handSegmentGradeAcceptable;
+
+  /// Segmentation grade: Poor – hand not clearly detected
+  ///
+  /// In en, this message translates to:
+  /// **'Hand not fully detected'**
+  String get handSegmentGradePoor;
+
+  /// Segmentation metric: how much of the frame the hand fills
+  ///
+  /// In en, this message translates to:
+  /// **'Coverage'**
+  String get handSegmentDimCoverage;
+
+  /// Segmentation metric: sharpness of the hand boundary
+  ///
+  /// In en, this message translates to:
+  /// **'Edge Quality'**
+  String get handSegmentDimEdge;
+
+  /// Segmentation metric: finger visibility
+  ///
+  /// In en, this message translates to:
+  /// **'Fingers'**
+  String get handSegmentDimFingers;
+
+  /// Segmentation metric: thumb visibility
+  ///
+  /// In en, this message translates to:
+  /// **'Thumb'**
+  String get handSegmentDimThumb;
+
+  /// Segmentation metric: wrist visibility
+  ///
+  /// In en, this message translates to:
+  /// **'Wrist'**
+  String get handSegmentDimWrist;
+
+  /// Label shown below the cutout preview image
+  ///
+  /// In en, this message translates to:
+  /// **'Detected hand'**
+  String get handSegmentCutoutLabel;
+
+  /// Tip shown when segmentation quality is poor
+  ///
+  /// In en, this message translates to:
+  /// **'Madame Gatto recommends photographing your hand against a plain background for the most accurate reading.'**
+  String get handSegmentPoorTip;
 }
 
 class _AppLocalizationsDelegate
