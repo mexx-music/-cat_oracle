@@ -395,4 +395,149 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsResetButton => 'Reset';
+
+  @override
+  String get palmExtractionTitle => 'Palm Line Extraction';
+
+  @override
+  String get palmExtractionSubtitle => 'Madame Gatto is analysing your signs';
+
+  @override
+  String get palmExtractionPhaseImageLoaded =>
+      'Image capture / Original loaded';
+
+  @override
+  String get palmExtractionPhaseOptimizing =>
+      'Image optimisation / Contrast & clarity';
+
+  @override
+  String get palmExtractionPhasePalmDetected =>
+      'Palm detected / ROI segmentation';
+
+  @override
+  String get palmExtractionPhaseEdges => 'Edge detection / Line structure';
+
+  @override
+  String get palmExtractionPhaseLines => 'Extracting main lines';
+
+  @override
+  String get palmExtractionPhaseGeometry => 'Geometric analysis';
+
+  @override
+  String get palmExtractionPhaseGattoConfirm => 'Madame Gatto confirms';
+
+  @override
+  String get palmExtractionPhaseComplete => 'Analysis complete';
+
+  @override
+  String get palmExtractionStatusContrast => 'Contrast optimised';
+
+  @override
+  String get palmExtractionStatusEdges => 'Edges detected';
+
+  @override
+  String get palmExtractionStatusVectors => 'Line vectors calculated';
+
+  @override
+  String get palmExtractionStatusClassified => 'Symbolic patterns classified';
+
+  @override
+  String palmExtractionStatusEdgeCount(int count) {
+    return 'Edge points detected: $count';
+  }
+
+  @override
+  String palmExtractionStatusPathCount(int count) {
+    return 'Line candidates: $count';
+  }
+
+  @override
+  String palmExtractionStatusConfidence(int pct) {
+    return 'Confidence: $pct %';
+  }
+
+  @override
+  String get palmExtractionCompleteButton => 'To Reading';
+
+  @override
+  String get palmExtractionReleased => 'ANALYSIS RELEASED';
+
+  @override
+  String get palmExtractionPanelLines => 'LINES';
+
+  @override
+  String get palmExtractionPanelStatus => 'STATUS';
+
+  @override
+  String get palmExtractionPanelLife => 'LIFE';
+
+  @override
+  String get palmExtractionPanelHeart => 'HEART';
+
+  @override
+  String get palmExtractionPanelHead => 'HEAD';
+
+  @override
+  String get palmExtractionPanelFate => 'FATE';
+
+  @override
+  String get palmExtractionPanelContrast => 'CONTR.';
+
+  @override
+  String get palmExtractionPanelClarity => 'CLARITY';
+
+  @override
+  String get palmExtractionPanelVector => 'VECTOR';
+
+  @override
+  String get palmExtractionPanelQuality => 'QUALITY';
+
+  @override
+  String get palmExtractionPipelineButton => 'Details';
+
+  @override
+  String get palmExtractionPipelineTitle => 'Pipeline Details';
+
+  @override
+  String get palmExtractionPipelineRoi => 'ROI detected';
+
+  @override
+  String get palmExtractionPipelineRoiYes => 'Yes';
+
+  @override
+  String get palmExtractionPipelineRoiNo => 'No';
+
+  @override
+  String get palmExtractionPipelineEdgePixels => 'Edge pixels';
+
+  @override
+  String get palmExtractionPipelineLineCandidates => 'Line candidates';
+
+  @override
+  String get palmExtractionPipelineConfidence => 'Confidence';
+
+  @override
+  String get palmExtractionPipelineWorkSize => 'Work size';
+
+  @override
+  String get palmExtractionPipelinePalmMaskCoverage => 'Palm mask coverage';
+
+  @override
+  String get palmExtractionPipelineDarkLinePixels => 'Dark-line pixels';
+
+  @override
+  String get palmExtractionPipelineSobelPixels => 'Sobel auxiliary pixels';
+
+  @override
+  String get palmExtractionPipelineAcceptedInterior => 'Accepted interior';
+
+  @override
+  String get palmExtractionPipelineRejectedBoundary => 'Rejected boundary';
+
+  @override
+  String get palmExtractionClassificationUncertain =>
+      'Lines detected, assignment uncertain';
+
+  @override
+  String get palmExtractionReadingTitle => 'Reading';
 }

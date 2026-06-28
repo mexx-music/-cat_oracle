@@ -2,6 +2,8 @@ import 'dart:math';
 
 import '../models/palm_trait.dart';
 import '../models/palmistry_analysis_profile.dart';
+import '../../hand_scan/logic/palm_line_classifier.dart';
+import '../../hand_scan/logic/palm_line_extractor.dart';
 
 // ── Trait library ──────────────────────────────────────────────────────────
 
@@ -128,8 +130,7 @@ const Map<FateLine, PalmTrait> _fateLineTraits = {
         'einen erkennbaren Lebensweg hindeuten. Madame Gatto sieht hier '
         'jemanden, dem Kontinuität wichtig ist und der Entscheidungen '
         'mit Bedacht trifft.',
-    catMessage:
-        'Madame Gatto sagt: Wer seinen Weg kennt, geht ihn mit Würde.',
+    catMessage: 'Madame Gatto sagt: Wer seinen Weg kennt, geht ihn mit Würde.',
   ),
   FateLine.strong: PalmTrait(
     title: 'Starke Schicksalslinie',
@@ -262,4 +263,204 @@ String readingFromProfile(PalmistryAnalysisProfile profile) {
           'Madame Gatto sagt schließlich: '
           'Jede Hand ist einzigartig. Diese hier trägt eine stille Stärke in sich.';
   }
+}
+
+// ── Extraction-based profile ──────────────────────────────────────────────────
+
+/// Derives a [PalmistryAnalysisProfile] from a real [PalmLineExtractionResult].
+///
+/// When the extraction is too weak (low edge count or confidence < 0.15) the
+/// function falls back to the deterministic seed-based [profileFromImagePath].
+///
+/// Life line length:
+///   arc_length_ratio < 0.38 → short, < 0.62 → medium, ≥ 0.62 → long
+///
+/// Heart line depth: mapped from the classifier confidence score.
+///
+/// Head line curvature: arc_length / chord_length ratio.
+///   < 1.18 → straight, < 1.50 → mixed, ≥ 1.50 → curved
+///
+/// Fate line strength: mapped from the classifier confidence score.
+PalmistryAnalysisProfile profileFromExtraction(
+  PalmLineExtractionResult extraction, {
+  String fallbackSeed = '',
+}) {
+  if (!extraction.hasRealData || extraction.confidence < 0.15) {
+    return profileFromImagePath(
+      fallbackSeed.isEmpty ? 'default_fallback' : fallbackSeed,
+    );
+  }
+
+  final c = PalmLineClassifier.classify(extraction);
+
+  // ── Life line ──────────────────────────────────────────────────────────────
+  final LifeLine lifeLine;
+  if (c.lifeLineConfidence < 0.25) {
+    lifeLine = _seedPick(LifeLine.values, fallbackSeed, 0);
+  } else {
+    final r = c.lifeLineLengthRatio;
+    lifeLine = r < 0.38
+        ? LifeLine.short
+        : r < 0.62
+        ? LifeLine.medium
+        : LifeLine.long;
+  }
+
+  // ── Heart line ─────────────────────────────────────────────────────────────
+  final HeartLine heartLine;
+  if (c.heartLineConfidence < 0.25) {
+    heartLine = _seedPick(HeartLine.values, fallbackSeed, 1);
+  } else {
+    heartLine = c.heartLineConfidence > 0.60
+        ? HeartLine.deep
+        : c.heartLineConfidence > 0.38
+        ? HeartLine.balanced
+        : HeartLine.soft;
+  }
+
+  // ── Head line ──────────────────────────────────────────────────────────────
+  final HeadLine headLine;
+  if (c.headLineConfidence < 0.25) {
+    headLine = _seedPick(HeadLine.values, fallbackSeed, 2);
+  } else {
+    headLine = c.headLineCurvature < 1.18
+        ? HeadLine.straight
+        : c.headLineCurvature < 1.50
+        ? HeadLine.mixed
+        : HeadLine.curved;
+  }
+
+  // ── Fate line ──────────────────────────────────────────────────────────────
+  final FateLine fateLine;
+  if (c.fateLineConfidence < 0.20) {
+    fateLine = FateLine.faint;
+  } else if (c.fateLineConfidence < 0.52) {
+    fateLine = FateLine.visible;
+  } else {
+    fateLine = FateLine.strong;
+  }
+
+  // ── Mount Venus: proxy from edge density ───────────────────────────────────
+  final area = max(1, extraction.imageWidth * extraction.imageHeight);
+  final density = extraction.edgePointCount / area.toDouble();
+  final MountVenus mountVenus = density < 0.005
+      ? MountVenus.flat
+      : density < 0.012
+      ? MountVenus.balanced
+      : MountVenus.full;
+
+  // ── Hand shape: proxy from image aspect ratio ──────────────────────────────
+  final aspect =
+      extraction.imageWidth / max(1, extraction.imageHeight).toDouble();
+  final HandShape handShape = aspect < 0.75
+      ? HandShape.water
+      : aspect < 0.90
+      ? HandShape.earth
+      : aspect < 1.10
+      ? HandShape.air
+      : HandShape.fire;
+
+  return PalmistryAnalysisProfile(
+    lifeLine: lifeLine,
+    heartLine: heartLine,
+    headLine: headLine,
+    fateLine: fateLine,
+    mountVenus: mountVenus,
+    handShape: handShape,
+  );
+}
+
+/// Like [profileFromExtraction] but accepts an already-computed
+/// [PalmLineClassificationResult].  Use this when the classification was
+/// modified after extraction (e.g. life line path extended by continuation).
+PalmistryAnalysisProfile profileFromClassification(
+  PalmLineClassificationResult c,
+  PalmLineExtractionResult extraction, {
+  String fallbackSeed = '',
+}) {
+  // ── Life line ──────────────────────────────────────────────────────────────
+  final LifeLine lifeLine;
+  if (c.lifeLineConfidence < 0.25) {
+    lifeLine = _seedPick(LifeLine.values, fallbackSeed, 0);
+  } else {
+    final r = c.lifeLineLengthRatio;
+    lifeLine = r < 0.38
+        ? LifeLine.short
+        : r < 0.62
+        ? LifeLine.medium
+        : LifeLine.long;
+  }
+
+  // ── Heart line ─────────────────────────────────────────────────────────────
+  final HeartLine heartLine;
+  if (c.heartLineConfidence < 0.25) {
+    heartLine = _seedPick(HeartLine.values, fallbackSeed, 1);
+  } else {
+    heartLine = c.heartLineConfidence > 0.60
+        ? HeartLine.deep
+        : c.heartLineConfidence > 0.38
+        ? HeartLine.balanced
+        : HeartLine.soft;
+  }
+
+  // ── Head line ──────────────────────────────────────────────────────────────
+  final HeadLine headLine;
+  if (c.headLineConfidence < 0.25) {
+    headLine = _seedPick(HeadLine.values, fallbackSeed, 2);
+  } else {
+    headLine = c.headLineCurvature < 1.18
+        ? HeadLine.straight
+        : c.headLineCurvature < 1.50
+        ? HeadLine.mixed
+        : HeadLine.curved;
+  }
+
+  // ── Fate line ──────────────────────────────────────────────────────────────
+  final FateLine fateLine;
+  if (c.fateLineConfidence < 0.20) {
+    fateLine = FateLine.faint;
+  } else if (c.fateLineConfidence < 0.52) {
+    fateLine = FateLine.visible;
+  } else {
+    fateLine = FateLine.strong;
+  }
+
+  // ── Mount Venus: edge density proxy ───────────────────────────────────────
+  final area = max(1, extraction.imageWidth * extraction.imageHeight);
+  final density = extraction.edgePointCount / area.toDouble();
+  final MountVenus mountVenus = density < 0.005
+      ? MountVenus.flat
+      : density < 0.012
+      ? MountVenus.balanced
+      : MountVenus.full;
+
+  // ── Hand shape: aspect ratio proxy ────────────────────────────────────────
+  final aspect =
+      extraction.imageWidth / max(1, extraction.imageHeight).toDouble();
+  final HandShape handShape = aspect < 0.75
+      ? HandShape.water
+      : aspect < 0.90
+      ? HandShape.earth
+      : aspect < 1.10
+      ? HandShape.air
+      : HandShape.fire;
+
+  return PalmistryAnalysisProfile(
+    lifeLine: lifeLine,
+    heartLine: heartLine,
+    headLine: headLine,
+    fateLine: fateLine,
+    mountVenus: mountVenus,
+    handShape: handShape,
+  );
+}
+
+/// Picks a value from [values] deterministically based on [seed] + [offset].
+/// Used as a seeded fallback when a specific line confidence is too low.
+T _seedPick<T>(List<T> values, String seed, int offset) {
+  var h = 0;
+  for (final cu in seed.codeUnits) {
+    h = h * 31 + cu;
+  }
+  return values[(h.abs() + offset) % values.length];
 }

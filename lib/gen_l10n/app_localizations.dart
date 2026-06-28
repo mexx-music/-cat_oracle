@@ -817,6 +817,276 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reset'**
   String get settingsResetButton;
+
+  /// Title of the palm extraction animation screen
+  ///
+  /// In en, this message translates to:
+  /// **'Palm Line Extraction'**
+  String get palmExtractionTitle;
+
+  /// Subtitle of the palm extraction animation screen
+  ///
+  /// In en, this message translates to:
+  /// **'Madame Gatto is analysing your signs'**
+  String get palmExtractionSubtitle;
+
+  /// Phase 1 label
+  ///
+  /// In en, this message translates to:
+  /// **'Image capture / Original loaded'**
+  String get palmExtractionPhaseImageLoaded;
+
+  /// Phase 2 label
+  ///
+  /// In en, this message translates to:
+  /// **'Image optimisation / Contrast & clarity'**
+  String get palmExtractionPhaseOptimizing;
+
+  /// Phase 3 label
+  ///
+  /// In en, this message translates to:
+  /// **'Palm detected / ROI segmentation'**
+  String get palmExtractionPhasePalmDetected;
+
+  /// Phase 4 label
+  ///
+  /// In en, this message translates to:
+  /// **'Edge detection / Line structure'**
+  String get palmExtractionPhaseEdges;
+
+  /// Phase 5 label
+  ///
+  /// In en, this message translates to:
+  /// **'Extracting main lines'**
+  String get palmExtractionPhaseLines;
+
+  /// Phase 6 label
+  ///
+  /// In en, this message translates to:
+  /// **'Geometric analysis'**
+  String get palmExtractionPhaseGeometry;
+
+  /// Phase 7 label
+  ///
+  /// In en, this message translates to:
+  /// **'Madame Gatto confirms'**
+  String get palmExtractionPhaseGattoConfirm;
+
+  /// Phase 8 label
+  ///
+  /// In en, this message translates to:
+  /// **'Analysis complete'**
+  String get palmExtractionPhaseComplete;
+
+  /// Status message: contrast done
+  ///
+  /// In en, this message translates to:
+  /// **'Contrast optimised'**
+  String get palmExtractionStatusContrast;
+
+  /// Status message: edges done
+  ///
+  /// In en, this message translates to:
+  /// **'Edges detected'**
+  String get palmExtractionStatusEdges;
+
+  /// Status message: vectors done
+  ///
+  /// In en, this message translates to:
+  /// **'Line vectors calculated'**
+  String get palmExtractionStatusVectors;
+
+  /// Status message: classification done
+  ///
+  /// In en, this message translates to:
+  /// **'Symbolic patterns classified'**
+  String get palmExtractionStatusClassified;
+
+  /// Status message: real edge pixel count from extraction
+  ///
+  /// In en, this message translates to:
+  /// **'Edge points detected: {count}'**
+  String palmExtractionStatusEdgeCount(int count);
+
+  /// Status message: number of extracted line paths
+  ///
+  /// In en, this message translates to:
+  /// **'Line candidates: {count}'**
+  String palmExtractionStatusPathCount(int count);
+
+  /// Status message: extraction confidence percentage
+  ///
+  /// In en, this message translates to:
+  /// **'Confidence: {pct} %'**
+  String palmExtractionStatusConfidence(int pct);
+
+  /// Button shown when extraction animation is done – opens inline reading panel
+  ///
+  /// In en, this message translates to:
+  /// **'To Reading'**
+  String get palmExtractionCompleteButton;
+
+  /// Completion seal text on palm extraction animation
+  ///
+  /// In en, this message translates to:
+  /// **'ANALYSIS RELEASED'**
+  String get palmExtractionReleased;
+
+  /// Left side-panel header: palm lines
+  ///
+  /// In en, this message translates to:
+  /// **'LINES'**
+  String get palmExtractionPanelLines;
+
+  /// Right side-panel header: status
+  ///
+  /// In en, this message translates to:
+  /// **'STATUS'**
+  String get palmExtractionPanelStatus;
+
+  /// Panel metric label: life line
+  ///
+  /// In en, this message translates to:
+  /// **'LIFE'**
+  String get palmExtractionPanelLife;
+
+  /// Panel metric label: heart line
+  ///
+  /// In en, this message translates to:
+  /// **'HEART'**
+  String get palmExtractionPanelHeart;
+
+  /// Panel metric label: head line
+  ///
+  /// In en, this message translates to:
+  /// **'HEAD'**
+  String get palmExtractionPanelHead;
+
+  /// Panel metric label: fate line
+  ///
+  /// In en, this message translates to:
+  /// **'FATE'**
+  String get palmExtractionPanelFate;
+
+  /// Panel metric label: contrast
+  ///
+  /// In en, this message translates to:
+  /// **'CONTR.'**
+  String get palmExtractionPanelContrast;
+
+  /// Panel metric label: clarity
+  ///
+  /// In en, this message translates to:
+  /// **'CLARITY'**
+  String get palmExtractionPanelClarity;
+
+  /// Panel metric label: vector count
+  ///
+  /// In en, this message translates to:
+  /// **'VECTOR'**
+  String get palmExtractionPanelVector;
+
+  /// Panel metric label: overall quality
+  ///
+  /// In en, this message translates to:
+  /// **'QUALITY'**
+  String get palmExtractionPanelQuality;
+
+  /// Button/chip label to open the pipeline details sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get palmExtractionPipelineButton;
+
+  /// Title of the pipeline details bottom sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Pipeline Details'**
+  String get palmExtractionPipelineTitle;
+
+  /// Pipeline detail label: ROI detection status
+  ///
+  /// In en, this message translates to:
+  /// **'ROI detected'**
+  String get palmExtractionPipelineRoi;
+
+  /// Value when ROI was detected
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get palmExtractionPipelineRoiYes;
+
+  /// Value when ROI was not detected (full image used)
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get palmExtractionPipelineRoiNo;
+
+  /// Pipeline detail label: total edge pixel count
+  ///
+  /// In en, this message translates to:
+  /// **'Edge pixels'**
+  String get palmExtractionPipelineEdgePixels;
+
+  /// Pipeline detail label: number of candidate paths found
+  ///
+  /// In en, this message translates to:
+  /// **'Line candidates'**
+  String get palmExtractionPipelineLineCandidates;
+
+  /// Pipeline detail label: extraction confidence score
+  ///
+  /// In en, this message translates to:
+  /// **'Confidence'**
+  String get palmExtractionPipelineConfidence;
+
+  /// Pipeline detail label: dimensions of the normalised work image
+  ///
+  /// In en, this message translates to:
+  /// **'Work size'**
+  String get palmExtractionPipelineWorkSize;
+
+  /// Pipeline detail label: fraction of the work image covered by the palm interior mask
+  ///
+  /// In en, this message translates to:
+  /// **'Palm mask coverage'**
+  String get palmExtractionPipelinePalmMaskCoverage;
+
+  /// Pipeline detail label: pixels detected by the dark-line evidence map
+  ///
+  /// In en, this message translates to:
+  /// **'Dark-line pixels'**
+  String get palmExtractionPipelineDarkLinePixels;
+
+  /// Pipeline detail label: pixels detected by auxiliary Sobel evidence
+  ///
+  /// In en, this message translates to:
+  /// **'Sobel auxiliary pixels'**
+  String get palmExtractionPipelineSobelPixels;
+
+  /// Pipeline detail label: mean interior ratio of accepted components
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted interior'**
+  String get palmExtractionPipelineAcceptedInterior;
+
+  /// Pipeline detail label: mean boundary ratio of rejected components
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected boundary'**
+  String get palmExtractionPipelineRejectedBoundary;
+
+  /// Overlay shown when line evidence exists but classification confidence is low
+  ///
+  /// In en, this message translates to:
+  /// **'Lines detected, assignment uncertain'**
+  String get palmExtractionClassificationUncertain;
+
+  /// Title of the inline reading panel shown after palm extraction completes
+  ///
+  /// In en, this message translates to:
+  /// **'Reading'**
+  String get palmExtractionReadingTitle;
 }
 
 class _AppLocalizationsDelegate
